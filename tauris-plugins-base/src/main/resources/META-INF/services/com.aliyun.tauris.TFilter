@@ -1,0 +1,11 @@
+com.aliyun.tauris.plugins.filter.DebugFilter
+com.aliyun.tauris.plugins.filter.DropFilter
+com.aliyun.tauris.plugins.filter.MetricFilter
+com.aliyun.tauris.plugins.filter.MutateFilter
+com.aliyun.tauris.plugins.filter.ConverterFilter
+com.aliyun.tauris.plugins.filter.RegexFilter
+com.aliyun.tauris.plugins.filter.SplitFilter
+com.aliyun.tauris.plugins.filter.StrFormatFilter
+com.aliyun.tauris.plugins.filter.CalcFilter
+com.aliyun.tauris.plugins.filter.RandomFilter
+com.aliyun.tauris.plugins.filter.CacheFilter

@@ -1,0 +1,6 @@
+%{name}
+%{value}
+this
+is
+my
+%{!HOME}

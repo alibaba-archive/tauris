@@ -1,0 +1,6 @@
+com.aliyun.tauris.plugins.codec.JSONEncoder
+com.aliyun.tauris.plugins.codec.FormatEncoder
+com.aliyun.tauris.plugins.codec.KVSEncoder
+com.aliyun.tauris.plugins.codec.MsgPackEncoder
+com.aliyun.tauris.plugins.codec.CSVEncoder
+com.aliyun.tauris.plugins.codec.JsoniterEncoder

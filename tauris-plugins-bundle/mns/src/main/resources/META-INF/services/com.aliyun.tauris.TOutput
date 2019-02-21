@@ -1,0 +1,2 @@
+com.aliyun.tauris.plugins.output.MNSQueueOutput
+com.aliyun.tauris.plugins.output.MNSTopicOutput

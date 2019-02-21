@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+# Process name ( For display )
+NAME=tauris
+CLASS_NAME=com.aliyun.tauris.Bootstrap
+
+SCRIPT_NAME=$0;
+BIN_DIR=`dirname ${SCRIPT_NAME}`;
+T_HOME=$(cd ${BIN_DIR}/..; pwd);
+BIN_DIR=${T_HOME}/bin
+BASE_LIB=${T_HOME}/lib
+ENV_PY=${T_HOME}/bin/env.py
+
+function log_failure_msg() {
+    echo "$@" "[ FAILED ]"
+}
+
+function log_success_msg() {
+    echo "$@" "[ OK ]"
+}
+
+if [ -z "$TAURIS_APP" ]; then
+    TAURIS_APP=$NAME
+fi
+
+#check java environ
+JAVA=java
+if [[ -e ${JAVA_HOME}/bin/java ]]; then
+    JAVA=${JAVA_HOME}/bin/java
+fi
+
+export CLASSPATH=`$ENV_PY cp`
+export JAVA_TOOL_OPTIONS=`$ENV_PY vm $TAURIS_APP`
+exec -a $TAURIS_APP ${JAVA} -server ${CLASS_NAME} $@
+#exec -a $TAURIS_APP java ${CLASS_NAME} $@
+#exec ${JAVA_HOME}/bin/java ${CLASS_NAME} $@

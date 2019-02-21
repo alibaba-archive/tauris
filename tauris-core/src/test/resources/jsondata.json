@@ -1,0 +1,20 @@
+{
+  "static" : "flat",
+  "request": {
+    "method": "GET",
+    "uri": "/get",
+    "size": "75",
+    "request_uri": "http://httpbin.org:8000/get",
+    "querystring": {},
+    "headers": {
+      "accept": "*/*",
+      "host": "httpbin.org",
+      "user-agent": "curl/7.37.1",
+      "test" : {
+        "hello" : "world"
+      }
+    },
+    "intarray" : [1, 2, 4, 5],
+    "strarray" : ["aaa", "bbb", "ccc", "ddd", "eee"]
+  }
+}

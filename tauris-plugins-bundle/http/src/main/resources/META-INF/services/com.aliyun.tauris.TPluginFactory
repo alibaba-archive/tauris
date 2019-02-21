@@ -1,0 +1,3 @@
+com.aliyun.tauris.plugins.http.TAuthenticatorFactory
+com.aliyun.tauris.plugins.http.TSignerFactory
+com.aliyun.tauris.plugins.http.TAuthenticatorPackFactory

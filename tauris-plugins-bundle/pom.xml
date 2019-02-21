@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>tauris-parent</artifactId>
+        <groupId>com.aliyun.tauris</groupId>
+        <version>1.4.10-SNAPSHOT</version>
+    </parent>
+    <artifactId>tauris-plugins-bundle</artifactId>
+    <packaging>pom</packaging>
+    <name>Tauris :: plugins :: bundle</name>
+
+    <modules>
+        <module>scroll</module>
+        <module>http</module>
+        <module>sls</module>
+        <module>mns</module>
+        <module>syslog</module>
+        <module>tcp</module>
+        <module>udp</module>
+        <module>influxdb</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.aliyun.tauris</groupId>
+            <artifactId>tauris-plugins-base</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+</project>

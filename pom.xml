@@ -31,7 +31,6 @@
                 <module>tauris-plugins-filter</module>
                 <module>tauris-plugins-bundle</module>
                 <module>tauris-plugins-resource</module>
-                <module>tauris-example</module>
             </modules>
         </profile>
 

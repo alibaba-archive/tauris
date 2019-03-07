@@ -5,7 +5,11 @@ base=`dirname $0`
 cd $base
 base=`pwd`
 version=`cat VERSION`
-rm -rf lib
+if [ ! -d lib ]; then
+   mkdir lib
+fi
+
+rm -rf lib/*
 mvn package -Dmaven.test.skip=true -Ddist=${base}
 
 mkdir -p dist/tauris

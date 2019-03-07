@@ -17,6 +17,30 @@
         <project_dir>${project.basedir}</project_dir>
     </properties>
 
+    <scm>
+        <connection>scm:git:git@github.com:aliyun/tauris.git</connection>
+        <developerConnection>scm:git:git@github.com:aliyun/tauris.git</developerConnection>
+        <url>https://github.com/aliyun/tauris</url>
+    </scm>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>rockis</id>
+            <name>Zhang Lei</name>
+            <email>rockis@gmail.com</email>
+            <url>https://github.com/rockis</url>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
+
     <profiles>
         <profile>
             <id>alibaba</id>

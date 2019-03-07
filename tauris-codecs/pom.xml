@@ -6,7 +6,7 @@
     <parent>
         <artifactId>tauris-parent</artifactId>
         <groupId>com.aliyun.tauris</groupId>
-        <version>1.4.10-SNAPSHOT</version>
+        <version>1.4.11-SNAPSHOT</version>
     </parent>
     <packaging>jar</packaging>
     <artifactId>tauris-codecs</artifactId>
@@ -30,7 +30,7 @@
         </dependency>
 
         <dependency>
-            <groupId>net.sf.opencsv</groupId>
+            <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
         </dependency>
 

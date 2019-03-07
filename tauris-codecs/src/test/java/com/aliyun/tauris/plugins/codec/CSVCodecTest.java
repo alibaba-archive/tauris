@@ -9,7 +9,7 @@ import java.io.ByteArrayOutputStream;
 /**
  * Class KVCodecTest
  *
- * @author chuanshi.zl<chuanshi.zl@alibaba-inc.com>
+ * @author zhanglei
  * @date 2018-09-05
  */
 public class CSVCodecTest {

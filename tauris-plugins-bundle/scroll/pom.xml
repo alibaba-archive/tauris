@@ -6,7 +6,7 @@
     <parent>
         <artifactId>tauris-plugins-bundle</artifactId>
         <groupId>com.aliyun.tauris</groupId>
-        <version>1.4.10-SNAPSHOT</version>
+        <version>1.4.11-SNAPSHOT</version>
     </parent>
     <packaging>jar</packaging>
     <artifactId>tauris-plugins-bundle-scroll</artifactId>

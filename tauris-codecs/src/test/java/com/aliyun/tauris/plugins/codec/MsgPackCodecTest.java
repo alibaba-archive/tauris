@@ -12,7 +12,7 @@ import java.io.StringWriter;
 /**
  * Class KVCodecTest
  *
- * @author chuanshi.zl<chuanshi.zl@alibaba-inc.com>
+ * @author zhanglei
  * @date 2018-09-05
  */
 public class MsgPackCodecTest {

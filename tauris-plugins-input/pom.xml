@@ -6,7 +6,7 @@
     <parent>
         <artifactId>tauris-parent</artifactId>
         <groupId>com.aliyun.tauris</groupId>
-        <version>1.4.10-SNAPSHOT</version>
+        <version>1.4.11-SNAPSHOT</version>
     </parent>
     <artifactId>tauris-plugins-input</artifactId>
     <packaging>pom</packaging>

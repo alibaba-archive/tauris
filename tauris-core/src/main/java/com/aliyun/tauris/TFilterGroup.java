@@ -79,7 +79,7 @@ public class TFilterGroup extends TPluginGroup {
             }
             return event;
         } catch (Exception e) {
-            logger.ERROR("filter %s raise an uncatched exception", e, lastFilter.id());
+            logger.EXCEPTION(String.format("filter %s raise an uncatched exception", lastFilter.id()), e);
             return null;
         }
     }

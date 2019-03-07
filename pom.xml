@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.aliyun.tauris</groupId>
     <artifactId>tauris-parent</artifactId>
-    <version>1.4.10-SNAPSHOT</version>
+    <version>1.4.11-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Tauris</name>
 
@@ -31,6 +31,7 @@
                 <module>tauris-plugins-filter</module>
                 <module>tauris-plugins-bundle</module>
                 <module>tauris-plugins-resource</module>
+                <module>tauris-example</module>
             </modules>
         </profile>
 
@@ -309,9 +310,9 @@
             </dependency>
 
             <dependency>
-                <groupId>net.sf.opencsv</groupId>
+                <groupId>com.opencsv</groupId>
                 <artifactId>opencsv</artifactId>
-                <version>2.3</version>
+                <version>4.5</version>
             </dependency>
 
             <dependency>

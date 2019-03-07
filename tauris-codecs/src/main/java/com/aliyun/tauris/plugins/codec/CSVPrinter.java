@@ -1,12 +1,12 @@
 package com.aliyun.tauris.plugins.codec;
 
-import au.com.bytecode.opencsv.CSVWriter;
 import com.aliyun.tauris.EncodeException;
 import com.aliyun.tauris.TEncoder;
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.TPrinter;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
+import com.opencsv.CSVWriter;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.io.*;
@@ -51,7 +51,7 @@ public class CSVPrinter implements TPrinter {
     @Override
     public TPrinter wrap(OutputStream out) {
         CSVPrinter printer = new CSVPrinter(fields, separator, quotechar, escape, delimiter);
-        printer.writer = new CSVWriter(new OutputStreamWriter(out), separator, quotechar, escape);
+        printer.writer = new CSVWriter(new OutputStreamWriter(out), separator, quotechar, escape, delimiter);
         printer.buffer = new String[fields.length];
         return printer;
     }

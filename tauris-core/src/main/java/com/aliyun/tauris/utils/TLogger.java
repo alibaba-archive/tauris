@@ -80,6 +80,13 @@ public class TLogger extends LoggerWrapper {
         this.error(msg, e);
     }
 
+    public void EXCEPTION(String msg, Throwable e) {
+        if (this.pluginId != null) {
+            this.error("[" + pluginId + "]" + msg);
+        }
+        this.error(msg, e);
+    }
+
     public void WARN2(String message, String detail) {
         if (verbose && detail != null) {
             message = message + ", verbose: '" + detail + "'";

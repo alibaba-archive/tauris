@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Class InfluxdbDecoderTest
  *
- * @author chuanshi.zl<chuanshi.zl@alibaba-inc.com>
+ * @author zhanglei
  * @date 2018-09-04
  */
 public class InfluxdbDecoderTest {

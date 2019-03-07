@@ -1,10 +1,11 @@
 package com.aliyun.tauris.plugins.codec;
 
-import au.com.bytecode.opencsv.CSVParser;
 import com.aliyun.tauris.DecodeException;
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -30,10 +31,9 @@ public class CSVDecoder extends AbstractDecoder {
 
     boolean strict = false;
 
-    private CSVParser parser;
+    private ThreadLocal<CSVParser> threadLocal = new ThreadLocal<>();
 
     public void init() {
-        parser = new CSVParser(separator, quotechar, escape);
     }
 
     @Override
@@ -58,9 +58,18 @@ public class CSVDecoder extends AbstractDecoder {
         return event;
     }
 
+    private CSVParser getParser() {
+        CSVParser parser = threadLocal.get();
+        if (parser == null) {
+            parser = new CSVParserBuilder().withSeparator(separator).withQuoteChar(quotechar).withEscapeChar(escape).build();
+            threadLocal.set(parser);
+        }
+        return parser;
+    }
+
     private void decode(String source, BiConsumer<String, String> put) throws DecodeException {
         try {
-            String[] cols = parser.parseLine(source);
+            String[] cols = getParser().parseLine(source);
             if (strict && cols.length != fields.length) {
                 throw new DecodeException("column's length not match");
             }

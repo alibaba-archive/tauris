@@ -2,53 +2,60 @@ package com.aliyun.tauris.config.parser;
 
 import com.aliyun.tauris.*;
 import com.aliyun.tauris.config.TConfigException;
-import org.apache.commons.lang3.RandomStringUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 
 /**
  * Created by jdziworski on 30.03.16.
  */
 public class Plugin {
-    private String      name;
+    private String      majorName;
+    private String      minorName;
     private Assignments assignments;
 
-    public Plugin(String name, Assignments assignments) {
-        this.name = name;
+    public Plugin(String majorName, String minorName, Assignments assignments) {
+        this.majorName = majorName;
+        this.minorName = minorName == null ? "default" : minorName;
         this.assignments = assignments;
     }
 
     public String getName() {
-        return name;
+        return minorName == null || minorName.equals("default") ? majorName : String.format("%s.%s", majorName, minorName);
     }
 
-    public  <T extends TPlugin> TPlugin build(Class<T> type) {
-        TPluginResolver resolver =  TPluginResolver.defaultResolver;
-        TPlugin plugin = resolver.resolvePlugin(type, name);
+    public String getMajorName() {
+        return majorName;
+    }
+
+    public String getMinorName() {
+        return minorName;
+    }
+
+    public <T extends TPlugin> TPlugin build(Class<T> type) {
+        TPluginResolver resolver = TPluginResolver.defaultResolver;
+        TPlugin         plugin   = resolver.resolvePlugin(type, majorName, minorName);
         return this.build(plugin);
     }
 
     public TPlugin build(TPluginFactory factory) {
-        TPlugin plugin = factory.newInstance(name);
+        TPlugin plugin = factory.newInstance(majorName, minorName);
         return build(plugin);
     }
 
     public TPlugin build(TPlugin plugin) {
-        Helper.m.message(name).expand("{").next();
+        String pluginName = getName();
+        Helper.m.message(pluginName).expand("{").next();
         this.assignments.assignTo(plugin);
-        String pid = name + "_" + RandomStringUtils.randomNumeric(8).toLowerCase();
+        String pid = PluginId.generateId(pluginName);
         if (plugin.id() == null) {
             plugin.setId(pid);
             Helper.m.collapse("} //id: " + pid).next();
         } else {
             Helper.m.collapse("}").next();
         }
-        init(plugin, name);
+        init(plugin, pluginName);
         return plugin;
     }
 
@@ -69,29 +76,36 @@ public class Plugin {
         }
     }
 
-        @Override
+    @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        String pluginName = getName();
 
-        Plugin component = (Plugin) o;
-
-        if (name != null ? !name.equals(component.name) : component.name != null) return false;
-        return assignments != null ? assignments.equals(component.assignments) : component.assignments == null;
+        Plugin other = (Plugin) o;
+        if (!pluginName.equals(other.getName())) {
+            return false;
+        }
+        return assignments != null ? assignments.equals(other.assignments) : other.assignments == null;
 
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
+        String pluginName = getName();
+        int    result     = pluginName != null ? pluginName.hashCode() : 0;
         result = 31 * result + (assignments != null ? assignments.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return "Method{" +
-                "\nname='" + name + '\'' +
+        return "Plugin {" +
+                "\nname='" + getName() + '\'' +
                 "\nassignments=" + assignments +
                 '}';
     }

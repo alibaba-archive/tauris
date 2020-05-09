@@ -40,10 +40,9 @@ public class CSVEncoder extends AbstractEncoder {
     }
 
     protected void writeEvent(TEvent event, OutputStream output) throws IOException {
-        Writer writer = new OutputStreamWriter(output);
         for (int i = 0; i < fields.length; i++) {
             if (i != 0) {
-                writer.append(separator);
+                output.write(separator);
             }
             Object val = event.get(fields[i]);
             String strval;
@@ -52,22 +51,24 @@ public class CSVEncoder extends AbstractEncoder {
             } else {
                 strval = val.toString();
             }
-            writeTo(strval, writer);
+            writeTo(strval, output);
         }
-        writer.flush();
     }
 
-    private void writeTo(String element, Appendable sb) throws IOException {
+    private void writeTo(String element, OutputStream output) throws IOException {
         if (element == null) {
             return;
         }
         if (quotechar != '\0') {
-            sb.append(quotechar);
+            output.write(quotechar);
         }
-        sb.append(stringContainsSpecialCharacters(element) ? processLine(element) : element);
-
+        if (stringContainsSpecialCharacters(element)) {
+            processLine(element, output);
+        } else {
+            output.write(element.getBytes(charset));
+        }
         if (quotechar != '\0') {
-            sb.append(quotechar);
+            output.write(quotechar);
         }
     }
 
@@ -75,19 +76,18 @@ public class CSVEncoder extends AbstractEncoder {
         return line.indexOf(quotechar) != -1 || line.indexOf(escape) != -1;
     }
 
-    protected StringBuilder processLine(String nextElement) {
-        StringBuilder sb = new StringBuilder(128);
+    protected void processLine(String nextElement, OutputStream output) throws IOException {
         for (int j = 0; j < nextElement.length(); j++) {
             char nextChar = nextElement.charAt(j);
             if (escape != NULL_CHARACTER && nextChar == quotechar) {
-                sb.append(escape).append(nextChar);
+                output.write(escape);
+                output.write(nextChar);
             } else if (escape != NULL_CHARACTER && nextChar == escape) {
-                sb.append(escape).append(nextChar);
+                output.write(escape);
+                output.write(nextChar);
             } else {
-                sb.append(nextChar);
+                output.write(nextChar);
             }
         }
-
-        return sb;
     }
 }

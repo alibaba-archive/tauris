@@ -4,8 +4,8 @@ import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.TPluginInitException;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
-import com.aliyun.tauris.formatter.SimpleFormatter;
-import com.aliyun.tauris.metric.Counter;
+import com.aliyun.tauris.formatter.EventFormatter;
+import com.aliyun.tauris.metrics.Counter;
 import com.opencsv.CSVWriter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -30,7 +30,7 @@ public class CSVOutput extends BaseTOutput {
     private static Counter OUTPUT_COUNTER = Counter.build().name("output_csv_total").labelNames("id").help("csv output count").create().register();
 
     @Required
-    SimpleFormatter path;
+    EventFormatter path;
 
     int flushInterval = 2;
 

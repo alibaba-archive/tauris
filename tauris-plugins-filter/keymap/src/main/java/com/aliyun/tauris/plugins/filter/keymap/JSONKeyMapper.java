@@ -2,14 +2,13 @@ package com.aliyun.tauris.plugins.filter.keymap;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONPath;
 import com.aliyun.tauris.TObject;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
-import com.aliyun.tauris.expression.TExpression;
-import com.aliyun.tauris.utils.TLogger;
+import com.alibaba.texpr.TExpression;
+import com.aliyun.tauris.TLogger;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -76,7 +75,7 @@ public class JSONKeyMapper extends AbstractResourceKeyMapper {
             return value;
         }
         JSONObject jo = (JSONObject)value;
-        return jo.get(keyName);
+        return JSONPath.eval(jo, valueName);
     }
 
     static class JSONObjectWrapper implements TObject {

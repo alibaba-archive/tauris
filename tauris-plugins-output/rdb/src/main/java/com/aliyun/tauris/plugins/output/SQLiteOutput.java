@@ -4,7 +4,7 @@ import com.aliyun.tauris.EncodeException;
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.TPluginInitException;
 import com.aliyun.tauris.annotations.Name;
-import com.aliyun.tauris.metric.Counter;
+import com.aliyun.tauris.metrics.Counter;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,10 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by ZhangLei on 17/5/28.
@@ -26,7 +23,6 @@ public class SQLiteOutput extends RdbOutput {
     private static Logger logger = LoggerFactory.getLogger("tauris.output.sqlite");
 
     private static Counter OUTPUT_COUNTER = Counter.build().name("output_sqlite_total").labelNames("id").help("sqlite put count").create().register();
-    private static Counter ERROR_COUNTER  = Counter.build().name("output_sqlite_error_total").labelNames("id").help("sqlite put error count").create().register();
 
     final static String DRIVER_CLASS = "org.sqlite.JDBC";
 
@@ -78,31 +74,38 @@ public class SQLiteOutput extends RdbOutput {
         return conn;
     }
 
-    protected void writeEventsToDatabase(Map<String, List<Object[]>> data) {
-        if (data.isEmpty()) return;
+    protected List<String> writeEventsToDatabase(Map<String, List<Object[]>> data) {
+        List<String> successful = new ArrayList<>();
         for (Map.Entry<String, List<Object[]>> entry : data.entrySet()) {
             List<Object[]> rows = entry.getValue();
             if (singleThread) {
-                writeEventsToDatabaseSafety(entry.getKey(), entry.getValue(), makeInsertSQL(entry.getValue().size()));
+                if (writeEventsToDatabaseSafety(entry.getKey(), rows, makeInsertSQL(rows.size()))) {
+                    successful.add(entry.getKey());
+                    OUTPUT_COUNTER.labels(id()).inc(rows.size());
+                }
             } else {
-                writeEventsToDatabaseNotSafety(entry.getKey(), entry.getValue(), makeInsertSQL(entry.getValue().size()));
+                if (writeEventsToDatabaseNotSafety(entry.getKey(), rows, makeInsertSQL(rows.size()))) {
+                    successful.add(entry.getKey());
+                    OUTPUT_COUNTER.labels(id()).inc(rows.size());
+                }
             }
-            OUTPUT_COUNTER.labels(id()).inc(rows.size());
         }
+        return successful;
     }
 
-    private void writeEventsToDatabaseSafety(String url, List<Object[]> rows, String insertSql) {
+    private boolean writeEventsToDatabaseSafety(String url, List<Object[]> rows, String insertSql) {
         synchronized (lock) {
-            writeEventsToDatabaseNotSafety(url, rows, insertSql);
+            return writeEventsToDatabaseNotSafety(url, rows, insertSql);
         }
     }
 
-    private void writeEventsToDatabaseNotSafety(String url, List<Object[]> rows, String insertSql) {
+    private boolean writeEventsToDatabaseNotSafety(String url, List<Object[]> rows, String insertSql) {
         try (Connection conn = makeConnection(url); PreparedStatement stmt = conn.prepareStatement(insertSql)) {
             writeEventToDatabase(rows, conn, stmt);
+            return true;
         } catch (SQLException e) {
-            ERROR_COUNTER.labels(id()).inc(rows.size());
             logger.error("write to database failed", e);
+            return false;
         }
     }
 
@@ -127,11 +130,11 @@ public class SQLiteOutput extends RdbOutput {
     }
 
     @Override
-    protected BatchWriteTask newTask() throws Exception {
+    protected BatchTask createTask() throws Exception {
         return new SQLiteWriteTask();
     }
 
-    class SQLiteWriteTask extends BatchWriteTask {
+    class SQLiteWriteTask extends BatchTask {
 
         Map<String, List<Object[]>> data;
 
@@ -161,8 +164,24 @@ public class SQLiteOutput extends RdbOutput {
         }
 
         @Override
-        protected void execute() {
-            writeEventsToDatabase(data);
+        protected boolean execute() {
+            if (data.isEmpty()) {
+                return true;
+            }
+            for (String s :  writeEventsToDatabase(data)) {
+                data.remove(s);
+            }
+            return data.isEmpty();
+        }
+
+        @Override
+        protected void active() {
+            clear();
+        }
+
+        @Override
+        protected void clear() {
+            data.values().forEach(List::clear);
         }
     }
 }

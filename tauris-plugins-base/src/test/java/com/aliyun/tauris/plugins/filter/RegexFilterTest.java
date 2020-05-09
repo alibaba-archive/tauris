@@ -1,5 +1,6 @@
 package com.aliyun.tauris.plugins.filter;
 
+import com.aliyun.tauris.DefaultEvent;
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.TFilter;
 import com.aliyun.tauris.config.parser.Parser;
@@ -25,7 +26,7 @@ public class RegexFilterTest {
         cf.patternFile = new File(RegexFilterTest.class.getClassLoader().getResource("wafaccesslog.patterns").toURI());
         cf.init();;
 
-        TEvent e = new TEvent(log);
+        TEvent e = new DefaultEvent(log);
         cf.filter(e);
         System.out.println(e.get("httpCookie"));
         Assert.assertEquals("111.19.32.76", e.get("remoteAddr"));
@@ -42,7 +43,7 @@ public class RegexFilterTest {
             RegexFilter cf = new RegexFilter();
             cf.pattern = Pattern.compile(pattern);
             cf.init();;
-            TEvent e = new TEvent(log);
+            TEvent e = new DefaultEvent(log);
             cf.filter(e);
             if (e.get("remoteAddr") == null) {
                 System.out.println(sl.get(sl.size() - 1));
@@ -65,7 +66,7 @@ public class RegexFilterTest {
                 "}";
 
         TFilter f = parseFilter(cfg);
-        TEvent e = new TEvent("antibot_cc_123_ok");
+        TEvent e = new DefaultEvent("antibot_cc_123_ok");
         e.set("val", "world");
         Assert.assertNotNull(f.filter(e));
 
@@ -87,7 +88,7 @@ public class RegexFilterTest {
                 "}";
 
         TFilter f = parseFilter(cfg);
-        TEvent e = new TEvent("antibot_cc_123_ok");
+        TEvent e = new DefaultEvent("antibot_cc_123_ok");
         e.set("val", "world");
         Assert.assertNotNull(f.filter(e));
 
@@ -107,7 +108,7 @@ public class RegexFilterTest {
                 "     }";
 
         TFilter f = parseFilter(cfg);
-        TEvent e = new TEvent("/mmmmmmmmmmm?aaaaaa=111111");
+        TEvent e = new DefaultEvent("/mmmmmmmmmmm?aaaaaa=111111");
         Assert.assertNotNull(f.filter(e));
 
         Assert.assertEquals("/mmmmmmmmmmm", e.get("request_path"));
@@ -129,7 +130,7 @@ public class RegexFilterTest {
                 "     }";
 
         TFilter f = parseFilter(cfg);
-        TEvent e = new TEvent();
+        TEvent e = new DefaultEvent();
         e.set("cc_rule_id", "");
         Assert.assertNotNull(f.filter(e));
 

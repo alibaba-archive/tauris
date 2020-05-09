@@ -6,7 +6,7 @@
     <parent>
         <artifactId>tauris-parent</artifactId>
         <groupId>com.aliyun.tauris</groupId>
-        <version>1.4.11-SNAPSHOT</version>
+        <version>1.7.0-SNAPSHOT</version>
     </parent>
     <packaging>jar</packaging>
     <artifactId>tauris-codecs</artifactId>
@@ -24,20 +24,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.jsoniter</groupId>
-            <artifactId>jsoniter</artifactId>
-            <version>0.9.19</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.msgpack</groupId>
-            <artifactId>msgpack</artifactId>
-            <version>0.6.13</version>
-        </dependency>
     </dependencies>
 </project>

@@ -3,7 +3,7 @@ package com.aliyun.tauris.utils;
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.TWidget;
 import com.aliyun.tauris.annotations.Required;
-import com.aliyun.tauris.formatter.SimpleFormatter;
+import com.aliyun.tauris.formatter.EventFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +17,7 @@ public class EventLogging implements TWidget {
 
     private Logger logger = LoggerFactory.getLogger(EventLogging.class);
 
-    private SimpleFormatter formatter;
+    private EventFormatter formatter;
 
     private Method method;
 
@@ -35,7 +35,7 @@ public class EventLogging implements TWidget {
 
     @Required
     public void setFormat(String format) {
-        this.formatter = SimpleFormatter.build(format);
+        this.formatter = EventFormatter.build(format);
     }
 
     @Required

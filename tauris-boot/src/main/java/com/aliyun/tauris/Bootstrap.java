@@ -3,20 +3,11 @@ package com.aliyun.tauris;
 import com.aliyun.tauris.config.*;
 import com.aliyun.tauris.config.parser.Helper;
 import org.apache.commons.cli.*;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.*;
 import org.apache.log4j.xml.DOMConfigurator;
-import sun.misc.Signal;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.lang.management.ManagementFactory;
-import java.nio.charset.Charset;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
@@ -41,11 +32,9 @@ public class Bootstrap {
         options.addOption(Option.builder("t").longOpt("test").desc("Check configuration for valid syntax and then exit").build());
         options.addOption(Option.builder("P").longOpt("profiler").desc("Collection plugin's performance info").build());
         options.addOption(Option.builder("p").hasArg(true).argName("app.pid").longOpt("pid").desc("Pid file path").build());
-        options.addOption(Option.builder("u").hasArg(true).argName("number").longOpt("ungracefully").desc("Ungracefully exit after <number> seconds when receive TERM signal").build());
         options.addOption(Option.builder("m").hasArg(true).argName("port[:path]").longOpt("metric").desc("Enable metric server, default path is '/metrics'").build());
         options.addOption(Option.builder("M").hasArg(true).argName("file[:interval]").longOpt("metricF").desc("Dump metrics into a <file> every <interval> seconds, interval default 15").build());
         options.addOption(Option.builder("w").hasArg(true).argName("directory").longOpt("workdir").desc("Set the working directory").build());
-        options.addOption(Option.builder("c").hasArg(true).argName("number").longOpt("concurrency").desc("Number of parallel worker threads").build());
         options.addOption(Option.builder("o").hasArg(true).argName("app.out").longOpt("output").desc("Write stdout to <app.out> instead of stdout").build());
         options.addOption(Option.builder("l").hasArg(true).argName("file.log").longOpt("logfile").desc("Logging to <file.log>").build());
         options.addOption(Option.builder("L").hasArg(true).argName("log4j.xml").longOpt("log4j").desc("Log4j configuration file").build());
@@ -63,10 +52,10 @@ public class Bootstrap {
             cfg = cmd.getOptionValue("log4j");
         }
         if (cfg != null) {
-            if ( cfg.endsWith(".xml")) {
+            if (cfg.endsWith(".xml")) {
                 DOMConfigurator.configure(cfg);
             }
-            if ( cfg.endsWith(".properties")) {
+            if (cfg.endsWith(".properties")) {
                 PropertyConfigurator.configure(cfg);
             }
             return;
@@ -122,11 +111,13 @@ public class Bootstrap {
     }
 
     private static void version(CommandLine cmd) {
-        String version;
-        try {
-            version = (StringUtils.join(IOUtils.readLines(Bootstrap.class.getClassLoader().getResourceAsStream("VERSION")), ""));
+        String version = "unknown";
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(Bootstrap.class.getClassLoader().getResourceAsStream("VERSION")))) {
+            String fv = br.readLine();
+            if (fv != null && !fv.trim().isEmpty()) {
+                version = fv;
+            }
         } catch (Exception e) {
-            version = "unknown";
         }
         System.setProperty("tauris.version", version);
         if (cmd.hasOption("version")) {
@@ -153,7 +144,7 @@ public class Bootstrap {
     }
 
     private static void metrics(CommandLine cmd) {
-        String p = cmd.getOptionValue("metric");
+        String  p  = cmd.getOptionValue("metric");
         Pattern p3 = Pattern.compile("^(?<host>[^:]+):(?<port>\\d+):(?<path>.+)$");
         Pattern p2 = Pattern.compile("^(?<port>\\d+):(?<path>.+)$");
         Pattern p1 = Pattern.compile("^(?<port>\\d+)$");
@@ -191,7 +182,7 @@ public class Bootstrap {
     }
 
     private static void metricsF(CommandLine cmd) {
-        String v = cmd.getOptionValue('M');
+        String  v = cmd.getOptionValue('M');
         Pattern p = Pattern.compile("(?<file>[^:]+)(:(?<interval>\\d+))?");
         if (v != null) {
             Matcher m = p.matcher(v);
@@ -208,20 +199,6 @@ public class Bootstrap {
         }
     }
 
-    private static void parallel(CommandLine cmd) {
-        String p = cmd.getOptionValue("concurrency");
-        if (p != null) {
-            try {
-                int pn = Integer.parseInt(p);
-                System.setProperty(TPipeline.SYSPROP_FILTER_WORKERS, String.valueOf(pn));
-            } catch (NumberFormatException e) {
-                fault("invalid parallel, must be a number");
-            }
-        } else if (System.getProperty("tauris.filter.workers") == null){
-            System.setProperty("tauris.filter.workers", String.valueOf(Runtime.getRuntime().availableProcessors()));
-        }
-    }
-
     private static void writePid(CommandLine cmd) {
         String opt = cmd.getOptionValue("pid");
         if (opt != null) {
@@ -229,36 +206,17 @@ public class Bootstrap {
             if ((pidFile.exists() && !pidFile.canWrite()) || !pidFile.getParentFile().canWrite()) {
                 fault(String.format("pid file %s cannot be write", pidFile.getAbsoluteFile()));
             }
-            try {
-                FileUtils.write(pidFile, getPid(), Charset.defaultCharset());
+            try (FileWriter fw = new FileWriter(pidFile)) {
+                fw.write(getPid());
             } catch (Exception e) {
                 fault(String.format("pid file %s write failed", pidFile.getAbsoluteFile()));
             }
         }
     }
 
-    public static void pluginDoc(String[] argv) throws Exception {
-        Logger rootLogger = Logger.getRootLogger();
-        rootLogger.setLevel(Level.ERROR);
-        if (argv.length < 2) {
-            System.out.println("Usage: tauris plugins <plugin-type> [plugin-name]");
-            System.out.println("plugin types:");
-            System.out.println("\t input");
-            System.out.println("\t filter");
-            System.out.println("\t output");
-            System.exit(0);
-        }
-        String typeName = argv[1];
-        String pluginName = "";
-        if (argv.length > 2) {
-            pluginName = argv[2];
-        }
-        PluginDoc.printDoc(typeName, pluginName);
-    }
-
     public static String getPid() {
         String n = ManagementFactory.getRuntimeMXBean().getName();
-        int i = n.indexOf('@');
+        int    i = n.indexOf('@');
         if (i > 0) {
             return n.substring(0, i);
         }
@@ -266,12 +224,8 @@ public class Bootstrap {
     }
 
     public static void main(String[] argv) throws Exception {
-        if (argv.length > 0 && argv[0].equals("desc")) {
-            pluginDoc(argv);
-            System.exit(0);
-        }
-        Options options = createCommandOptions();
-        CommandLineParser parser = new DefaultParser();
+        Options           options = createCommandOptions();
+        CommandLineParser parser  = new DefaultParser();
         try {
             parser.parse(options, argv);
         } catch (ParseException e) {
@@ -288,7 +242,6 @@ public class Bootstrap {
         if (cmd.hasOption("help") || argv.length == 0) {
             HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("tauris [OPTIONS] <rule>", "OPTIONS", options, "");
-            formatter.printHelp("tauris desc <plugin-type> [plugin-name]", "", new Options(), "");
             System.exit(0);
         }
 
@@ -301,14 +254,11 @@ public class Bootstrap {
         logging(cmd);
         version(cmd);
         workdir(cmd);
-        profiler(cmd);
-        parallel(cmd);
         metrics(cmd);
         metricsF(cmd);
         writePid(cmd);
 
         boolean test = cmd.hasOption("test");
-
         if (rule == null) {
             fault("No rule source was specified");
             return;
@@ -329,6 +279,7 @@ public class Bootstrap {
         try {
             tauris.load();
         } catch (Exception e) {
+            e.printStackTrace();
             System.err.println(Helper.m.toString());
             System.err.println(e.getMessage());
             System.exit(1);
@@ -336,60 +287,17 @@ public class Bootstrap {
         if (test) {
             System.exit(0);
         }
-        AtomicInteger forceQuitAfterMillis = new AtomicInteger(0);
-        try {
-            String n = cmd.getOptionValue("ungracefully");
-            if (n != null) {
-                forceQuitAfterMillis.set(Integer.parseInt(n));
-            }
-        } catch (NumberFormatException e) {
-            fault("invalid number of ungracefully");
-        }
-        Signal.handle(new Signal("HUP"), signal -> {
-            System.out.println("signal HUP received, reload pipeline");
-            tauris.reload();
-        });
-        Signal.handle(new Signal("USR2"), signal -> {
-            System.out.println("signal USR2 received, reload pipeline");
-            tauris.reload();
-        }); //如果使用nohup执行, HUP信号将不会被收到, 因此这里监听USR2执行reload
-        Signal.handle(new Signal("TERM"), signal -> {
-            System.out.println("signal TERM received");
-            int us = forceQuitAfterMillis.get();
-            if (us == 0) {
-                tauris.stop();
-                System.exit(0);
-            } else {
-                Thread stop = new Thread(tauris::stop);
-                stop.start();
-                try {
-                    Thread.sleep(us * 1000 / 2);
-                } catch (InterruptedException e) {
-                    return;
-                }
-                if (stop.isAlive()) {
-                    System.out.println("stop processing timeout, clear pipeline");
-                    tauris.clearPipeline();
-                    System.out.println("pipeline has been clean");
-                } else {
-                    System.exit(0);
-                }
-                try {
-                    Thread.sleep(us * 1000 / 2);
-                } catch (InterruptedException e) {
-                    return;
-                }
-                System.out.println("stop processing is still alive, force exit");
-                System.exit(0);
-            }
-        });
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("tauris is stopping");
+            tauris.stop();
+            System.out.println("tauris has been stopped");
+        }));
         try {
             tauris.start();
-            Thread.currentThread().join();
         } catch (Exception e) {
             e.printStackTrace();
             System.err.print(e.getMessage());
+            System.exit(1);
         }
     }
-
 }

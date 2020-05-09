@@ -7,6 +7,8 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import org.apache.commons.beanutils.ConvertUtils;
 
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 /**
@@ -23,7 +25,9 @@ public abstract class AbstractConverter implements TConverter {
 
     int cacheSize = 0;
 
-    private LoadingCache<Object, Nullable> _cache = null;
+    int cacheExpiredSeconds = 0;
+
+    private LoadingCache<Object, Optional<Object>> _cache = null;
 
     public AbstractConverter(Class<?> targetType) {
         this.targetType = targetType;
@@ -36,10 +40,13 @@ public abstract class AbstractConverter implements TConverter {
 
     public void init() {
         if (cacheSize > 0) {
-            _cache = CacheBuilder.newBuilder().maximumSize(cacheSize)
-                    .build(new CacheLoader<Object, Nullable>() {
-                        public Nullable load(Object key) {
-                            return new Nullable(convert(key));
+            CacheBuilder<Object, Object> b = CacheBuilder.newBuilder().maximumSize(cacheSize);
+            if (cacheExpiredSeconds > 0) {
+                b.expireAfterAccess(cacheExpiredSeconds, TimeUnit.SECONDS);
+            }
+            _cache = b.build(new CacheLoader<Object, Optional<Object>>() {
+                        public Optional<Object> load(Object key) {
+                            return convert(key);
                         }
                     });
         }
@@ -51,18 +58,20 @@ public abstract class AbstractConverter implements TConverter {
             if (value != null) {
                 if (_cache == null) {
                     try {
-                        value = convert(value);
-                        event.set(field, value);
+                        Optional<Object> opt = convert(value);
+                        if (opt.isPresent()) {
+                            event.set(field, opt.get());
+                        }
                     } catch (Exception ex) {
                         event.remove(field);
                     }
                 } else {
                     try {
-                        Nullable v = _cache.get(value);
-                        if (v.isNull()) {
-                            event.remove(field);
+                        Optional<Object> opt = _cache.get(value);
+                        if (opt.isPresent()) {
+                            event.set(field, opt.get());
                         } else {
-                            event.set(field, v.getValue());
+                            event.remove(field);
                         }
                     } catch (Exception ex) {
                         event.remove(field);
@@ -72,31 +81,14 @@ public abstract class AbstractConverter implements TConverter {
         }
     }
 
-    protected Object convert(Object value) {
+    protected Optional<Object> convert(Object value) {
         if (value == null) {
-            return null;
+            return Optional.empty();
         }
         if (pattern != null && !pattern.matcher(value.toString()).matches()) {
-            return null;
+            return Optional.empty();
         }
-        return ConvertUtils.convert(value, targetType);
-    }
-
-    private static class Nullable {
-
-        private Object value;
-
-        public Nullable(Object value) {
-            this.value = value;
-        }
-
-        public boolean isNull() {
-            return this.value == null;
-        }
-
-        public Object getValue() {
-            return value;
-        }
+        return Optional.of(ConvertUtils.convert(value, targetType));
     }
 
 

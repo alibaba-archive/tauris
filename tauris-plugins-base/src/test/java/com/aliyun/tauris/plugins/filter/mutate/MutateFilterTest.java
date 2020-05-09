@@ -1,5 +1,6 @@
 package com.aliyun.tauris.plugins.filter.mutate;
 
+import com.aliyun.tauris.DefaultEvent;
 import com.aliyun.tauris.TEvent;
 import org.junit.Assert;
 import org.junit.Test;
@@ -19,7 +20,7 @@ public class MutateFilterTest {
         rf.fields = new String[]{"f2:nf2", "f3:nf3"};
         rf.init();;
 
-        TEvent e = new TEvent("");
+        TEvent e = new DefaultEvent("");
         e.set("f1", "v1");
         e.set("f2", "v2");
         e.set("f3", "v3");
@@ -45,7 +46,7 @@ public class MutateFilterTest {
         rf.rename = true;
         rf.init();;
 
-        TEvent e = new TEvent("");
+        TEvent e = new DefaultEvent("");
         e.set("f1", "v1");
         e.set("f2", "v2");
         e.set("f3", "v3");

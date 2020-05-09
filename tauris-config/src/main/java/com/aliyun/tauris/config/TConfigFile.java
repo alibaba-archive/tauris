@@ -1,9 +1,8 @@
 package com.aliyun.tauris.config;
 
-import org.apache.commons.io.FileUtils;
+import com.google.common.base.Charsets;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Created by ZhangLei on 17/5/14.
@@ -24,8 +23,10 @@ public class TConfigFile implements TConfig {
             throw new TConfigException("No config file found: " + file);
         } else {
             try {
-                content = FileUtils.readFileToString(file);
-                return content;
+                byte[] content = new byte[(int)file.length()];
+                InputStream is = new FileInputStream(file);
+                is.read(content);
+                return new String(content, Charsets.UTF_8);
             } catch (IOException e) {
                 throw new TConfigException("Cannot read config file " + file, e);
             }

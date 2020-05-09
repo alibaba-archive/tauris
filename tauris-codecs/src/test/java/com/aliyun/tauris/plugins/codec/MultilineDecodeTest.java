@@ -6,6 +6,7 @@ package com.aliyun.tauris.plugins.codec;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.aliyun.tauris.DefaultEventFactory;
 import com.aliyun.tauris.TScanner;
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,12 +33,13 @@ public class MultilineDecodeTest {
 
         String source = JSON.toJSONString(o1, true) + "\n"+ JSON.toJSONString(o2, true);
 
-        JSONDecoder decoder = new JSONDecoder();
-        MatchlineScanner scanner = new MatchlineScanner();
+        JSONDecoder             decoder = new JSONDecoder();
+        MatchlineScannerBuilder scanner = new MatchlineScannerBuilder();
         scanner.head = null; //Pattern.compile("");
         scanner.tail = Pattern.compile("^\\}$");
+        scanner.codec = decoder;
 
-        TScanner s = scanner.wrap(new ByteArrayInputStream(source.getBytes())).withCodec(decoder);
+        TScanner s = scanner.create(new ByteArrayInputStream(source.getBytes()), new DefaultEventFactory());
         AtomicInteger index = new AtomicInteger(1);
         s.scan((e) -> {
             int i = index.getAndIncrement();

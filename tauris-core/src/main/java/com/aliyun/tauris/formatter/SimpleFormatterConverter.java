@@ -13,12 +13,12 @@ public class SimpleFormatterConverter extends TConverter {
             throw new IllegalArgumentException("cannot convert " + value.getClass() + " to simple event formatter");
         }
         String strVal = (String)value;
-        SimpleFormatter formatter = SimpleFormatter.build(strVal);
+        EventFormatter formatter = EventFormatter.build(strVal);
         return (T)formatter;
     }
 
     @Override
     public Class<?> getType() {
-        return SimpleFormatter.class;
+        return EventFormatter.class;
     }
 }

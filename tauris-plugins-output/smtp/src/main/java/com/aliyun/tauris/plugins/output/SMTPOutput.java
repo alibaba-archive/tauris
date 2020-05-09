@@ -5,7 +5,7 @@ import com.aliyun.tauris.TResource;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
 import com.aliyun.tauris.TPluginInitException;
-import com.aliyun.tauris.metric.Counter;
+import com.aliyun.tauris.metrics.Counter;
 import com.hubspot.jinjava.Jinjava;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -101,7 +102,8 @@ public class SMTPOutput extends BaseTOutput {
     protected void doWrite(TEvent event) {
         HashMap<String, Object> data = new HashMap<String, Object>() {
             {
-                put("__time__", event.getTimestamp().toDate());
+                put("__time__", event.getTimestamp());
+                put("__date__", new Date(event.getTimestamp()));
                 put("__meta__", event.getMeta());
                 putAll(event.getFields());
             }
@@ -117,7 +119,7 @@ public class SMTPOutput extends BaseTOutput {
             if (cc != null && cc.length > 0) {
                 message.addRecipients(Message.RecipientType.CC, cc);
             }
-            message.setSentDate(event.getTimestamp().toDate());
+            message.setSentDate(new Date(event.getTimestamp()));
             message.setContent(content, contentType);
             message.saveChanges();
 

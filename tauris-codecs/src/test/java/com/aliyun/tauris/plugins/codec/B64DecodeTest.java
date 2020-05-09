@@ -4,6 +4,7 @@ package com.aliyun.tauris.plugins.codec;
  * Created by ZhangLei on 2018/6/5.
  */
 
+import com.aliyun.tauris.DefaultEvent;
 import com.aliyun.tauris.TEvent;
 import org.junit.Assert;
 import org.junit.Test;
@@ -21,7 +22,7 @@ public class B64DecodeTest {
         Base64Decoder decoder = new Base64Decoder();
 
         String text = "a text";
-        TEvent event = new TEvent();
+        TEvent event = new DefaultEvent();
 
         decoder.decode(Base64.getEncoder().encodeToString(text.getBytes()), event, "tgt");
 

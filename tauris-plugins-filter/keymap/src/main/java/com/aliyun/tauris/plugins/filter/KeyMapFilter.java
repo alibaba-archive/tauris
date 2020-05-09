@@ -2,7 +2,6 @@ package com.aliyun.tauris.plugins.filter;
 
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.TPluginInitException;
-import com.aliyun.tauris.TResource;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
 import com.aliyun.tauris.plugins.filter.keymap.TKeyMapper;

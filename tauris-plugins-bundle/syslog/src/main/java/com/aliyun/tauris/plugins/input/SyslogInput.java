@@ -2,11 +2,9 @@ package com.aliyun.tauris.plugins.input;
 
 import com.aliyun.tauris.DecodeException;
 import com.aliyun.tauris.TEvent;
-import com.aliyun.tauris.TQueue;
 import com.aliyun.tauris.annotations.Required;
 import com.aliyun.tauris.TPluginInitException;
-import com.aliyun.tauris.utils.TLogger;
-import org.joda.time.DateTime;
+import com.aliyun.tauris.TLogger;
 import org.productivity.java.syslog4j.SyslogConstants;
 import org.productivity.java.syslog4j.server.*;
 import org.productivity.java.syslog4j.server.impl.net.tcp.TCPNetSyslogServerConfig;
@@ -15,7 +13,7 @@ import org.productivity.java.syslog4j.server.impl.net.udp.UDPNetSyslogServerConf
 /**
  * Created by ZhangLei on 16/12/7.
  */
-public class SyslogInput extends BaseTInput implements SyslogConstants, SyslogServerEventHandlerIF {
+public class SyslogInput extends BaseMessageInput implements SyslogConstants, SyslogServerEventHandlerIF {
 
     private TLogger logger;
 
@@ -65,8 +63,8 @@ public class SyslogInput extends BaseTInput implements SyslogConstants, SyslogSe
     public void event(SyslogServerIF syslogServerIF, SyslogServerEventIF event) {
         String message = event.getMessage().trim();
         try {
-            TEvent e = codec.decode(message);
-            e.setTimestamp(new DateTime(event.getDate()));
+            TEvent e = codec.decode(message, getEventFactory());
+            e.setTimestamp(event.getDate().getTime());
             e.addMeta("level", event.getLevel());
             e.addMeta("facility", event.getFacility());
             if (event.getHost() != null){

@@ -1,12 +1,7 @@
 package com.aliyun.tauris.plugins.codec;
 
-import com.aliyun.tauris.DecodeException;
-import com.aliyun.tauris.TDecoder;
-import com.aliyun.tauris.TEvent;
-import com.aliyun.tauris.TScanner;
-import com.aliyun.tauris.utils.TLogger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.aliyun.tauris.*;
+import com.aliyun.tauris.TLogger;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -20,16 +15,14 @@ import java.util.function.Function;
  */
 public abstract class AbstractScanner implements TScanner {
 
-    protected TLogger   logger;
-    protected TDecoder codec  = new PlainDecoder();
+    protected TLogger logger;
+    protected TDecoder codec;
+    protected TEventFactory factory;
 
-    public AbstractScanner() {
-        this.logger = TLogger.getLogger(this);
-    }
-
-    public AbstractScanner(TDecoder codec) {
+    public AbstractScanner(TDecoder codec, TEventFactory factory) {
         this.logger = TLogger.getLogger(this);
         this.codec = codec;
+        this.factory = factory;
     }
 
     @Override
@@ -46,13 +39,8 @@ public abstract class AbstractScanner implements TScanner {
                 }
             }
         } catch (EOFException e) {
+            // ignored
         }
-    }
-
-    @Override
-    public TScanner withCodec(TDecoder codec) {
-        this.codec = codec;
-        return this;
     }
 
     protected abstract boolean hasNext();

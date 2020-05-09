@@ -1,5 +1,6 @@
 package com.aliyun.tauris.plugins.codec;
 
+import com.aliyun.tauris.DefaultEvent;
 import com.aliyun.tauris.TEvent;
 import com.google.common.collect.Sets;
 import org.junit.Assert;
@@ -20,7 +21,7 @@ public class QueryStringDecoderTest {
         QueryStringDecoder decoder = new QueryStringDecoder();
         source = "a=1&b=2&c=3";
 
-        TEvent event = new TEvent();
+        TEvent event = new DefaultEvent();
 
         decoder.decode(source, event);
         Assert.assertEquals("1", event.get("a"));
@@ -36,7 +37,7 @@ public class QueryStringDecoderTest {
 
         source = "a=1&b=2&c=3&c=4";
 
-        TEvent event = new TEvent();
+        TEvent event = new DefaultEvent();
         decoder.decode(source, event);
 
         Assert.assertEquals("1", event.get("a"));
@@ -56,7 +57,7 @@ public class QueryStringDecoderTest {
         decoder.includes = Sets.newHashSet("a", "c");
         decoder.arrayValue = true;
         decoder.overwrite = true;
-        TEvent event = new TEvent();
+        TEvent event = new DefaultEvent();
         event.set("c", "5");
 
         decoder.decode("a=1&b=2&c=3&c=4", event, "tgt");
@@ -78,7 +79,7 @@ public class QueryStringDecoderTest {
 
         decoder.overwrite = false;
         decoder.arrayValue = false;
-        TEvent event = new TEvent();
+        TEvent event = new DefaultEvent();
         event.set("a", 10);
 
         decoder.decode("a=1&b=2&c=3&c=4", event);

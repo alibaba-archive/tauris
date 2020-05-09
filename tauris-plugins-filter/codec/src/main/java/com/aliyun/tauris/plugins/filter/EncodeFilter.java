@@ -4,7 +4,7 @@ import com.aliyun.tauris.TEncoder;
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
-import com.aliyun.tauris.utils.TLogger;
+import com.aliyun.tauris.TLogger;
 
 /**
  * 将对象encode

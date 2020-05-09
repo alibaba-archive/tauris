@@ -7,16 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Modifier;
-import java.util.HashSet;
-import java.util.ServiceLoader;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by ZhangLei on 17/5/23.
  */
 public class AbstractPluginFactory implements TPluginFactory {
 
-    private Logger LOG = LoggerFactory.getLogger(AbstractPluginFactory.class);
+    private Logger logger = LoggerFactory.getLogger(AbstractPluginFactory.class);
 
     private final Class<? extends TPlugin> pluginType;
 
@@ -28,19 +26,35 @@ public class AbstractPluginFactory implements TPluginFactory {
     }
 
     @Override
-    public TPlugin newInstance(String pluginName) {
-        for (Class<? extends TPlugin> c : reflections.getSubTypesOf(pluginType)) {
-            if (pluginName.equals(pluginName(c))
-                    || pluginName.equals(CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, c.getSimpleName()))
-                && !(c.isInterface() || Modifier.isAbstract(c.getModifiers()))) {
-                try {
-                    return c.newInstance();
-                } catch (IllegalAccessException | InstantiationException e) {
-                    throw new IllegalStateException("cannot create instance for " + c.getName(), e);
+    public TPlugin newInstance(String majorName, String minorName) {
+        Class<? extends TPlugin>                  preferred = null;
+        Map<PluginName, Class<? extends TPlugin>> matched   = new HashMap<>();
+        try {
+            for (Class<? extends TPlugin> c : reflections.getSubTypesOf(pluginType)) {
+                if (c.isInterface() || Modifier.isAbstract(c.getModifiers())) {
+                    continue;
+                }
+                PluginName name = pluginName(c);
+                if (name.major.equals(majorName)) {
+                    if (name.minior.equals(minorName)) {
+                        return c.newInstance();
+                    }
+                    matched.put(name, c);
+                    if (name.preferred) {
+                        preferred = c;
+                    }
                 }
             }
+            if (preferred != null) {
+                return preferred.newInstance();
+            }
+            if (!matched.isEmpty()) {
+                return new ArrayList<>(matched.values()).get(0).newInstance();
+            }
+            return newInstanceFromSL(new PluginName(majorName, minorName));
+        } catch (IllegalAccessException | InstantiationException e) {
+            throw new IllegalStateException(String.format("cannot create instance for %s", new PluginName(majorName, minorName)), e);
         }
-        return newInstanceFromSL(pluginName);
     }
 
     @Override
@@ -55,25 +69,49 @@ public class AbstractPluginFactory implements TPluginFactory {
         return classes;
     }
 
-    public TPlugin newInstanceFromSL(String pluginName) {
+    /**
+     * 使用serviceloader创建插件实例
+     * 优先返回插件的major名和和minor名与参数完全一致的插件
+     * 其次返回major名与参数一致，且preferred为true的插件
+     * 最后任意返回一个major名与参数一致的插件
+     *
+     * @param pluginName 插件名
+     * @return plugin实例
+     */
+    public TPlugin newInstanceFromSL(PluginName pluginName) {
+        logger.info(String.format("create plugin instance %s/%s", pluginType.getName(), pluginName));
+        TPlugin                  preferred = null;
+        Map<PluginName, TPlugin> matched   = new HashMap<>();
+
         ServiceLoader<? extends TPlugin> ploader = ServiceLoader.load(pluginType);
         for (TPlugin plugin : ploader) {
-            String name = pluginName(plugin.getClass());
+            PluginName name = pluginName(plugin.getClass());
             if (name.equals(pluginName)) {
-                LOG.info(String.format("create plugin instance %s/%s", pluginType.getName(), pluginName));
                 return plugin;
             }
+            if (name.major.equals(pluginName.major)) {
+                matched.put(name, plugin);
+                if (name.preferred) {
+                    preferred = plugin;
+                }
+            }
+        }
+        if (preferred != null) {
+            return preferred;
+        }
+        if (!matched.isEmpty()) {
+            return new ArrayList<>(matched.values()).get(0);
         }
         throw new IllegalArgumentException(String.format("plugin %s not found, type is %s", pluginName, pluginType.getName()));
     }
 
-    public static String pluginName(Class<? extends TPlugin> clazz) {
+    public static PluginName pluginName(Class<? extends TPlugin> clazz) {
         Name n = clazz.getAnnotation(Name.class);
         if (n != null) {
-            return n.value();
+            return new PluginName(n.value(), n.minor(), n.preferred());
         }
 
-        int i = 0;
+        int    i  = 0;
         char[] cs = clazz.getSimpleName().toCharArray();
         for (i = cs.length - 1; i >= 0; i--) {
             if (Character.isUpperCase(cs[i])) {
@@ -82,7 +120,61 @@ public class AbstractPluginFactory implements TPluginFactory {
         }
         String name = clazz.getSimpleName().substring(0, i);
         name = CaseFormat.UPPER_CAMEL.converterTo(CaseFormat.LOWER_UNDERSCORE).convert(name);
-        return name;
+        return new PluginName(name);
     }
 
+    private static class PluginName {
+
+        private final String  major;
+        private final String  minior;
+        private final boolean preferred;
+
+        public PluginName(String major) {
+            this.major = major;
+            this.minior = "default";
+            this.preferred = true;
+        }
+
+        public PluginName(String major, String minior) {
+            this.major = major;
+            this.minior = minior;
+            this.preferred = false;
+        }
+
+        public PluginName(String major, String minior, boolean preferred) {
+            this.major = major;
+            this.minior = minior;
+            this.preferred = preferred;
+        }
+
+        public String getMajor() {
+            return major;
+        }
+
+        public String getMinior() {
+            return minior;
+        }
+
+        public boolean isPreferred() {
+            return preferred;
+        }
+
+        @Override
+        public int hashCode() {
+            return major.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!(obj instanceof PluginName)) {
+                return false;
+            }
+            return major.equals(((PluginName) obj).major) && minior.equals(((PluginName) obj).minior);
+        }
+
+        @Override
+        public String toString() {
+            return minior.isEmpty() || minior.equals("default") ? major : String.format("%s.%s", major, minior);
+        }
+    }
 }

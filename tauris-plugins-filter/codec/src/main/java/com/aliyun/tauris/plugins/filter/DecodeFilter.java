@@ -5,7 +5,7 @@ import com.aliyun.tauris.TDecoder;
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
-import com.aliyun.tauris.utils.TLogger;
+import com.aliyun.tauris.TLogger;
 
 /**
  * 将对象decode
@@ -21,6 +21,11 @@ public class DecodeFilter extends BaseTFilter {
 
     String target;
 
+    /**
+     * if not, remove source field after decode, default true
+     */
+    boolean keepSource = true;
+
     @Required
     TDecoder decoder;
 
@@ -34,7 +39,7 @@ public class DecodeFilter extends BaseTFilter {
     @Override
     public boolean doFilter(TEvent event) {
         try {
-            Object val = event.get(source);
+            Object val = keepSource ? event.get(source) : event.remove(source);
             if (val == null) {
                 logger.warn("plugin:{} - source {} is null", id(), source);
                 return false;

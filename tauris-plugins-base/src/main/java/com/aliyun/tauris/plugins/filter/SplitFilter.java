@@ -3,10 +3,6 @@ package com.aliyun.tauris.plugins.filter;
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.annotations.Required;
 
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.stream.Collectors;
-
 /**
  * Created by ZhangLei on 16/12/8.
  */

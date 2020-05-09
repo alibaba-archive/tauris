@@ -1,7 +1,7 @@
 package com.aliyun.tauris.plugins.output;
 
 import com.aliyun.tauris.TEvent;
-import com.aliyun.tauris.metric.Counter;
+import com.aliyun.tauris.metrics.Counter;
 
 /**
  * 空输出

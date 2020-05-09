@@ -2,6 +2,7 @@ package com.aliyun.tauris.plugins.codec;
 
 import com.aliyun.tauris.DecodeException;
 import com.aliyun.tauris.TEvent;
+import com.aliyun.tauris.TEventFactory;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -64,12 +65,12 @@ public class InfluxdbDecoder extends AbstractDecoder {
     Precision precision = Precision.nanosecond;
 
     @Override
-    public TEvent decode(String source) throws DecodeException {
-        //        warehouse,warehouse=et1 http=423.0,http_ssl=55.0,s2xx=445.0,s3xx=10.0,s4xx=19.0 1494903614000000000
+    public TEvent decode(String source, TEventFactory eventFactory) throws DecodeException {
         if (source == null || source.trim().isEmpty()) {
             throw new DecodeException("source is null");
         }
-        TEvent event = new TEvent(source);
+        TEvent event = eventFactory.create();
+        event.setSource(source);
         decode(source, event, null);
         return event;
     }
@@ -102,7 +103,7 @@ public class InfluxdbDecoder extends AbstractDecoder {
             }
 
             DateTime timestamp = precision.parse(segs[2]);
-            event.setTimestamp(timestamp);
+            event.setTimestamp(timestamp.getMillis());
         } catch (Exception e) {
             throw new DecodeException("invalid influxdb format", source);
         }

@@ -2,6 +2,7 @@ package com.aliyun.tauris.plugins.codec;
 
 import com.aliyun.tauris.DecodeException;
 import com.aliyun.tauris.TEvent;
+import com.aliyun.tauris.TEventFactory;
 import com.aliyun.tauris.annotations.Name;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -31,8 +32,8 @@ public class QueryStringDecoder extends AbstractDecoder {
 
 
     @Override
-    public TEvent decode(String source) throws DecodeException {
-        TEvent event = new TEvent();
+    public TEvent decode(String source, TEventFactory factory) throws DecodeException {
+        TEvent event = factory.create(source);
         decode(source, event, null);
         return null;
     }
@@ -52,7 +53,7 @@ public class QueryStringDecoder extends AbstractDecoder {
 
     private boolean filterSimple(String text, TEvent event, String target) {
         try {
-            Map<String, Object> tgt = target == null ? event.getFields() : Maps.newHashMap();
+            Map<String, Object> tgt = Maps.newHashMap();
             KeyValueIterator iter = new KeyValueIterator(text);
             while (iter.hasNext()) {
                 KeyValue kv = iter.next();
@@ -67,17 +68,26 @@ public class QueryStringDecoder extends AbstractDecoder {
             }
             if (target != null) {
                 event.set(target, tgt);
+            } else {
+                if (overwrite) {
+                    event.setFields(tgt);
+                } else {
+                    for (Map.Entry<String, Object> entry: tgt.entrySet()) {
+                        if (!event.contains(entry.getKey())) {
+                            event.setField(entry.getKey(), entry.getValue());
+                        }
+                    }
+                }
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
             return false;
         }
     }
 
     private boolean filterSupportArray(String text, TEvent event, String target) {
         try {
-            Map<String, Object> tgt = target == null ? event.getFields() : Maps.newHashMap();
+            Map<String, Object> tgt = Maps.newHashMap();
             KeyValueIterator iter = new KeyValueIterator(text);
             while (iter.hasNext()) {
                 KeyValue kv = iter.next();
@@ -100,7 +110,17 @@ public class QueryStringDecoder extends AbstractDecoder {
                 }
             }
             if (target != null) {
-                event.setField(target, tgt);
+                event.set(target, tgt);
+            } else {
+                if (overwrite) {
+                    event.setFields(tgt);
+                } else {
+                    for (Map.Entry<String, Object> entry: tgt.entrySet()) {
+                        if (!event.contains(entry.getKey())) {
+                            event.setField(entry.getKey(), entry.getValue());
+                        }
+                    }
+                }
             }
             return true;
         } catch (Exception e) {

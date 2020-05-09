@@ -1,17 +1,14 @@
 package com.aliyun.tauris.plugins.output;
 
-import com.aliyun.tauris.EncodeException;
-import com.aliyun.tauris.TEvent;
-import com.aliyun.tauris.TPrinter;
+import com.aliyun.tauris.*;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
-import com.aliyun.tauris.formatter.SimpleFormatter;
-import com.aliyun.tauris.TPluginInitException;
-import com.aliyun.tauris.metric.Counter;
-import com.aliyun.tauris.plugins.codec.DefaultPrinter;
+import com.aliyun.tauris.formatter.EventFormatter;
+import com.aliyun.tauris.metrics.Counter;
+import com.aliyun.tauris.plugins.codec.DefaultPrinterBuilder;
 import com.aliyun.tauris.plugins.http.CompressType;
 import com.aliyun.tauris.plugins.http.TSigner;
-import com.aliyun.tauris.utils.TLogger;
+import com.aliyun.tauris.TLogger;
 import net.jpountz.lz4.LZ4FrameOutputStream;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -66,14 +63,13 @@ public class HttpOutput extends BaseBatchOutput {
     }
 
     private static Counter OUTPUT_COUNTER = Counter.build().name("output_http_total").labelNames("id", "status").help("http output event count").create().register();
-    private static Counter RETRY_COUNTER  = Counter.build().name("output_http_retry_total").labelNames("id").help("http output retry count").create().register();
 
     private TLogger logger;
 
     Map<String, String> headers = new HashMap<>();
 
     @Required
-    SimpleFormatter url;
+    EventFormatter url;
 
     TSigner signer;
 
@@ -83,17 +79,14 @@ public class HttpOutput extends BaseBatchOutput {
 
     String contentType;
 
-    int  retryTimes    = 6; //写入失败后的重试次数
-    long retryInterval = 10; //写入失败后重试间隔时间, 单位秒
-
     Method method = Method.post;
 
-    TPrinter printer = new DefaultPrinter();
+    TPrinterBuilder printer = new DefaultPrinterBuilder();
 
     /**
      * 最大连接数
      */
-    int maxConnection = 200;
+    int maxConnections = 200;
 
     /**
      * 每个主机地址的并发数
@@ -123,7 +116,7 @@ public class HttpOutput extends BaseBatchOutput {
             headers.put("Content-Type", contentType);
         }
         connectionManager = new PoolingHttpClientConnectionManager();
-        connectionManager.setMaxTotal(maxConnection);
+        connectionManager.setMaxTotal(maxConnections);
         connectionManager.setDefaultMaxPerRoute(maxPerRoute);
 
         RequestConfig.Builder rcb = RequestConfig.custom();
@@ -149,7 +142,7 @@ public class HttpOutput extends BaseBatchOutput {
     }
 
     @Override
-    protected BatchWriteTask newTask() throws Exception {
+    protected BatchTask createTask() throws Exception {
         if (method == Method.get || method == Method.head) {
             return new GetHeadTask();
         } else {
@@ -160,21 +153,13 @@ public class HttpOutput extends BaseBatchOutput {
     @Override
     public void stop() {
         super.stop();
-        idleConnectionEvictor.shutdown();
-        connectionManager.shutdown();
-    }
-
-    static class TransferResult {
-        final int    status;
-        final String payload;
-
-        public TransferResult(int status, String payload) {
-            this.status = status;
-            this.payload = payload;
+        if (idleConnectionEvictor != null) {
+            idleConnectionEvictor.shutdown();
+            connectionManager.shutdown();
         }
     }
 
-    abstract class HttpTask extends BatchWriteTask {
+    abstract class HttpTask extends BatchTask {
         protected CloseableHttpClient client;
 
         public HttpTask() {
@@ -192,6 +177,11 @@ public class HttpOutput extends BaseBatchOutput {
         public PostPutTask() throws Exception {
             String url = HttpOutput.this.url.format();
             request = Method.post == method ? new HttpPost(url) : new HttpPut(url);
+            init();
+        }
+
+        private void init() throws IOException {
+            this.data.reset();
             OutputStream output = null;
             switch (compressType) {
                 case lz4:
@@ -209,7 +199,7 @@ public class HttpOutput extends BaseBatchOutput {
             if (compressType != CompressType.none) {
                 request.setHeader("Content-Encoding", compressType.toString());
             }
-            this.printer = HttpOutput.this.printer.wrap(output).withCodec(codec);
+            this.printer = HttpOutput.this.printer.create(output);
         }
 
         @Override
@@ -218,7 +208,7 @@ public class HttpOutput extends BaseBatchOutput {
         }
 
         @Override
-        protected void execute() {
+        protected boolean execute() {
             try {
                 printer.flush();
                 printer.close();
@@ -231,24 +221,10 @@ public class HttpOutput extends BaseBatchOutput {
                 headers.forEach(request::setHeader);
                 request.setConfig(requestConfig);
                 request.setEntity(new ByteArrayEntity(content));
-
-                int count = 0;
-                while (count < retryTimes + 1) {
-                    if (sendRequest(request)) {
-                        return;
-                    } else {
-                        try {
-                            Thread.sleep(retryInterval * 1000);
-                        } catch (InterruptedException e) {
-                            break;
-                        }
-                        count++;
-                        RETRY_COUNTER.labels(id).inc();
-                    }
-                }
-                OUTPUT_COUNTER.labels(id, "597").inc(elementCount());
+                return sendRequest(request);
             } catch (IOException e) {
                 logger.ERROR("http post failed", e);
+                return false;
             }
         }
 
@@ -258,8 +234,10 @@ public class HttpOutput extends BaseBatchOutput {
          */
         protected boolean sendRequest(HttpEntityEnclosingRequestBase request) {
             long now = System.currentTimeMillis();
+            boolean result = false;
             try {
                 HttpResponse response = client.execute(request);
+
                 int status = response.getStatusLine().getStatusCode();
                 HttpEntity entity = response.getEntity();
                 String payload = "";
@@ -273,14 +251,33 @@ public class HttpOutput extends BaseBatchOutput {
                 } else {
                     OUTPUT_COUNTER.labels(id, "" + status).inc(elementCount());
                 }
+                result = true;
             } catch (SocketTimeoutException e) {
                 OUTPUT_COUNTER.labels(id, "598").inc(elementCount());
                 logger.ERROR("send request to %s timeout, %d events losing, use %d msec", e, url.format(), elementCount(), System.currentTimeMillis() - now);
             } catch (Exception e) {
                 OUTPUT_COUNTER.labels(id, "599").inc(elementCount());
                 logger.ERROR("send request to %s failed", e, url.format());
+            } finally {
+                if (!result) {
+                    request.reset();
+                }
             }
-            return true;
+            return result;
+        }
+
+        @Override
+        protected void active() {
+            try {
+                init();
+            } catch (IOException e) {
+                throw new IllegalStateException(e.getMessage());
+            }
+        }
+
+        @Override
+        protected void clear() {
+            data.reset();
         }
     }
 
@@ -314,35 +311,10 @@ public class HttpOutput extends BaseBatchOutput {
         }
 
         @Override
-        protected void execute() {
-            try {
-                printer.flush();
-                printer.close();
-
-                int count = 0;
-                while (count < retryTimes + 1) {
-                    if (sendRequests()) {
-                        return;
-                    } else {
-                        try {
-                            Thread.sleep(retryInterval * 1000);
-                        } catch (InterruptedException e) {
-                            break;
-                        }
-                        count++;
-                        RETRY_COUNTER.labels(id).inc();
-                    }
-                }
-                OUTPUT_COUNTER.labels(id, "597").inc(elementCount());
-            } catch (IOException e) {
-                logger.ERROR("http post failed", e);
-            }
-        }
-
-        private boolean sendRequests() {
-            HttpClientBuilder   clientBuilder = HttpClients.custom();
-            CloseableHttpClient client        = clientBuilder.setSSLSocketFactory(sslsf).build();
-            List<HttpRequestBase> fails = new ArrayList<>();
+        protected boolean execute() {
+            HttpClientBuilder     clientBuilder = HttpClients.custom();
+            CloseableHttpClient   client        = clientBuilder.setSSLSocketFactory(sslsf).build();
+            List<HttpRequestBase> fails         = new ArrayList<>();
             for (HttpRequestBase request : requests) {
                 try {
                     HttpResponse response = client.execute(request);
@@ -367,6 +339,16 @@ public class HttpOutput extends BaseBatchOutput {
             }
             requests = fails;
             return requests.isEmpty();
+        }
+
+        @Override
+        protected void active() {
+            requests.clear();
+        }
+
+        @Override
+        protected void clear() {
+            requests.clear();
         }
     }
 }

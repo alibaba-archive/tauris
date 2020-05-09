@@ -20,7 +20,7 @@ public class DateConverter implements TConverter {
 
     String format;
 
-    DateType type = DateType.joda;
+    DateType type = DateType.date;
 
     private DateTimeFormatter _formatter;
 
@@ -59,10 +59,13 @@ public class DateConverter implements TConverter {
             LOG.error(String.format("cannot convert %s to date", value));
             return null;
         }
-        if (type == DateType.standard) {
-            return date.toDate();
-        } else {
-            return date;
+        switch (type) {
+            case joda:
+                return date;
+            case timestamp:
+                return date.getMillis();
+            default:
+                return date.toDate();
         }
     }
 

@@ -1,6 +1,7 @@
 package com.aliyun.tauris;
 
 import com.aliyun.tauris.annotations.Name;
+import com.aliyun.tauris.annotations.Type;
 import com.google.common.base.CaseFormat;
 import org.reflections.Reflections;
 
@@ -10,8 +11,8 @@ import java.util.function.Consumer;
 /**
  * Created by ZhangLei on 2018/4/13.
  */
+@Type("resource")
 public abstract class TResource implements TPlugin {
-
 
     public static final String P_MD5SUM = "__md5sum__";
 
@@ -22,6 +23,10 @@ public abstract class TResource implements TPlugin {
     protected Charset charset = Charset.defaultCharset();
 
     public abstract byte[] fetch() throws Exception;
+
+    public String fetchText() throws Exception {
+        return new String(fetch(), charset);
+    }
 
     public abstract void watch(Consumer<byte[]> consumer);
 

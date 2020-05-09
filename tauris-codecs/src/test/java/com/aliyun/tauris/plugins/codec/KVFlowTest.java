@@ -2,9 +2,7 @@ package com.aliyun.tauris.plugins.codec;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.aliyun.tauris.TEvent;
-import com.aliyun.tauris.TPrinter;
-import com.aliyun.tauris.TScanner;
+import com.aliyun.tauris.*;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -24,64 +22,66 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class KVFlowTest {
 
-//    @Test
+    @Test
     public void testCount() throws Exception {
-        String json = IOUtils.resourceToString("/sample.json", Charset.defaultCharset());// KVFlowTest.class.getClassLoader().getResourceAsStream("/sample.json");
-        JSONObject o = JSON.parseObject(json);
-        TEvent event = new TEvent();
-        for (String k : o.keySet()) {
-            event.setField(k, o.get(k));
-        }
-        KVFlowPrinter printer = new KVFlowPrinter();
-        printer.init();
-        ByteArrayOutputStream bos = null;
-        long now = System.currentTimeMillis();
+        String     json  = IOUtils.resourceToString("sample.json", Charset.defaultCharset(), getClass().getClassLoader());// KVFlowTest.class.getClassLoader().getResourceAsStream("/sample.json");
+        JSONObject o     = JSON.parseObject(json);
+        TEvent     event = new DefaultEvent();
+        event.setFields(o);
+        KVFlowPrinterBuilder  pb  = new KVFlowPrinterBuilder();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        long                  now = System.currentTimeMillis();
+
+        AtomicLong elementCounter = new AtomicLong();
+
+
         for (int i = 0; i < 10; i++) {
-            bos = new ByteArrayOutputStream();
-            TPrinter p = printer.wrap(bos);
+            TPrinter p = pb.create(bos);
             for (int j = 0; j < 1000; j++) {
                 p.write(event);
+                elementCounter.incrementAndGet();
             }
             p.flush();
         }
         System.out.println(System.currentTimeMillis() - now);
 
-        KVFlowScanner scanner = new KVFlowScanner();
-        AtomicLong counter = new AtomicLong();
-        byte[] bs = bos.toByteArray();
+        KVFlowScannerBuilder sb      = new KVFlowScannerBuilder();
+        AtomicLong           counter = new AtomicLong();
+        byte[]               bs      = bos.toByteArray();
+
+        System.out.println("bs'length = " + bs.length);
 
         now = System.currentTimeMillis();
-        for (int i = 0; i < 1000; i++) {
-            ByteArrayInputStream bis = new ByteArrayInputStream(bs);
-            TScanner s = scanner.wrap(bis);
+        ByteArrayInputStream bis = new ByteArrayInputStream(bs);
+        for (int i = 0; i < 10; i++) {
+            TScanner s = sb.create(bis, new DefaultEventFactory());
             s.scan((e) -> {
                 counter.incrementAndGet();
                 return true;
             });
         }
         System.out.println(System.currentTimeMillis() - now);
-        Assert.assertEquals(10 * 1000, counter.get());
+        Assert.assertEquals(elementCounter.get(), counter.get());
     }
 
-//    @Test
+    @Test
     public void testEquals() throws Exception {
-        String json = IOUtils.resourceToString("/sample.json", Charset.defaultCharset());// KVFlowTest.class.getClassLoader().getResourceAsStream("/sample.json");
-        JSONObject o = JSON.parseObject(json);
-        TEvent event = new TEvent();
+        String     json  = IOUtils.resourceToString("sample.json", Charset.defaultCharset(), getClass().getClassLoader());// KVFlowTest.class.getClassLoader().getResourceAsStream("/sample.json");
+        JSONObject o     = JSON.parseObject(json);
+        TEvent     event = new DefaultEvent();
         for (String k : o.keySet()) {
             event.setField(k, o.get(k));
         }
-        KVFlowPrinter printer = new KVFlowPrinter();
-        printer.init();
+        KVFlowPrinterBuilder  pb  = new KVFlowPrinterBuilder();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        TPrinter p = printer.wrap(bos);
+        TPrinter              p   = pb.create(bos);
         p.write(event);
         p.close();
-        byte[] bs = bos.toByteArray();
-        ByteArrayInputStream bis = new ByteArrayInputStream(bs);
-        KVFlowScanner scanner = new KVFlowScanner();
-        TScanner s = scanner.wrap(bis);
-        TEvent[] wrapper = new TEvent[1];
+        byte[]               bs      = bos.toByteArray();
+        ByteArrayInputStream bis     = new ByteArrayInputStream(bs);
+        KVFlowScannerBuilder sb      = new KVFlowScannerBuilder();
+        TScanner             s       = sb.create(bis, new DefaultEventFactory());
+        TEvent[]             wrapper = new TEvent[1];
         s.scan((e) -> {
             wrapper[0] = e;
             return true;
@@ -93,12 +93,12 @@ public class KVFlowTest {
 
     @Test
     public void testMany() throws Exception {
-        Scanner br = new Scanner(new InputStreamReader(KVFlowTest.class.getClassLoader().getResourceAsStream("1k.log")));
+        Scanner br = new Scanner(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("1k.log")));
         br.useDelimiter("\n");
         List<TEvent> events = new ArrayList<>();
         while (br.hasNext()) {
-            String line = br.nextLine();
-            TEvent event = new TEvent();
+            String line  = br.nextLine();
+            TEvent event = new DefaultEvent();
             if (line.isEmpty()) {
                 continue;
             }
@@ -108,18 +108,17 @@ public class KVFlowTest {
             }
             events.add(event);
         }
-        KVFlowPrinter printer = new KVFlowPrinter();
-        printer.init();
+        KVFlowPrinterBuilder  pb  = new KVFlowPrinterBuilder();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        TPrinter p = printer.wrap(bos);
-        for (TEvent event: events) {
+        TPrinter              p   = pb.create(bos);
+        for (TEvent event : events) {
             p.write(event);
         }
         p.close();
-        byte[] bs = bos.toByteArray();
+        byte[]               bs  = bos.toByteArray();
         ByteArrayInputStream bis = new ByteArrayInputStream(bs);
-        KVFlowScanner scanner = new KVFlowScanner();
-        TScanner s = scanner.wrap(bis);
+        KVFlowScannerBuilder sb  = new KVFlowScannerBuilder();
+        TScanner             s   = sb.create(bis, new DefaultEventFactory());
         s.scan((e) -> {
             return true;
         });

@@ -7,7 +7,11 @@ import java.util.Set;
  */
 public interface TPluginFactory {
 
-    TPlugin newInstance(String pluginName);
+    default TPlugin newInstance(String pluginName) {
+        return newInstance(pluginName, "default");
+    };
+
+    TPlugin newInstance(String pluginName, String minorName);
 
     Set<Class<? extends TPlugin>> getPluginClasses();
 }

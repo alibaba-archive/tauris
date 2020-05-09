@@ -33,7 +33,10 @@ public abstract class AbstractResourceKeyMapper extends AbstractKeyMapper {
     }
 
     public void watch() throws Exception {
-        update(new String(resource.fetch(), charset));
+        byte[] bs = resource.fetch();
+        if (bs != null) {
+            update(new String(bs, charset));
+        }
         resource.watch((s) -> {
             if (s == null) {
                 return;

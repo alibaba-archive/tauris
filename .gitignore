@@ -6,7 +6,7 @@ target
 *.log
 build-dist.sh
 *.tgz
-/jafka-1.0*
+.DS_Store
 /data
 /build
 /docs
@@ -19,3 +19,6 @@ __pycache__
 pom-*.xml
 dist
 release
+findlta.sh
+lib/
+mm.sh

@@ -2,18 +2,18 @@ package com.aliyun.tauris.plugins.codec;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONWriter;
 import com.alibaba.fastjson.serializer.JSONSerializer;
 import com.alibaba.fastjson.serializer.SerializeWriter;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
 import com.aliyun.tauris.EncodeException;
-import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.TEvent;
+import com.aliyun.tauris.annotations.Name;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.Arrays;
 import java.util.Map;
 

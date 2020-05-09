@@ -1,16 +1,13 @@
 package com.aliyun.tauris.plugins.input;
 
 import com.aliyun.tauris.*;
-import com.aliyun.tauris.plugins.codec.PlainDecoder;
-import com.aliyun.tauris.formatter.SimpleFormatter;
-import com.aliyun.tauris.TPluginInitException;
-import com.aliyun.tauris.metric.Counter;
-import com.aliyun.tauris.utils.TLogger;
+import com.aliyun.tauris.formatter.EventFormatter;
+import com.aliyun.tauris.metrics.Counter;
 
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by ZhangLei on 16/12/9.
@@ -19,15 +16,15 @@ public abstract class BaseTInput extends AbstractPlugin implements TInput {
 
     private static final Counter INPUT_COUNTER = Counter.build().name("input_event_count").labelNames("id").help("input plugin receives event count").create().register();
 
-    protected      Charset charset = Charset.defaultCharset();
+    protected Charset charset = Charset.defaultCharset();
 
     protected TLogger logger;
 
-    TDecoder codec = new PlainDecoder();
+    protected TEventFactory eventFactory;
 
-    Map<String, Object> newFields;
+    protected Map<String, Object> newFields;
 
-    protected TQueue<List<TEvent>> queue;
+    protected TPipe<TEvent> pipe;
 
     private Map<String, Object> _newFields = new ConcurrentHashMap<>();
 
@@ -39,9 +36,9 @@ public abstract class BaseTInput extends AbstractPlugin implements TInput {
             for (Map.Entry<String, Object> e : newFields.entrySet()) {
                 String key = e.getKey();
                 Object val = e.getValue();
-                if (val instanceof String && ((String)val).contains("%{")) {
+                if (val instanceof String && ((String) val).contains("%{")) {
                     try {
-                        SimpleFormatter formatter = SimpleFormatter.build((String)val);
+                        EventFormatter formatter = EventFormatter.build((String) val);
                         _newFields.put(key, formatter);
                     } catch (Exception ex) {
                         throw new TPluginInitException("invalid formatter expression for input plugin " + id() + ":'" + val + "'");
@@ -54,15 +51,13 @@ public abstract class BaseTInput extends AbstractPlugin implements TInput {
         doInit();
     }
 
-    protected void doInit() throws TPluginInitException {}
-
-    public void setQueue(TQueue<List<TEvent>> queue) {
-        this.queue = queue;
+    protected void doInit() throws TPluginInitException {
     }
 
     @Override
-    public void init(TQueue<List<TEvent>> queue) {
-        this.queue = new TQueueDelegate(queue);
+    public void init(TPipe<TEvent> pipe, TEventFactory eventFactory) {
+        this.pipe = new TPipeDelegate(pipe);
+        this.eventFactory = eventFactory;
     }
 
     @Override
@@ -71,84 +66,56 @@ public abstract class BaseTInput extends AbstractPlugin implements TInput {
     }
 
     protected void putEvent(TEvent event) throws InterruptedException {
-        queue.put(Collections.singletonList(event), 1);
+        pipe.put(event);
     }
 
     protected void putEvents(List<TEvent> events) throws InterruptedException {
-        queue.put(events, events.size());
+        for (TEvent event: events) {
+            pipe.put(event);
+        }
     }
 
-    class TQueueDelegate implements TQueue<List<TEvent>> {
+    protected TEventFactory getEventFactory() {
+        return eventFactory;
+    }
 
-        private TQueue<List<TEvent>> queue;
+    class TPipeDelegate implements TPipe<TEvent> {
 
-        public TQueueDelegate(TQueue<List<TEvent>> queue) {
-            this.queue = queue;
+        private TPipe<TEvent> pipe;
+
+        public TPipeDelegate(TPipe<TEvent> pipe) {
+            this.pipe = pipe;
         }
 
         @Override
         public String getName() {
-            return queue.getName();
+            return pipe.getName();
         }
 
         @Override
-        public void put(List<TEvent> events, int elementCount) throws InterruptedException {
-            if (events == null || events.isEmpty()) {
+        public void put(TEvent event) throws InterruptedException {
+            if (event == null) {
                 return;
             }
             if (_newFields != null) {
                 for (Map.Entry<String, Object> entry : _newFields.entrySet()) {
-                    for (TEvent event: events) {
-                        String key = entry.getKey();
-                        Object val = entry.getValue();
-                        if (val instanceof SimpleFormatter) {
-                            val = ((SimpleFormatter)val).format(event);
-                        }
+                    String key = entry.getKey();
+                    Object val = entry.getValue();
+                    if (val instanceof EventFormatter) {
+                        val = ((EventFormatter) val).format(event);
+                    }
+                    if (!event.contains(key)) {
                         try {
                             event.set(key, val);
-                        } catch (NullPointerException ex) {
+                        } catch (Exception ex) {
                             logger.EXCEPTION(ex);
+                            return;
                         }
                     }
                 }
             }
-            queue.put(events, events.size());
-            INPUT_COUNTER.labels(id()).inc(events.size());
-        }
-
-        @Override
-        public boolean offer(List<TEvent> item, long millis, int elementCount) throws InterruptedException {
-            return queue.offer(item, millis, elementCount);
-        }
-
-        @Override
-        public List<TEvent> take() throws InterruptedException {
-            return queue.take();
-        }
-
-        @Override
-        public List<TEvent> poll(long timeout, TimeUnit unit) throws InterruptedException {
-            return queue.poll(timeout, unit);
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return queue.isEmpty();
-        }
-
-        @Override
-        public long getElementCount() {
-            return queue.getElementCount();
-        }
-
-        @Override
-        public long size() {
-            return queue.size();
-        }
-
-        @Override
-        public void clear() {
-            queue.clear();
+            pipe.put(event);
+            INPUT_COUNTER.labels(id()).inc();
         }
     }
 }

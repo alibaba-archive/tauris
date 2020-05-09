@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
-import com.aliyun.tauris.formatter.SimpleFormatter;
+import com.aliyun.tauris.formatter.EventFormatter;
 
 import java.util.HashMap;
 import java.util.IllegalFormatException;
@@ -17,7 +17,7 @@ import java.util.Map;
 public class TextMessage implements TDingMessage {
 
     @Required
-    SimpleFormatter content;
+    EventFormatter content;
 
     boolean atAll;
 

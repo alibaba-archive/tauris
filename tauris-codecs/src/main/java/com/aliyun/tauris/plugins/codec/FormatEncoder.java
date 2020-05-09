@@ -7,7 +7,6 @@ import com.aliyun.tauris.formatter.TEventFormatter;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Writer;
 
 /**
  * Created by ZhangLei on 16/12/7.

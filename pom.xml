@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.aliyun.tauris</groupId>
     <artifactId>tauris-parent</artifactId>
-    <version>1.4.11-SNAPSHOT</version>
+    <version>1.7.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Tauris</name>
 
@@ -14,66 +14,21 @@
         <javac_source>1.8</javac_source>
         <file_encoding>UTF-8</file_encoding>
         <slf4j_version>1.7.9</slf4j_version>
+        <netty_version>4.1.20.Final</netty_version>
         <project_dir>${project.basedir}</project_dir>
     </properties>
 
-    <scm>
-        <connection>scm:git:git@github.com:aliyun/tauris.git</connection>
-        <developerConnection>scm:git:git@github.com:aliyun/tauris.git</developerConnection>
-        <url>https://github.com/aliyun/tauris</url>
-    </scm>
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-    <developers>
-        <developer>
-            <id>rockis</id>
-            <name>Zhang Lei</name>
-            <email>rockis@gmail.com</email>
-            <url>https://github.com/rockis</url>
-            <roles>
-                <role>developer</role>
-            </roles>
-        </developer>
-    </developers>
-
-    <profiles>
-        <profile>
-            <id>alibaba</id>
-            <modules>
-                <module>tauris-core</module>
-                <module>tauris-config</module>
-                <module>tauris-boot</module>
-                <module>tauris-codecs</module>
-                <module>tauris-plugins-base</module>
-                <module>tauris-plugins-input</module>
-                <module>tauris-plugins-output</module>
-                <module>tauris-plugins-filter</module>
-                <module>tauris-plugins-bundle</module>
-                <module>tauris-plugins-resource</module>
-            </modules>
-        </profile>
-
-        <profile>
-            <id>product</id>
-            <modules>
-                <module>tauris-core</module>
-                <module>tauris-config</module>
-                <module>tauris-boot</module>
-                <module>tauris-codecs</module>
-                <module>tauris-plugins-base</module>
-                <module>tauris-plugins-input</module>
-                <module>tauris-plugins-output</module>
-                <module>tauris-plugins-filter</module>
-                <module>tauris-plugins-bundle</module>
-                <module>tauris-plugins-resource</module>
-            </modules>
-        </profile>
-    </profiles>
+    <modules>
+        <module>tauris-core</module>
+        <module>tauris-config</module>
+        <module>tauris-boot</module>
+        <module>tauris-codecs</module>
+        <module>tauris-plugins-base</module>
+        <module>tauris-plugins-input</module>
+        <module>tauris-plugins-output</module>
+        <module>tauris-plugins-filter</module>
+        <module>tauris-plugins-bundle</module>
+    </modules>
 
     <dependencies>
 
@@ -152,6 +107,12 @@
                 <version>1.0.16</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>texpr</artifactId>
+                <version>1.0.8</version>
+            </dependency>
+
             <!-- commons -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -193,6 +154,48 @@
                 <groupId>commons-net</groupId>
                 <artifactId>commons-net</artifactId>
                 <version>3.5</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-transport</artifactId>
+                <version>${netty_version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec</artifactId>
+                <version>${netty_version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-http</artifactId>
+                <version>${netty_version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-resolver</artifactId>
+                <version>${netty_version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-buffer</artifactId>
+                <version>${netty_version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-common</artifactId>
+                <version>${netty_version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-handler</artifactId>
+                <version>${netty_version}</version>
             </dependency>
 
             <dependency>
@@ -240,7 +243,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>19.0</version>
+                <version>27.0-jre</version>
             </dependency>
 
             <dependency>
@@ -250,9 +253,33 @@
             </dependency>
 
             <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>1.21</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
-                <version>1.2.48</version>
+                <version>1.2.67</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>2.9.10</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.9.10</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>2.9.10</version>
             </dependency>
 
             <dependency>
@@ -274,6 +301,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>3.12.2</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-api</artifactId>
                 <version>2.6.2</version>
@@ -288,6 +321,20 @@
                 <groupId>com.hubspot.jinjava</groupId>
                 <artifactId>jinjava</artifactId>
                 <version>2.4.12</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.google.guava</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.google.code.findbugs</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.javassist</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -368,7 +415,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <version>3.2</version>
                 <configuration>
                     <target>${javac_target}</target>
                     <source>${javac_source}</source>

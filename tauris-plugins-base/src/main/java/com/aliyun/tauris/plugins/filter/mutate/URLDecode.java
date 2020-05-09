@@ -3,12 +3,10 @@ package com.aliyun.tauris.plugins.filter.mutate;
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
-import com.google.common.base.CaseFormat;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.URLCodec;
 
 import java.io.UnsupportedEncodingException;
-import java.util.*;
 
 /**
  *

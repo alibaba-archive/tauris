@@ -6,18 +6,16 @@
     <parent>
         <artifactId>tauris-parent</artifactId>
         <groupId>com.aliyun.tauris</groupId>
-        <version>1.4.11-SNAPSHOT</version>
+        <version>1.7.0-SNAPSHOT</version>
     </parent>
     <artifactId>tauris-plugins-filter</artifactId>
     <packaging>pom</packaging>
     <name>Tauris :: plugins :: filter</name>
 
     <modules>
-        <module>ua</module>
-        <module>iploc</module>
         <module>keymap</module>
         <module>codec</module>
-        <module>redis</module>
+        <module>load</module>
     </modules>
 
     <dependencies>

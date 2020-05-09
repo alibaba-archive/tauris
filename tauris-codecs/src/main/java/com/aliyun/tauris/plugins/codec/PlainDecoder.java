@@ -2,6 +2,7 @@ package com.aliyun.tauris.plugins.codec;
 
 import com.aliyun.tauris.DecodeException;
 import com.aliyun.tauris.TEvent;
+import com.aliyun.tauris.TEventFactory;
 
 /**
  * Created by ZhangLei on 16/12/7.
@@ -16,7 +17,7 @@ public class PlainDecoder extends AbstractDecoder {
     }
 
     @Override
-    public TEvent decode(String source) throws DecodeException {
-        return new TEvent(trim ? source.trim() : source);
+    public TEvent decode(String source, TEventFactory factory) throws DecodeException {
+        return factory.create(source);
     }
 }

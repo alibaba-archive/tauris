@@ -1,7 +1,7 @@
 package com.aliyun.tauris.plugins.filter.mutate;
 
+import com.aliyun.tauris.DefaultEvent;
 import com.aliyun.tauris.TEvent;
-import com.google.common.base.CaseFormat;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -17,7 +17,7 @@ public class SubStringTest {
         SubString ss = new SubString();
         ss.beginIndex = 10;
         ss.init();
-        TEvent event = new TEvent(str);
+        TEvent event = new DefaultEvent(str);
 
         ss.mutate(event);
         Assert.assertEquals(str.substring(10), event.getSource());
@@ -30,7 +30,7 @@ public class SubStringTest {
         ss.beginIndex = 10;
         ss.endIndex = 20;
         ss.init();
-        TEvent event = new TEvent(str);
+        TEvent event = new DefaultEvent(str);
 
         ss.mutate(event);
         Assert.assertEquals(str.substring(10, 20), event.getSource());
@@ -42,7 +42,7 @@ public class SubStringTest {
         SubString ss = new SubString();
         ss.beginIndex = 10;
         ss.init();
-        TEvent event = new TEvent(str);
+        TEvent event = new DefaultEvent(str);
 
         ss.mutate(event);
         Assert.assertEquals(str, event.getSource());
@@ -55,7 +55,7 @@ public class SubStringTest {
         ss.beginIndex = 10;
         ss.endIndex = 500;
         ss.init();
-        TEvent event = new TEvent(str);
+        TEvent event = new DefaultEvent(str);
 
         ss.mutate(event);
         Assert.assertEquals(str.substring(10), event.getSource());
@@ -70,7 +70,7 @@ public class SubStringTest {
         ss.beginChars = " ,";
         ss.matchEnd = true;
         ss.init();
-        TEvent event = new TEvent(str);
+        TEvent event = new DefaultEvent(str);
 
         ss.mutate(event);
         Assert.assertEquals("502", event.getSource());
@@ -84,7 +84,7 @@ public class SubStringTest {
         ss.beginChars = " ,";
         ss.matchEnd = true;
         ss.init();
-        TEvent event = new TEvent(str);
+        TEvent event = new DefaultEvent(str);
 
         ss.mutate(event);
         Assert.assertEquals("503", event.getSource());
@@ -98,7 +98,7 @@ public class SubStringTest {
         ss.beginChars = " ,";
         ss.matchEnd = true;
         ss.init();
-        TEvent event = new TEvent(str);
+        TEvent event = new DefaultEvent(str);
 
         ss.mutate(event);
         Assert.assertEquals("504", event.getSource());
@@ -113,7 +113,7 @@ public class SubStringTest {
         ss.endChars = ":";
         ss.matchEnd = true;
         ss.init();
-        TEvent event = new TEvent(str);
+        TEvent event = new DefaultEvent(str);
 
         ss.mutate(event);
         Assert.assertEquals("504", event.getSource());
@@ -128,7 +128,7 @@ public class SubStringTest {
         ss.endChars = ":";
         ss.matchEnd = true;
         ss.init();
-        TEvent event = new TEvent(str);
+        TEvent event = new DefaultEvent(str);
 
         ss.mutate(event);
         Assert.assertEquals("10.10.10.0", event.getSource());
@@ -143,7 +143,7 @@ public class SubStringTest {
         ss.endChars = ":";
         ss.matchEnd = true;
         ss.init();
-        TEvent event = new TEvent(str);
+        TEvent event = new DefaultEvent(str);
 
         ss.mutate(event);
         Assert.assertEquals("10.10.10.2", event.getSource());
@@ -158,7 +158,7 @@ public class SubStringTest {
         ss.endChars = ":";
         ss.matchEnd = false;
         ss.init();
-        TEvent event = new TEvent(str);
+        TEvent event = new DefaultEvent(str);
 
         ss.mutate(event);
         Assert.assertEquals("10.10.10.1", event.getSource());
@@ -173,7 +173,7 @@ public class SubStringTest {
         ss.endChars = " ";
         ss.matchEnd = false;
         ss.init();
-        TEvent event = new TEvent(str);
+        TEvent event = new DefaultEvent(str);
 
         ss.mutate(event);
         Assert.assertEquals("10.10.10.1:443,", event.getSource());

@@ -3,10 +3,10 @@ package com.aliyun.tauris.plugins.filter.keymap;
 import com.aliyun.tauris.TPluginInitException;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
-import com.aliyun.tauris.utils.TLogger;
+import com.aliyun.tauris.TLogger;
+import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.opencsv.CSVReaderBuilder;
 
 import java.io.CharArrayReader;
 import java.io.IOException;
@@ -23,6 +23,9 @@ public class CSVKeyMapper extends AbstractResourceKeyMapper {
 
     char separator = ',';
 
+    char quotechar = '\"';
+
+    char escape = '\\';
     /**
      * key在csv列的索引, 从1开始。
      */
@@ -45,14 +48,16 @@ public class CSVKeyMapper extends AbstractResourceKeyMapper {
     }
 
     public void update(String text) {
-        int colIndex = this.keyIndex;
-        try (CSVReader reader = new CSVReader(new CharArrayReader(text.toCharArray()), separator)) {
+        int              colIndex = this.keyIndex;
+        CSVReaderBuilder builder  = new CSVReaderBuilder(new CharArrayReader(text.toCharArray()));
+        try (CSVReader reader = builder.withCSVParser(new CSVParserBuilder().withSeparator(separator).withEscapeChar(escape).withQuoteChar(quotechar).build()).build()) {
+            ;
             Map<String, Object> data = new HashMap<>();
             for (String[] row : reader.readAll()) {
                 if (colIndex < row.length) {
                     String key = row[colIndex];
                     if (data.containsKey(key)) {
-                        logger.WARN("duplicated key:%s",  key);
+                        logger.WARN("duplicated key:%s", key);
                     }
                     data.put(key, row);
                 }
@@ -73,7 +78,7 @@ public class CSVKeyMapper extends AbstractResourceKeyMapper {
         if (valueIndex == null || value == null) {
             return value;
         }
-        String[] cols = (String[])value;
+        String[] cols = (String[]) value;
         if (cols.length <= valueIndex) {
             return null;
         }

@@ -6,8 +6,6 @@ import com.aliyun.tauris.annotations.Required;
 import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.net.URLCodec;
 
-import java.io.UnsupportedEncodingException;
-
 /**
  *
  * Created by ZhangLei on 16/12/14.

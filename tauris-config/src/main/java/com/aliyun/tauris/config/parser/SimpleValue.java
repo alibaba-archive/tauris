@@ -1,6 +1,5 @@
 package com.aliyun.tauris.config.parser;
 
-import com.aliyun.tauris.utils.TProperty;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 /**

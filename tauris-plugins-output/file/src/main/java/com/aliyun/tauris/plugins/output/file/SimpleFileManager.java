@@ -3,12 +3,9 @@ package com.aliyun.tauris.plugins.output.file;
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
-import com.aliyun.tauris.formatter.SimpleFormatter;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Class SimpleFileManager

@@ -3,14 +3,11 @@ package com.aliyun.tauris.plugins.input;
 import com.aliyun.tauris.annotations.Required;
 import com.aliyun.tauris.TPluginInitException;
 import com.aliyun.tauris.TScanner;
-import com.aliyun.tauris.utils.TLogger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.aliyun.tauris.TLogger;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Collections;
 
 /**
  * Created by ZhangLei on 16/12/9.
@@ -34,7 +31,7 @@ public class FileInput extends BaseStreamInput {
 
     @Override
     public void run() throws Exception {
-        TScanner scanner = this.scanner.wrap(new BufferedInputStream(new FileInputStream(filepath))).withCodec(codec);
+        TScanner scanner = this.getScanner(new BufferedInputStream(new FileInputStream(filepath)));
         scanner.scan((event) -> {
             try {
                 putEvent(event);

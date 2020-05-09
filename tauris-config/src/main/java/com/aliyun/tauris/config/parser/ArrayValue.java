@@ -1,9 +1,7 @@
 package com.aliyun.tauris.config.parser;
 
 import com.aliyun.tauris.config.TConfigException;
-import com.aliyun.tauris.utils.TProperty;
 import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -62,6 +60,10 @@ public class ArrayValue extends Value {
 
     @Override
     public String toString() {
-        return "[" + StringUtils.join(elements, ", ") + "]";
+        List<String> es = new ArrayList<>(elements.size());
+        for (SimpleValue v: elements) {
+            es.add(v.toString());
+        }
+        return "[\n\t" + String.join(",\n\t", es) + "]";
     }
 }

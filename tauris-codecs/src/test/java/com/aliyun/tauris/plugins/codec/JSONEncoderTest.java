@@ -1,13 +1,13 @@
 package com.aliyun.tauris.plugins.codec;
 
 import com.aliyun.tauris.EncodeException;
+import com.aliyun.tauris.DefaultEvent;
 import com.aliyun.tauris.TEvent;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.StringWriter;
 
 /**
  * Created by ZhangLei on 2017/11/24.
@@ -16,7 +16,7 @@ public class JSONEncoderTest {
 
     @Test
     public void test() throws EncodeException, IOException {
-        TEvent event = new TEvent();
+        TEvent event = new DefaultEvent();
         event.setField("f1", "v1");
         event.setField("f2", "v2");
         event.setField("f3", "v3");

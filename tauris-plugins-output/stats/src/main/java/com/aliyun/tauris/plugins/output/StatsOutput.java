@@ -1,11 +1,12 @@
 package com.aliyun.tauris.plugins.output;
 
-import com.aliyun.tauris.EncodeException;
-import com.aliyun.tauris.TEvent;
-import com.aliyun.tauris.TPluginInitException;
+import com.aliyun.tauris.*;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
-import com.aliyun.tauris.metric.Counter;
+import com.aliyun.tauris.metrics.Counter;
+import com.aliyun.tauris.plugins.codec.DefaultPrinterBuilder;
+import com.aliyun.tauris.plugins.codec.EncodePrinterBuilder;
+import com.aliyun.tauris.plugins.codec.PlainEncoder;
 import com.aliyun.tauris.plugins.output.stats.EventPoint;
 import com.aliyun.tauris.plugins.output.stats.LabelField;
 import com.aliyun.tauris.plugins.output.stats.Labels;
@@ -15,8 +16,6 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.quartz.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.Map;
@@ -31,9 +30,10 @@ import static org.quartz.JobBuilder.*;
 @Name("stats")
 public class StatsOutput extends BaseTOutput {
 
-    private static Logger logger = LoggerFactory.getLogger("tauris.output.stats");
 
     private static Counter OUTPUT_COUNTER = Counter.build().name("output_stats_total").labelNames("id").help("stats output total").create().register();
+
+    private TLogger logger;
 
     @Required
     File directory;
@@ -43,7 +43,9 @@ public class StatsOutput extends BaseTOutput {
 
     String datePattern;
 
-    private DateTimeFormatter dateFormatter;
+    TPrinterBuilder printer = new DefaultPrinterBuilder();
+
+    TEncoder codec;
 
     @Required
     String flushCronExpr;
@@ -60,6 +62,14 @@ public class StatsOutput extends BaseTOutput {
     @Required
     ValueField[] valueFields;
 
+    /**
+     * 在写文件之前的等待时间
+     *
+     */
+    int waitSecondsBeforeWrite = 1;
+
+    private DateTimeFormatter dateFormatter;
+
     private volatile Map<Labels, AggregatedPoint> data = new ConcurrentHashMap<>();
 
     private Scheduler scheduler;
@@ -67,8 +77,16 @@ public class StatsOutput extends BaseTOutput {
     private Lock lock = new ReentrantLock();
 
     public void init() throws TPluginInitException {
+        logger = TLogger.getLogger(this);
         if (datePattern != null) {
             dateFormatter = DateTimeFormat.forPattern(datePattern);
+        }
+        if (codec != null) {
+            if (printer instanceof EncodePrinterBuilder) {
+                ((EncodePrinterBuilder) printer).setCodec(codec);
+            } else {
+                throw new TPluginInitException("printer not a EncodePrinterBuilder, codec will be ignored");
+            }
         }
     }
 
@@ -81,6 +99,7 @@ public class StatsOutput extends BaseTOutput {
         JobDetail job     = newJob(FlushJob.class).usingJobData(data).build();
         Trigger   trigger = newTrigger().withSchedule(cronSchedule(flushCronExpr)).build();
         scheduler.getContext().put("instance", this);
+        scheduler.getContext().put("logger", logger);
         scheduler.scheduleJob(job, trigger);
         scheduler.start();
         if (!directory.exists()) {
@@ -93,9 +112,6 @@ public class StatsOutput extends BaseTOutput {
     @Override
     public void doWrite(TEvent event) {
         EventPoint ep = createEventPoint(event);
-        if (ep == null) {
-            return;
-        }
         lock.lock();
         AggregatedPoint ap = data.get(ep.getLabels());
         if (ap == null) {
@@ -128,14 +144,17 @@ public class StatsOutput extends BaseTOutput {
             lock.unlock();
         }
         File file = newFile();
-        try (FileOutputStream writer = new FileOutputStream(file)) {
+        try (TPrinter printer = this.printer.create(new FileOutputStream(file))) {
+            if (waitSecondsBeforeWrite > 0) {
+                Thread.sleep(waitSecondsBeforeWrite * 1000L);
+            }
             snapdata.forEach((tag, ap) -> {
                 try {
                     TEvent e = ap.toEvent();
                     if (e == null) {
                         return;
                     }
-                    codec.encode(e, writer);
+                    printer.write(e);
                 } catch (IOException e) {
                     logger.error("write stats result failed", e);
                 } catch (EncodeException e) {
@@ -146,6 +165,8 @@ public class StatsOutput extends BaseTOutput {
             snapdata.clear();
         } catch (IOException e){
             logger.error("write stats result failed", e);
+        } catch (InterruptedException e) {
+            // pass
         }
     }
 
@@ -153,8 +174,10 @@ public class StatsOutput extends BaseTOutput {
     public void stop() {
         try {
             super.stop();
-            scheduler.shutdown();
-            flush();
+            if (scheduler != null) {
+                scheduler.shutdown();
+                flush();
+            }
         } catch (SchedulerException e) {
             logger.error("shutdown failed", e);
         }
@@ -178,7 +201,6 @@ public class StatsOutput extends BaseTOutput {
         return new EventPoint(tags, values);
     }
 
-
     public static class FlushJob implements Job {
 
         @Override
@@ -186,7 +208,7 @@ public class StatsOutput extends BaseTOutput {
             try {
                 ((StatsOutput) context.getJobDetail().getJobDataMap().get("instance")).flush();
             } catch (Exception e) {
-                logger.error("flush exception", e);
+                ((TLogger) context.getJobDetail().getJobDataMap().get("logger")).EXCEPTION(e);
             }
         }
     }
@@ -220,7 +242,7 @@ public class StatsOutput extends BaseTOutput {
         }
 
         public TEvent toEvent() {
-            TEvent e = new TEvent();
+            TEvent e = new DefaultEvent();
             for (int i = 0; i < labelFields.length; i++) {
                 String key = labelFields[i].getLabel();
                 Object value = labels.getKey(i);

@@ -2,7 +2,6 @@ package com.aliyun.tauris.config.parser;
 
 import com.aliyun.tauris.TPlugin;
 import com.aliyun.tauris.TPluginResolver;
-import com.aliyun.tauris.utils.TProperty;
 
 import java.lang.reflect.Array;
 import java.util.List;
@@ -31,7 +30,7 @@ class PluginsValue extends Value {
         Object array = Array.newInstance(property.getType(), plugins.size());
         int    i     = 0;
         for (Plugin e : plugins) {
-            TPlugin plugin = TPluginResolver.defaultResolver.resolvePlugin((Class<? extends TPlugin>)property.getType(), e.getName());
+            TPlugin plugin = TPluginResolver.defaultResolver.resolvePlugin((Class<? extends TPlugin>)property.getType(), e.getMajorName(), e.getMinorName());
             plugin = e.build(plugin);
             Array.set(array, i, plugin);
             i++;

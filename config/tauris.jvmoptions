@@ -94,18 +94,27 @@
 #-Dtauris.logging.verbose=false
 
 #-Dtauris.filter.workers=2
-#-Dtauris.filter.queue.capacity=100
+#-Dtauris.filter.pipe.capacity=0
 #-Dtauris.filter.profiler=false
 
-#-Dtauris.output.queue.capacity=0
+#-Dtauris.distribute.mode=group
+#-Dtauris.distribute.pipe.capacity=0
+
+#-Dtauris.output.pipe.capacity=0
 #-Dtauris.output.profiler=false
 
 #-Dtauris.metric.host=127.0.0.1
 #-Dtauris.metric.port=1985
 #-Dtauris.metric.path=/metrics
+#-Dtauris.metric.comment=true
 
 #-Dtauris.metric.file=
 #-Dtauris.metric.interval=15
 
-#tauris.reload.filter=true
-#tauris.reload.output=false
+#-Dtauris.event.factory=default
+#-Dtauris.event.factory=pooled
+#-Dtauris.event.default.field.min_capacity=64
+#-Dtauris.event.default.meta.min_capacity=12
+#-Dtauris.event.pool.config.maxTotal=1000
+#-Dtauris.event.pool.config.maxIdle=1000
+#-Dtauris.event.pool.config.minIdle=0

@@ -5,13 +5,12 @@ import com.aliyun.tauris.TPluginFactory;
 import com.aliyun.tauris.TPluginGroup;
 import com.aliyun.tauris.config.TConfigException;
 import com.aliyun.tauris.TPluginResolver;
-import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Created by jdziworski on 30.03.16.
+ * Created by zhanglei
  */
 public class PluginGroup {
     private final String       typeName;
@@ -36,7 +35,7 @@ public class PluginGroup {
         try {
             TPluginGroup g = groupClass.getConstructor(List.class).newInstance(plugins);
             this.assignments.assignTo(g);
-            String pid = "filter_" + RandomStringUtils.randomNumeric(8).toLowerCase();
+            String pid = PluginId.generateId(typeName + "_group");
             if (g.id() == null) {
                 g.setId(pid);
                 Helper.m.collapse("} //id: " + pid).next();

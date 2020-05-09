@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.tauris.DecodeException;
 import com.aliyun.tauris.TEvent;
+import com.aliyun.tauris.TEventFactory;
 import com.aliyun.tauris.annotations.Name;
 
 import javax.annotation.Nullable;
@@ -32,9 +33,9 @@ public class JSONDecoder extends AbstractJSONDecoder {
     }
 
     @Override
-    public TEvent decode(String source) throws DecodeException {
+    public TEvent decode(String source, TEventFactory factory) throws DecodeException {
         JSONObject object = parse(source);
-        TEvent event = new TEvent();
+        TEvent event = factory.create(source);
         decodeToEvent(event, object);
         return event;
     }
@@ -82,6 +83,7 @@ public class JSONDecoder extends AbstractJSONDecoder {
         try {
             return JSON.parseObject(text);
         } catch (JSONException e) {
+            System.err.println(text);
             throw new DecodeException("json decode error", e, text);
         }
     }

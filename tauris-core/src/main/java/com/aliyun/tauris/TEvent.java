@@ -1,208 +1,46 @@
 package com.aliyun.tauris;
 
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
+import com.alibaba.texpr.Context;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Method;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by ZhangLei on 16/12/8.
  */
-public class TEvent implements TObject {
+public interface TEvent extends TObject, Context {
 
-    public static final String META_SOURCE    = "@source";
-    public static final String META_TIMESTAMP = "@timestamp";
+    String META_SOURCE    = "@source";
+    String META_TIMESTAMP = "@timestamp";
 
-    private ConcurrentHashMap<String, Object> meta = new ConcurrentHashMap<>();
+    void addMeta(String key, Object value);
 
-    private ConcurrentHashMap<String, Object> fields = new ConcurrentHashMap<>();
+    Map<String, Object> getMeta();
 
-    public TEvent() {
-        set(META_TIMESTAMP, new DateTime());
-    }
+    Object getMeta(String name);
 
-    public TEvent(String source) {
-        this();
-        set(META_SOURCE, source);
-    }
+    boolean contains(String name);
 
-    public void addMeta(String key, Object value) {
-        if (key == null || value == null) {
-            throw new IllegalArgumentException("key or value is null");
-        }
-        this.meta.put(key, value);
-    }
+    void set(String name, Object value);
 
-    public Map<String, Object> getMeta() {
-        return Collections.unmodifiableMap(meta);
-    }
+    Object get(String name);
 
-    public Object getMeta(String name) {
-        return get(meta, name);
-    }
+    Object remove(String name);
 
-    public void set(String name, Object value) {
-        if (name == null || name.isEmpty()) throw new IllegalArgumentException("name is null");
-        if (value != null) {
-            if (name.charAt(0) == '@') {
-                meta.put(name.substring(1), value);
-            } else {
-                setField(name, value);
-            }
-        } else {
-            remove(name);
-        }
-    }
+    void setField(String name, Object value);
 
-    public Object get(String name) {
-        if (name == null || name.isEmpty()) return null;
-        if (name.charAt(0) == '@') {
-            return get(meta, name.substring(1));
-        } else {
-            if (name.charAt(0) == '$') {
-                return get(fields, name.substring(1));
-            }
-            return get(fields, name);
-        }
-    }
+    Object removeField(String name);
 
-    public Object remove(String name) {
-        if (name == null || name.isEmpty()) return null;
-        if (name.charAt(0) == '@') {
-            return meta.remove(name.substring(1));
-        } else {
-            return removeField(name);
-        }
-    }
+    void setFields(Map<String, Object> fields);
 
-    private Object get(Map<String, Object> data, String name) {
-        if (data.containsKey(name)) {
-            return data.get(name);
-        } else {
-            String[] parts = name.split("\\.");
-            Object v = data;
-            int elementIndex = 0;
-            int leftBracket;
+    Map<String, Object> getFields();
 
-            for (int i = 0; i < parts.length; i++) {
-                boolean last = parts.length - 1 == i;
-                String part = parts[i];
-                boolean valueIsArray = false;
+    long getTimestamp();
 
-                if (part.charAt(part.length() - 1) == ']') {
-                    valueIsArray = true;
-                    leftBracket = part.lastIndexOf('[');
-                    try {
-                        elementIndex = Integer.parseInt(part.substring(leftBracket + 1, part.length() - 1));
-                    } catch (NumberFormatException e) {
-                        return null;
-                    }
-                    part = part.substring(0, leftBracket);
-                }
+    void setTimestamp(long timestamp);
 
-                if (v instanceof Map) {
-                    v = ((Map) v).get(part);
-                    if (v == null) {
-                        return null;
-                    }
-                } else {
-                    try {
-                        Method getter = v.getClass().getMethod("get" + StringUtils.capitalize(part));
-                        v = getter.invoke(v);
-                    } catch (Exception e) {
-                        return null;
-                    }
-                }
-                if (v == null) {
-                    return null;
-                }
-                if (valueIsArray) {
-                    try {
-                        try {
-                            if (v instanceof List) {
-                                if (elementIndex < 0) {
-                                    elementIndex = ((List) v).size() + elementIndex;
-                                }
-                                v = ((List) v).get(elementIndex);
-                            } else if (v.getClass().isArray()) {
-                                if (elementIndex < 0) {
-                                    elementIndex = Array.getLength(v) + elementIndex;
-                                }
-                                v = Array.get(v, elementIndex);
-                            } else {
-                                return null;
-                            }
-                        } catch (IndexOutOfBoundsException e) {
-                            return null;
-                        }
+    String getSource();
 
-                    } catch (NumberFormatException e) {
-                        return null;
-                    }
-                }
-                if (last || v == null) {
-                    return v;
-                }
-            }
-            return v;
-        }
-    }
+    void setSource(String source);
 
-    public void setField(String name, Object value) {
-        if (value == null) return;
-        if (name.indexOf('.') >= 0) {
-            throw new IllegalArgumentException(String.format("invalid key:`%s`", name));
-        }
-        fields.put(name, value);
-    }
-
-    public Object removeField(String name) {
-        if (fields.containsKey(name)) {
-            return fields.remove(name);
-        } else if (name.indexOf('.') > 0) {
-            String[] parts = name.split("\\.");
-            Object v = fields;
-            for (int i = 0; i < parts.length; i++) {
-                boolean last = parts.length - 1 == i;
-                if (!last) {
-                    if (v == null) {
-                        return null;
-                    } else if (v instanceof Map) {
-                        v = ((Map) v).get(parts[i]);
-                    } else {
-                        return null;
-                    }
-                } else {
-                    if (v instanceof Map) {
-                        return ((Map) v).remove(parts[i]);
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    public void setFields(Map<String, Object> fields) {
-        this.fields.putAll(fields);
-    }
-
-    public Map<String, Object> getFields() {
-        return fields;
-    }
-
-    public DateTime getTimestamp() {
-        return (DateTime) get(META_TIMESTAMP);
-    }
-
-    public void setTimestamp(DateTime timestamp) {
-        set(META_TIMESTAMP, timestamp);
-    }
-
-    public String getSource() {
-        return (String) get(META_SOURCE);
-    }
-
+    void destroy();
 }

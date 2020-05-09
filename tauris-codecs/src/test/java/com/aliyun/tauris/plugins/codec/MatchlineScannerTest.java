@@ -2,6 +2,7 @@ package com.aliyun.tauris.plugins.codec;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.aliyun.tauris.DefaultEventFactory;
 import com.aliyun.tauris.TScanner;
 import org.junit.Assert;
 import org.junit.Test;
@@ -23,10 +24,11 @@ public class MatchlineScannerTest {
         String[] lines = new String[]{
             "[2018-08-23] first", "[2018-08-23] second message1\nsecond message2", "[2018-08-23] last"
         };
-        String text = String.join("\n", lines);
-        MatchlineScanner scanner = new MatchlineScanner();
+        String                  text    = String.join("\n", lines);
+        MatchlineScannerBuilder scanner = new MatchlineScannerBuilder();
         scanner.head = Pattern.compile("^\\[\\d+-\\d+-\\d+] .*");
-        TScanner s = scanner.wrap(new ByteArrayInputStream(text.getBytes()));
+        scanner.codec = new PlainDecoder();
+        TScanner s = scanner.create(new ByteArrayInputStream(text.getBytes()), new DefaultEventFactory());
         final AtomicInteger index = new AtomicInteger();
         s.scan((event) -> {
             Assert.assertEquals(lines[index.getAndIncrement()], event.getSource());
@@ -48,11 +50,12 @@ public class MatchlineScannerTest {
                 JSON.toJSONString(jack, true),
                 JSON.toJSONString(mary, true)
         };
-        String text = String.join("\n", blocks);
-        MatchlineScanner scanner = new MatchlineScanner();
+        String                  text    = String.join("\n", blocks);
+        MatchlineScannerBuilder scanner = new MatchlineScannerBuilder();
         scanner.head = Pattern.compile("\\{$");
         scanner.tail = Pattern.compile("\\}$");
-        TScanner s = scanner.wrap(new ByteArrayInputStream(text.getBytes()));
+        scanner.codec = new PlainDecoder();
+        TScanner s = scanner.create(new ByteArrayInputStream(text.getBytes()), new DefaultEventFactory());
         final AtomicInteger index = new AtomicInteger(0);
         s.scan((event) -> {
             int idx = index.getAndIncrement();
@@ -68,10 +71,11 @@ public class MatchlineScannerTest {
                "first block line1 \n first block line2 \n--",
                "second block line1\nsecond block line2\n second block line3\n--"
         };
-        String text = String.join("\n", blocks);
-        MatchlineScanner scanner = new MatchlineScanner();
+        String                  text    = String.join("\n", blocks);
+        MatchlineScannerBuilder scanner = new MatchlineScannerBuilder();
         scanner.tail = Pattern.compile("--");
-        TScanner s = scanner.wrap(new ByteArrayInputStream(text.getBytes()));
+        scanner.codec = new PlainDecoder();
+        TScanner s = scanner.create(new ByteArrayInputStream(text.getBytes()), new DefaultEventFactory());
         final AtomicInteger index = new AtomicInteger();
         s.scan((event) -> {
             Assert.assertEquals(blocks[index.getAndIncrement()], event.getSource());

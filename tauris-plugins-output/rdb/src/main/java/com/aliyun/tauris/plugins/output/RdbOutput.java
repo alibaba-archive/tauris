@@ -5,7 +5,7 @@ import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.TPluginInitException;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
-import com.aliyun.tauris.formatter.SimpleFormatter;
+import com.aliyun.tauris.formatter.EventFormatter;
 import com.aliyun.tauris.plugins.output.rdb.TDatasource;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ public class RdbOutput extends BaseBatchOutput {
 
     protected String driverClass;
 
-    protected SimpleFormatter url;
+    protected EventFormatter url;
 
     @Required
     String table;
@@ -134,12 +134,14 @@ public class RdbOutput extends BaseBatchOutput {
         return insertSql.toString();
     }
 
-    protected void writeEventsToDatabase(List<Object[]> rows) {
+    protected boolean writeEventsToDatabase(List<Object[]> rows) {
         String insertSql = makeInsertSQL(rows.size());
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(insertSql)) {
             writeEventToDatabase(rows, conn, stmt);
+            return true;
         } catch (SQLException e) {
             logger.error("write to database failed", e);
+            return false;
         }
     }
 
@@ -155,7 +157,7 @@ public class RdbOutput extends BaseBatchOutput {
     }
 
     @Override
-    protected BatchWriteTask newTask() throws Exception {
+    protected BatchTask createTask() throws Exception {
         return new RdbWriteTask();
     }
 
@@ -164,7 +166,7 @@ public class RdbOutput extends BaseBatchOutput {
         super.stop();
     }
 
-    class RdbWriteTask extends BatchWriteTask {
+    class RdbWriteTask extends BatchTask {
 
         List<Object[]> rows;
 
@@ -188,8 +190,18 @@ public class RdbOutput extends BaseBatchOutput {
         }
 
         @Override
-        protected void execute() {
-            writeEventsToDatabase(rows);
+        protected boolean execute() {
+            return writeEventsToDatabase(rows);
+        }
+
+        @Override
+        protected void active() {
+            rows.clear();
+        }
+
+        @Override
+        protected void clear() {
+            rows.clear();
         }
     }
 }

@@ -10,18 +10,13 @@ import com.aliyun.openservices.loghub.client.exceptions.LogHubClientWorkerExcept
 import com.aliyun.openservices.loghub.client.interfaces.ILogHubProcessor;
 import com.aliyun.openservices.loghub.client.interfaces.ILogHubProcessorFactory;
 import com.aliyun.tauris.TEvent;
-import com.aliyun.tauris.TQueue;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
 import com.aliyun.tauris.TPluginInitException;
-import com.aliyun.tauris.utils.TLogger;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.aliyun.tauris.TLogger;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -89,6 +84,8 @@ public class SLSInput extends BaseTInput {
      */
     int maxFetchLogGroupSize = 1000;
 
+    boolean batchPut = true;
+
     private ClientWorker worker;
 
     private Thread workerThread;
@@ -142,13 +139,15 @@ public class SLSInput extends BaseTInput {
     @Override
     public void close() {
         super.close();
-        try {
-            worker.shutdown();
-            //ClientWorker 运行过程中会生成多个异步的 Task，shutdown 之后最好等待还在执行的 Task 安全退出.
-            Thread.sleep(5 * 1000);
-        } catch (InterruptedException e) {
+        if (workerThread.isAlive()) {
+            try {
+                worker.shutdown();
+                //ClientWorker 运行过程中会生成多个异步的 Task，shutdown 之后最好等待还在执行的 Task 安全退出.
+                Thread.sleep(5 * 1000);
+            } catch (InterruptedException e) {
+            }
+            logInfo("sls input plugin closed");
         }
-        logInfo("sls input plugin closed");
     }
 
     class SLSLogHubProcessorFactory implements ILogHubProcessorFactory {
@@ -187,20 +186,26 @@ public class SLSInput extends BaseTInput {
                     }
                     List<TEvent> events = new LinkedList<>();
                     for (Logs.Log log : lg.getLogsList()) {
-                        TEvent event = new TEvent(lg.getSource());
+                        TEvent event = getEventFactory().create(lg.getSource());
                         event.addMeta(META_TOPIC, lg.getTopic());
                         event.addMeta(META_CATEGORY, lg.getCategory());
                         for (int i = 0; i < lg.getLogTagsCount(); i++) {
                             Logs.LogTag tag = lg.getLogTags(i);
                             event.addMeta(tag.getKey(), tag.getValue());
                         }
-                        event.setTimestamp(new DateTime(log.getTime() * 1000l));
+                        event.setTimestamp(log.getTime() * 1000L);
                         for (Logs.Log.Content cont : log.getContentsList()) {
                             event.setField(cont.getKey().trim(), cont.getValue());
                         }
-                        events.add(event);
+                        if (batchPut) {
+                            events.add(event);
+                        } else {
+                            putEvent(event);
+                        }
                     }
-                    putEvents(events);
+                    if (batchPut && !events.isEmpty()) {
+                        putEvents(events);
+                    }
                 }
                 if (checkTimeInterval > 0) {
                     long curTime = System.currentTimeMillis();

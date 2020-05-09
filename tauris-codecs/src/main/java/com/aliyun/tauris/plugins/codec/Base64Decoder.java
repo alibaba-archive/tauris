@@ -2,6 +2,7 @@ package com.aliyun.tauris.plugins.codec;
 
 import com.aliyun.tauris.DecodeException;
 import com.aliyun.tauris.TEvent;
+import com.aliyun.tauris.TEventFactory;
 import com.aliyun.tauris.annotations.Name;
 
 import java.nio.charset.Charset;
@@ -18,9 +19,9 @@ public class Base64Decoder extends AbstractDecoder {
     Charset charset = Charset.defaultCharset();
 
     @Override
-    public TEvent decode(String source) throws DecodeException {
+    public TEvent decode(String source, TEventFactory factory) throws DecodeException {
         byte[] bs = Base64.getDecoder().decode(source);
-        return new TEvent(new String(bs, charset));
+        return factory.create(new String(bs, charset));
     }
 
     @Override

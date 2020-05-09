@@ -3,10 +3,8 @@ package com.aliyun.tauris.plugins.filter;
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.annotations.Required;
 import com.aliyun.tauris.TPluginInitException;
-import com.aliyun.tauris.formatter.SimpleFormatter;
-import com.aliyun.tauris.metric.CollectorRegistry;
-import com.aliyun.tauris.metric.Counter;
-import com.aliyun.tauris.metric.GroupCounter;
+import com.aliyun.tauris.formatter.EventFormatter;
+import com.aliyun.tauris.metrics.Counter;
 
 /**
  * Created by ZhangLei on 16/12/14.
@@ -21,7 +19,7 @@ public class MetricFilter extends BaseTFilter {
 
     String[] labelNames;
 
-    SimpleFormatter[] labels;
+    EventFormatter[] labels;
 
     String valueField;
 

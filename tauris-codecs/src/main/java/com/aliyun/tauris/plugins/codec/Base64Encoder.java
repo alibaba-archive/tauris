@@ -1,6 +1,5 @@
 package com.aliyun.tauris.plugins.codec;
 
-import com.aliyun.tauris.DecodeException;
 import com.aliyun.tauris.EncodeException;
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.annotations.Name;
@@ -8,7 +7,6 @@ import com.aliyun.tauris.annotations.Required;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Writer;
 import java.util.Base64;
 
 

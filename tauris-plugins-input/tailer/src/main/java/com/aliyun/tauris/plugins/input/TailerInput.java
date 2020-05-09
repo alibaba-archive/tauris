@@ -4,9 +4,9 @@ import com.aliyun.tauris.DecodeException;
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.annotations.Required;
 import com.aliyun.tauris.TPluginInitException;
-import com.aliyun.tauris.metric.Gauge;
+import com.aliyun.tauris.metrics.Gauge;
 import com.aliyun.tauris.plugins.input.tailer.*;
-import com.aliyun.tauris.utils.TLogger;
+import com.aliyun.tauris.TLogger;
 import com.aliyun.tauris.utils.Wildcard;
 
 import java.io.File;
@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 /**
  * Created by ZhangLei on 16/12/9.
  */
-public class TailerInput extends BaseTInput {
+public class TailerInput extends BaseMessageInput {
 
     private static Gauge TAILER_POS = Gauge.build().name("input_tailer_position").labelNames("id", "filename").help("tailer current read position").create().register();
 
@@ -160,7 +160,7 @@ public class TailerInput extends BaseTInput {
                 return;
             }
             try {
-                TEvent event = codec.decode(line);
+                TEvent event = getCodec().decode(line, getEventFactory());
                 event.addMeta("filename", file.getAbsolutePath());
                 putEvent(event);
             } catch (DecodeException e) {

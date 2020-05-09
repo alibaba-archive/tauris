@@ -1,22 +1,18 @@
 package com.aliyun.tauris.plugins.output;
 
-import com.aliyun.tauris.EncodeException;
-import com.aliyun.tauris.TEvent;
-import com.aliyun.tauris.TPluginInitException;
-import com.aliyun.tauris.formatter.SimpleFormatter;
-import com.aliyun.tauris.metric.Counter;
-import com.aliyun.tauris.plugins.codec.DefaultPrinter;
-import com.aliyun.tauris.TPrinter;
+import com.aliyun.tauris.*;
+import com.aliyun.tauris.formatter.EventFormatter;
+import com.aliyun.tauris.metrics.Counter;
+import com.aliyun.tauris.plugins.codec.DefaultPrinterBuilder;
+import com.aliyun.tauris.plugins.codec.EncodePrinterBuilder;
 import com.aliyun.tauris.plugins.output.file.FormatedFileManager;
 import com.aliyun.tauris.plugins.output.file.TFileManager;
-import com.aliyun.tauris.utils.TLogger;
+import com.aliyun.tauris.TLogger;
 import com.google.common.collect.Sets;
-import org.apache.commons.io.IOUtils;
 
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by ZhangLei on 16/12/8.
@@ -24,16 +20,18 @@ import java.util.concurrent.ExecutionException;
 public class FileOutput extends BaseTOutput {
 
     private static Counter OUTPUT_COUNTER = Counter.build().name("output_file_total").labelNames("id").help("file output count").create().register();
+    private static Counter ERROR_COUNTER  = Counter.build().name("output_file_error_total").labelNames("id").help("file output error count").create().register();
 
     private TLogger logger;
 
-    TPrinter printer = new DefaultPrinter();
+    TPrinterBuilder printer = new DefaultPrinterBuilder();
 
-    SimpleFormatter path;
+    TEncoder codec;
 
-    int flushInterval = 2;
+    EventFormatter path;
 
-    int outputBufferSize = 8192;
+    boolean autoFlush     = true;
+    int     flushInterval = 2;
 
     TFileManager filemanager;
 
@@ -52,10 +50,17 @@ public class FileOutput extends BaseTOutput {
                     } catch (InterruptedException e) {
                         break;
                     } catch (Exception e) {
-                        continue;
+                        logger.EXCEPTION(e);
                     }
                 }
             });
+        }
+        if (codec != null) {
+            if (printer instanceof EncodePrinterBuilder) {
+                ((EncodePrinterBuilder) printer).setCodec(codec);
+            } else {
+                throw new TPluginInitException("printer not a EncodePrinterBuilder, codec will be ignored");
+            }
         }
         if (filemanager == null && path == null) {
             throw new TPluginInitException("filemanager or path is requried");
@@ -72,36 +77,42 @@ public class FileOutput extends BaseTOutput {
         }
     }
 
-    private TPrinter newPrinter(TEvent event) throws IOException, ExecutionException {
-        File     file = filemanager.resolve(event);
-        TPrinter w    = printers.get(file);
-        if (w == null) {
-            w = printer.wrap(new BufferedOutputStream(new FileOutputStream(file, true), outputBufferSize)).withCodec(codec);
-            TPrinter nw = printers.putIfAbsent(file, w);
-            if (nw != null) {
-                w = nw;
+    private TPrinter getPrinter(TEvent event) throws IOException {
+        File file = filemanager.resolve(event);
+        synchronized (printers) {
+            TPrinter w = printers.get(file);
+            if (w == null) {
+                w = printer.create(new FileOutputStream(file, true));
+                TPrinter nw = printers.putIfAbsent(file, w);
+                if (nw != null) {
+                    w = nw;
+                }
             }
+            return w;
         }
-        return w;
     }
 
     @Override
     public void doWrite(TEvent event) {
         try {
-            TPrinter w = newPrinter(event);
+            TPrinter w = getPrinter(event);
             w.write(event);
             OUTPUT_COUNTER.labels(id()).inc();
         } catch (IOException e) {
+            ERROR_COUNTER.labels(id()).inc();
             logger.ERROR("write file error", e);
-        } catch (ExecutionException e) {
-            logger.ERROR("make file error", e);
         } catch (EncodeException e) {
+            ERROR_COUNTER.labels(id()).inc();
             logger.ERROR("encode event failed", e);
         }
     }
 
     public void closePrinter(File file, TPrinter printer) {
-        IOUtils.closeQuietly(printer);
+        try {
+            printer.flush();
+            printer.close();
+        } catch (IOException e) {
+        }
         filemanager.onClose(file);
     }
 
@@ -121,27 +132,32 @@ public class FileOutput extends BaseTOutput {
     public void flush() {
         Set<File>                      beRemoved = new HashSet<>();
         Set<Map.Entry<File, TPrinter>> entries   = Sets.newHashSet(printers.entrySet());
-        for (Map.Entry<File, TPrinter> entry : entries) {
-            File f = entry.getKey();
-            TPrinter w = entry.getValue();
-            if (f.exists()) {
-                try {
-                    w.flush();
-                } catch (IOException e) {
-                    logger.ERROR("flush file %s error", e, f.getAbsolutePath());
+        synchronized (printers) {
+            for (Map.Entry<File, TPrinter> entry : entries) {
+                File f = entry.getKey();
+                TPrinter w = entry.getValue();
+                if (f.exists()) {
+                    if (autoFlush) {
+                        try {
+                            w.flush();
+                        } catch (IOException e) {
+                            logger.ERROR("flush file %s error", e, f.getAbsolutePath());
+                            beRemoved.add(f);
+                        }
+                    }
+                } else {
+                    beRemoved.add(f);
+                    continue;
                 }
-            } else {
-                beRemoved.add(f);
-                continue;
+                if (filemanager.canClose(f)) {
+                    beRemoved.add(f);
+                }
             }
-            if (filemanager.canClose(f)) {
-                beRemoved.add(f);
+            for (File f : beRemoved) {
+                TPrinter printer = printers.remove(f);
+                closePrinter(f, printer);
+                logger.INFO("file %s closed", f.getAbsolutePath());
             }
-        }
-        for (File f : beRemoved) {
-            TPrinter printer = printers.remove(f);
-            closePrinter(f, printer);
-            logger.INFO("file %s closed", f.getAbsolutePath());
         }
     }
 }

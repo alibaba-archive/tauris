@@ -4,12 +4,12 @@ import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
 import com.aliyun.tauris.TPluginInitException;
-import com.aliyun.tauris.utils.TLogger;
+import com.aliyun.tauris.TLogger;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.Date;
 
 
 /**
@@ -28,11 +28,12 @@ public class DateParse implements TMutate {
 
     String format;
 
-    DateType type = DateType.joda;
+    DateType type = DateType.date;
 
     private DateTimeFormatter formatter;
 
     public void init() throws TPluginInitException {
+        this.logger = TLogger.getLogger(this);
         if (format != null) {
             formatter = DateTimeFormat.forPattern(format);
         }
@@ -44,7 +45,9 @@ public class DateParse implements TMutate {
             Object value = event.get(source);
             if (value == null) return;
             DateTime date;
-            if (value instanceof DateTime) {
+            if (value instanceof Date) {
+                date = new DateTime(value);
+            } else if (value instanceof DateTime) {
                 date = (DateTime) value;
             } else if (value instanceof Long) {
                 date = new DateTime(value);
@@ -56,10 +59,16 @@ public class DateParse implements TMutate {
                 logger.ERROR("cannot convert %s to date", value);
                 return;
             }
-            if (type == DateType.standard) {
-                event.set(target, date.toDate());
-            } else {
-                event.set(target, date);
+            switch (type) {
+                case timestamp:
+                    event.set(target, date.getMillis());
+                    break;
+                case joda:
+                    event.set(target, date);
+                    break;
+                default:
+                    event.set(target, date.toDate());
+                    break;
             }
         } catch (Exception e) {
             logger.ERROR("date parse failed", e);

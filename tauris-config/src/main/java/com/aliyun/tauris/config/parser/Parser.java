@@ -3,8 +3,7 @@ package com.aliyun.tauris.config.parser;
 import antlr4.tauris.TaurisBaseVisitor;
 import antlr4.tauris.TaurisLexer;
 import antlr4.tauris.TaurisParser;
-import com.aliyun.tauris.TPlugin;
-import com.aliyun.tauris.expression.ExprException;
+import com.alibaba.texpr.ExprException;
 import org.antlr.v4.runtime.*;
 
 import java.util.ArrayList;
@@ -90,10 +89,18 @@ public class Parser {
         @Override
         public Pipeline visitPipeline(TaurisParser.PipelineContext ctx) {
             InputGroupVisitor  inputVisitor  = new InputGroupVisitor();
-            OutputGroupVisitor outputVisitor = new OutputGroupVisitor();
             FilterGroupVisitor filterVisitor = new FilterGroupVisitor();
-            InputGroup         inputGroup    = inputVisitor.visitInputGroup(ctx.inputGroup());
-            List<FilterGroup>  filterGroups  = new ArrayList<>();
+            OutputGroupVisitor outputVisitor = new OutputGroupVisitor();
+
+            List<InputGroup> inputGroups = new ArrayList<>();
+            if (ctx.inputGroup() != null) {
+                for (TaurisParser.InputGroupContext f : ctx.inputGroup()) {
+                    InputGroup inputGroup = inputVisitor.visitInputGroup(f);
+                    inputGroups.add(inputGroup);
+                }
+            }
+
+            List<FilterGroup> filterGroups = new ArrayList<>();
             if (ctx.filterGroup() != null) {
                 for (TaurisParser.FilterGroupContext f : ctx.filterGroup()) {
                     FilterGroup filterGroup = filterVisitor.visitFilterGroup(f);
@@ -101,21 +108,21 @@ public class Parser {
                 }
             }
 
-            List<OutputGroup>  outputGroups  = new ArrayList<>();
+            List<OutputGroup> outputGroups = new ArrayList<>();
             for (TaurisParser.OutputGroupContext c : ctx.outputGroup()) {
                 OutputGroup outputGroup = outputVisitor.visitOutputGroup(c);
                 outputGroups.add(outputGroup);
             }
-            return new Pipeline(inputGroup, filterGroups, outputGroups);
+            return new Pipeline(inputGroups, filterGroups, outputGroups);
         }
     }
 
     private static class PluginGroupVisitor extends TaurisBaseVisitor<PluginGroup> {
         @Override
         public PluginGroup visitPluginGroup(TaurisParser.PluginGroupContext ctx) {
-            PluginsVisitor pluginsVisitor = new PluginsVisitor();
+            PluginsVisitor     pluginsVisitor     = new PluginsVisitor();
             AssignmentsVisitor assignmentsVisitor = new AssignmentsVisitor();
-            String typeName = ctx.ID().getText();
+            String             typeName           = ctx.ID().getText();
             return new PluginGroup(typeName, pluginsVisitor.visitPlugins(ctx.plugins()), assignmentsVisitor.visit(ctx.plugins().assignment()));
         }
     }
@@ -123,7 +130,7 @@ public class Parser {
     private static class InputGroupVisitor extends TaurisBaseVisitor<InputGroup> {
         @Override
         public InputGroup visitInputGroup(TaurisParser.InputGroupContext ctx) {
-            PluginsVisitor pluginsVisitor = new PluginsVisitor();
+            PluginsVisitor     pluginsVisitor     = new PluginsVisitor();
             AssignmentsVisitor assignmentsVisitor = new AssignmentsVisitor();
             return new InputGroup(pluginsVisitor.visitPlugins(ctx.plugins()), assignmentsVisitor.visit(ctx.plugins().assignment()));
         }
@@ -133,7 +140,7 @@ public class Parser {
 
         @Override
         public FilterGroup visitFilterGroup(TaurisParser.FilterGroupContext ctx) {
-            PluginsVisitor pluginsVisitor = new PluginsVisitor();
+            PluginsVisitor     pluginsVisitor     = new PluginsVisitor();
             AssignmentsVisitor assignmentsVisitor = new AssignmentsVisitor();
             return new FilterGroup(pluginsVisitor.visitPlugins(ctx.plugins()), assignmentsVisitor.visit(ctx.plugins().assignment()));
         }
@@ -143,7 +150,7 @@ public class Parser {
 
         @Override
         public OutputGroup visitOutputGroup(TaurisParser.OutputGroupContext ctx) {
-            PluginsVisitor pluginsVisitor = new PluginsVisitor();
+            PluginsVisitor     pluginsVisitor     = new PluginsVisitor();
             AssignmentsVisitor assignmentsVisitor = new AssignmentsVisitor();
             return new OutputGroup(pluginsVisitor.visitPlugins(ctx.plugins()), assignmentsVisitor.visit(ctx.plugins().assignment()));
         }
@@ -164,10 +171,12 @@ public class Parser {
     private static class PluginVisitor extends TaurisBaseVisitor<Plugin> {
         @Override
         public Plugin visitPlugin(TaurisParser.PluginContext ctx) {
-            String             methodName    = ctx.name().getText();
+            TaurisParser.PluginNameContext pluginNameCtx = ctx.pluginName();
+            String majorName = pluginNameCtx.name(0).getText();
+            String minorName = pluginNameCtx.name().size() > 1 ?  pluginNameCtx.name(1).getText() : null;
             AssignmentsVisitor objectVisitor = new AssignmentsVisitor();
             Assignments        pluginBody    = objectVisitor.visitAssignments(ctx.assignments());
-            return new Plugin(methodName, pluginBody);
+            return new Plugin(majorName, minorName, pluginBody);
         }
     }
 
@@ -402,13 +411,13 @@ public class Parser {
 
         @Override
         public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
-            StringBuilder part = new StringBuilder();
-            int startLine = line > 0 ? line - 2 : 0;
-            int endLine = line > 0 ? line : 1;
+            StringBuilder part      = new StringBuilder();
+            int           startLine = line > 0 ? line - 2 : 0;
+            int           endLine   = line > 0 ? line : 1;
             part.append(String.format("syntax error: line:%d:%d, %s\n", line, charPositionInLine, msg));
             for (int no = startLine; no <= endLine; no++) {
-                part.append(String.format("%d %s %s\n", no + 1, no == line - 1 ? "*" : " ",  lines[no]));
-             }
+                part.append(String.format("%d %s %s\n", no + 1, no == line - 1 ? "*" : " ", lines[no]));
+            }
             errorMessage.append(part.toString());
         }
     }

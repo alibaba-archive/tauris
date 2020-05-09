@@ -3,7 +3,6 @@ package com.aliyun.tauris.plugins.filter;
 import com.alibaba.fastjson.JSON;
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.TPluginInitException;
-import com.aliyun.tauris.metric.CounterWidget;
 
 import java.io.*;
 
@@ -11,8 +10,6 @@ import java.io.*;
  * Created by ZhangLei on 16/12/11.
  */
 public class DebugFilter extends BaseTFilter {
-
-    private CounterWidget metric = null;
 
     boolean print = true;
 
@@ -40,9 +37,6 @@ public class DebugFilter extends BaseTFilter {
                 writer.write(event.getSource().getBytes());
             } catch (IOException e) {
             }
-        }
-        if (metric != null) {
-            metric.inc(event);
         }
         return true;
     }

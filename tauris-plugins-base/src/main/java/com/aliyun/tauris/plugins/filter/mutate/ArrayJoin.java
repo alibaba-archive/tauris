@@ -3,7 +3,6 @@ package com.aliyun.tauris.plugins.filter.mutate;
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 

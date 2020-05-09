@@ -6,6 +6,7 @@ import com.aliyun.tauris.TResource;
 import com.aliyun.tauris.annotations.Name;
 import com.hubspot.jinjava.Jinjava;
 
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -37,7 +38,8 @@ public class JinjaFormatter implements TEventFormatter {
     public String format(TEvent event) {
         HashMap<String, Object> data = new HashMap<String, Object>() {
             {
-                put("__time__", event.getTimestamp().toDate());
+                put("__time__", event.getTimestamp());
+                put("__date__", new Date(event.getTimestamp()));
                 put("__meta__", event.getMeta());
                 putAll(event.getFields());
             }

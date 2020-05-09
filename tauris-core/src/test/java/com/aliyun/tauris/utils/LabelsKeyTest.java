@@ -1,7 +1,7 @@
 package com.aliyun.tauris.utils;
 
-import com.aliyun.tauris.metric.LabelsKey;
-import com.aliyun.tauris.metric.LabelsKeyFactory;
+import com.aliyun.tauris.metrics.LabelsKey;
+import com.aliyun.tauris.metrics.LabelsKeyFactory;
 import org.junit.Test;
 
 import java.util.HashMap;

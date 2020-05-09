@@ -1,3 +1,3 @@
-com.aliyun.tauris.plugins.codec.DefaultPrinter
-com.aliyun.tauris.plugins.codec.KVFlowPrinter
-com.aliyun.tauris.plugins.codec.CSVPrinter
+com.aliyun.tauris.plugins.codec.DefaultPrinterBuilder
+com.aliyun.tauris.plugins.codec.KVFlowPrinterBuilder
+com.aliyun.tauris.plugins.codec.CSVPrinterBuilder

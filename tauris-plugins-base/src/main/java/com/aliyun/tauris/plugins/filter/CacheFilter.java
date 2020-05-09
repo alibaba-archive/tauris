@@ -4,7 +4,7 @@ import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
 import com.aliyun.tauris.TPluginInitException;
-import com.aliyun.tauris.formatter.SimpleFormatter;
+import com.aliyun.tauris.formatter.EventFormatter;
 import com.aliyun.tauris.plugins.filter.cache.BackendPools;
 import com.aliyun.tauris.plugins.filter.cache.TCacheAction;
 import com.aliyun.tauris.plugins.filter.cache.TCacheBackend;
@@ -29,9 +29,9 @@ public class CacheFilter extends BaseTFilter {
     String target;
 
     @Required
-    SimpleFormatter key;
+    EventFormatter key;
 
-    SimpleFormatter value;
+    EventFormatter value;
 
     public void init() throws TPluginInitException {
         if (action == TCacheAction.set && value == null) {

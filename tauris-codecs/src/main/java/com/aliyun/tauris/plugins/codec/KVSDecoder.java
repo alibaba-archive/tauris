@@ -2,6 +2,7 @@ package com.aliyun.tauris.plugins.codec;
 
 import com.aliyun.tauris.DecodeException;
 import com.aliyun.tauris.TEvent;
+import com.aliyun.tauris.TEventFactory;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
 
@@ -22,6 +23,11 @@ public class KVSDecoder extends AbstractDecoder {
     @Required
     char kvSeperator = '=';
 
+    /**
+     * 作为Input的codec时,若keepSource为true, 则在Event中保留原始source.
+     */
+    boolean keepSource = false;
+
     private ThreadLocal<char[]> bufLocal = new ThreadLocal<>();
 
     @Override
@@ -40,8 +46,8 @@ public class KVSDecoder extends AbstractDecoder {
     }
 
     @Override
-    public TEvent decode(String source) throws DecodeException {
-        TEvent event = new TEvent(source);
+    public TEvent decode(String source, TEventFactory factory) throws DecodeException {
+        TEvent event = keepSource ? factory.create(source) : factory.create();
         decode(source, event::set);
         return event;
     }

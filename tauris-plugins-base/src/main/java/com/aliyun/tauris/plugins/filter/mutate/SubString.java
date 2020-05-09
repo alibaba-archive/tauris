@@ -2,9 +2,7 @@ package com.aliyun.tauris.plugins.filter.mutate;
 
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.annotations.Name;
-import com.aliyun.tauris.annotations.Required;
 import com.aliyun.tauris.TPluginInitException;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import java.util.Set;

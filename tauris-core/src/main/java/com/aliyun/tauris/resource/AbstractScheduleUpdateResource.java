@@ -2,10 +2,8 @@ package com.aliyun.tauris.resource;
 
 import com.aliyun.tauris.TResource;
 import com.aliyun.tauris.TResourceURI;
-import com.aliyun.tauris.utils.TLogger;
+import com.aliyun.tauris.TLogger;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -21,13 +19,14 @@ public abstract class AbstractScheduleUpdateResource extends TResource {
 
     public static final String P_INTERVAL = "__interval__";
 
-    protected TLogger logger;
 
     protected ScheduledExecutorService updater;
 
     protected int updateInterval;
 
     protected String md5sum;
+
+    private TLogger logger;
 
     public AbstractScheduleUpdateResource() {
         this.logger = TLogger.getLogger(this);

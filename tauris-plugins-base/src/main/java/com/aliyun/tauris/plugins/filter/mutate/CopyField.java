@@ -2,13 +2,10 @@ package com.aliyun.tauris.plugins.filter.mutate;
 
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.annotations.Name;
-import com.aliyun.tauris.annotations.Required;
 import com.aliyun.tauris.TPluginInitException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by ZhangLei on 16/12/11.

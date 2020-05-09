@@ -1,5 +1,6 @@
 package com.aliyun.tauris.plugins.filter.mutate;
 
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -12,9 +13,9 @@ public class DoubleConverter extends AbstractConverter {
     }
 
     @Override
-    protected Object convert(Object value) {
+    protected Optional<Object> convert(Object value) {
         if (value instanceof Number) {
-            return ((Number)value).doubleValue();
+            return Optional.of(((Number) value).doubleValue());
         }
         return super.convert(value);
     }

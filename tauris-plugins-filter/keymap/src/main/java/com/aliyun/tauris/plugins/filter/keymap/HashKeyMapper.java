@@ -3,7 +3,6 @@ package com.aliyun.tauris.plugins.filter.keymap;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
 import com.aliyun.tauris.TPluginInitException;
-import com.aliyun.tauris.formatter.SimpleFormatter;
 
 import java.util.Collections;
 import java.util.Map;

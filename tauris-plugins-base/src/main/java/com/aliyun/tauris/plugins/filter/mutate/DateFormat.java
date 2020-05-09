@@ -8,11 +8,13 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.util.Date;
+
 /**
  * Created by ZhangLei on 16/12/14.
  */
 @Name("dateformat")
-public class DateFormat extends BaseMutate  {
+public class DateFormat extends BaseMutate {
 
     @Required
     String source;
@@ -39,23 +41,24 @@ public class DateFormat extends BaseMutate  {
 
     @Override
     public void mutate(TEvent event) {
-        Object val = event.get(source);
-        DateTime dt = null;
-        if (val instanceof DateTime) {
-            dt = (DateTime)val;
+        Object val    = event.get(source);
+        Long   millis = null;
+        if (val instanceof Date) {
+            millis = ((Date) val).getTime();
+        } else if (val instanceof DateTime) {
+            millis = ((DateTime) val).getMillis();
         } else if (val instanceof Long) {
-            dt = new DateTime(val);
+            millis = (Long) val;
         } else if (val instanceof Integer) {
-            dt = new DateTime(((Integer)val) * 1000);
+            millis = ((Integer) val) * 1000L;
         }
-        if (dt == null) {
+        if (millis == null) {
             return;
         }
         if (alignTo != null) {
-            long ts = dt.getMillis();
-            dt = new DateTime(ts - ts % alignTo);
+            millis = millis - millis % alignTo;
         }
-        event.set(target, dt.toString(_formatter));
+        event.set(target, new DateTime(millis).toString(_formatter));
 
     }
 

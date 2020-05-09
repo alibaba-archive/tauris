@@ -12,16 +12,16 @@ import java.util.List;
  */
 public class Pipeline {
 
-    private InputGroup        rawInputGroup;
+    private List<InputGroup>  rawInputGroups;
     private List<FilterGroup> rawFilterGroups;
     private List<OutputGroup> rawOutputGroups;
 
-    private TInputGroup        inputGroup;
+    private List<TInputGroup>  inputGroups;
     private List<TFilterGroup> filterGroups;
     private List<TOutputGroup> outputGroups;
 
-    Pipeline(InputGroup inputGroup, List<FilterGroup> filterGroups, List<OutputGroup> outputGroups) {
-        this.rawInputGroup = inputGroup;
+    Pipeline(List<InputGroup> inputGroups, List<FilterGroup> filterGroups, List<OutputGroup> outputGroups) {
+        this.rawInputGroups = inputGroups;
         this.rawFilterGroups = filterGroups;
         this.rawOutputGroups = outputGroups;
     }
@@ -30,7 +30,10 @@ public class Pipeline {
      */
     public void build() {
         Helper.m.init();
-        inputGroup = (TInputGroup) rawInputGroup.build(TInputGroup.class);
+        inputGroups = new ArrayList<>();
+        for (PluginGroup ig : rawInputGroups) {
+            inputGroups.add((TInputGroup) ig.build(TInputGroup.class));
+        }
 
         filterGroups = new ArrayList<>();
         for (PluginGroup fg : rawFilterGroups) {
@@ -43,8 +46,8 @@ public class Pipeline {
         }
     }
 
-    public TInputGroup getInputGroup() {
-        return inputGroup;
+    public List<TInputGroup> getInputGroups() {
+        return inputGroups;
     }
 
     public List<TFilterGroup> getFilterGroups() {
@@ -65,10 +68,13 @@ public class Pipeline {
         }
 
         Pipeline      pipeline = (Pipeline) o;
-        EqualsBuilder eb       = new EqualsBuilder().append(rawInputGroup, pipeline.rawInputGroup);
-        if (rawFilterGroups.size() != pipeline.rawFilterGroups.size()) {
-            return false;
+        EqualsBuilder eb       = new EqualsBuilder();
+        for (int i = 0; i < rawInputGroups.size(); i++) {
+            PluginGroup l = rawInputGroups.get(i);
+            PluginGroup r = pipeline.rawInputGroups.get(i);
+            eb.append(l, r);
         }
+
         for (int i = 0; i < rawFilterGroups.size(); i++) {
             PluginGroup l = rawFilterGroups.get(i);
             PluginGroup r = pipeline.rawFilterGroups.get(i);
@@ -91,7 +97,9 @@ public class Pipeline {
     @Override
     public int hashCode() {
         HashCodeBuilder hb = new HashCodeBuilder();
-        hb.append(rawInputGroup).append(rawInputGroup);
+        for (PluginGroup i : rawInputGroups) {
+            hb.append(i);
+        }
         for (PluginGroup f : rawFilterGroups) {
             hb.append(f);
         }
@@ -104,7 +112,7 @@ public class Pipeline {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(rawInputGroup.toString());
+        rawInputGroups.forEach((f) -> sb.append(f.toString()));
         rawFilterGroups.forEach((f) -> sb.append(f.toString()));
         rawOutputGroups.forEach((f) -> sb.append(f.toString()));
         return sb.toString();

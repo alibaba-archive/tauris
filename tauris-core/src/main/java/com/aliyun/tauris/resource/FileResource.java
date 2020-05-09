@@ -12,8 +12,6 @@ import java.io.File;
  */
 public class FileResource extends AbstractScheduleUpdateResource {
 
-    private static Logger logger = LoggerFactory.getLogger(FileResource.class);
-
     /**
      * 检查文件md5，保证在加载文件时文件完整
      */
@@ -34,6 +32,9 @@ public class FileResource extends AbstractScheduleUpdateResource {
     @Override
     public byte[] fetch() throws Exception {
         File file = resourceFile();
+        if (!file.exists()) {
+            return null;
+        }
         if (checkMD5) {
             File md5file = new File(file.getAbsolutePath() + "." + md5Suffix);
             if (!md5file.exists()) {
@@ -47,18 +48,25 @@ public class FileResource extends AbstractScheduleUpdateResource {
             }
             throw new RuntimeException("file " + file.getAbsoluteFile() + " md5sum mismatch");
         }
-        lastModified = file.lastModified();
-        fileLength = file.length();
+
         return FileUtils.readFileToByteArray(file);
     }
 
     @Override
     protected byte[] fetchIfChanged() throws Exception {
         File file = resourceFile();
+        if (!file.exists()) {
+            return null;
+        }
         if (file.length() == fileLength && file.lastModified() == lastModified) {
             return null;
         }
-        return fetch();
+        byte[] bs = fetch();
+        if (bs.length > 0) {
+            lastModified = file.lastModified();
+            fileLength = file.length();
+        }
+        return bs;
     }
 
     private File resourceFile() {

@@ -6,7 +6,6 @@ import com.aliyun.tauris.annotations.Required;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.lang.reflect.Array;
 import java.util.Collections;
 import java.util.List;
 

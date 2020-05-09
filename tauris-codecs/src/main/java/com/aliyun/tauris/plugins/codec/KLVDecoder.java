@@ -2,6 +2,7 @@ package com.aliyun.tauris.plugins.codec;
 
 import com.aliyun.tauris.DecodeException;
 import com.aliyun.tauris.TEvent;
+import com.aliyun.tauris.TEventFactory;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.utils.MapperUtil;
 
@@ -50,7 +51,7 @@ public class KLVDecoder extends AbstractDecoder {
             int valLen = MapperUtil.lbytes2int(data, cursor);
             cursor += 4;
             if (cursor + valLen > data.length) {
-                throw new DecodeException(String.format("klv decode error, value length %d out of range %d", valLen, data.length));
+                throw new DecodeException(String.format("klv decode error, value length %d out of range %d for key %s", valLen, data.length, key));
             }
             String val = new String(data, cursor, valLen, charset);
             cursor += valLen;
@@ -66,8 +67,8 @@ public class KLVDecoder extends AbstractDecoder {
     }
 
     @Override
-    public TEvent decode(String source) throws DecodeException {
-        TEvent event = new TEvent(source);
+    public TEvent decode(String source, TEventFactory factory) throws DecodeException {
+        TEvent event = factory.create(source);
         decode(source, event::set);
         return event;
     }

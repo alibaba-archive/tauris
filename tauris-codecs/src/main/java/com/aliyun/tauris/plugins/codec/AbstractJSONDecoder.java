@@ -22,12 +22,6 @@ public abstract class AbstractJSONDecoder extends AbstractDecoder {
         }
     }
 
-    protected TEvent jsonObjectToEvent(JSONObject object) throws DecodeException {
-        TEvent event = new TEvent();
-        copyObjectToEvent(event, object);
-        return event;
-    }
-
     protected static Object getValueByKey(Map<String, Object> data, String name) {
         if (data.containsKey(name)) {
             return data.get(name);

@@ -3,17 +3,7 @@ package com.aliyun.tauris.plugins.filter;
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
-import com.aliyun.tauris.formatter.SimpleFormatter;
-import com.aliyun.tauris.TPluginInitException;
 import com.aliyun.tauris.formatter.TEventFormatter;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by ZhangLei on 16/12/8.

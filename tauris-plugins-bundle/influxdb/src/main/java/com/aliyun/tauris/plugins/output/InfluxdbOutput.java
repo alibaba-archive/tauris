@@ -1,11 +1,13 @@
 package com.aliyun.tauris.plugins.output;
 
+import com.alibaba.fastjson.JSONObject;
 import com.aliyun.tauris.TEvent;
+import com.aliyun.tauris.TLogger;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
 import com.aliyun.tauris.TPluginInitException;
-import com.aliyun.tauris.metric.Counter;
-import com.aliyun.tauris.metric.Gauge;
+import com.aliyun.tauris.metrics.Counter;
+import com.aliyun.tauris.metrics.Gauge;
 import com.aliyun.tauris.plugins.output.influxdb.InfluxDBException;
 import com.aliyun.tauris.plugins.output.influxdb.InfluxDBFactory;
 import com.aliyun.tauris.plugins.output.influxdb.InfluxDBIOException;
@@ -20,8 +22,6 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.quartz.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -45,6 +45,10 @@ public class InfluxdbOutput extends BaseTOutput {
         flow, aggr
     }
 
+    public enum WalFormat {
+        line, json
+    }
+
     private static final DateTimeFormatter WAL_FILEPATH_PATTERN = DateTimeFormat.forPattern("yyyy/MM/dd/yyyyMMddHHmmss");
 
     private static Counter OUTPUT_COUNTER  = Counter.build().name("output_influxdb_total").labelNames("id", "measurement").help("influxdb output count").create().register();
@@ -53,7 +57,7 @@ public class InfluxdbOutput extends BaseTOutput {
     private static Gauge   SERIES_GUAGE    = Gauge.build().name("output_influxdb_series").labelNames("id", "measurement").help("influxdb series count").create().register();
     private static Gauge   WRITER_GUAGE    = Gauge.build().name("output_influxdb_writer_thread").labelNames("id", "measurement").help("influxdb writer thread count").create().register();
 
-    private static Logger logger = LoggerFactory.getLogger(InfluxdbOutput.class);
+    private TLogger logger;
 
     /**
      * url为空则只写wal不写influxdb
@@ -92,6 +96,9 @@ public class InfluxdbOutput extends BaseTOutput {
      * ${wafDir}/%{+yyyyMMddHHmmss}.dat
      */
     File walDir;
+
+
+    WalFormat walFormat = WalFormat.line;
 
     RunMode runMode = RunMode.flow;
 
@@ -137,6 +144,7 @@ public class InfluxdbOutput extends BaseTOutput {
     private BasicAuthenticator _authenticator;
 
     public void init() throws TPluginInitException {
+        this.logger = TLogger.getLogger(this);
         this._interval = Interval.from(interval);
         this._tagFields = new TagField[tagFields.length];
         for (int i = 0; i < tagFields.length; i++) {
@@ -185,6 +193,7 @@ public class InfluxdbOutput extends BaseTOutput {
         JobDetail job     = newJob(FlushJob.class).usingJobData(data).build();
         Trigger   trigger = newTrigger().withSchedule(cronSchedule(flushCronExpr)).build();
         scheduler.getContext().put("instance", this);
+        scheduler.getContext().put("logger", logger);
         scheduler.scheduleJob(job, trigger);
         scheduler.start();
     }
@@ -192,7 +201,7 @@ public class InfluxdbOutput extends BaseTOutput {
     @Override
     public void doWrite(TEvent event) {
         long currentTimeMode = System.currentTimeMillis() / 1000 / _interval.seconds();
-        long eventTimeMode  = event.getTimestamp().getMillis() / 1000 / _interval.seconds();
+        long eventTimeMode  = event.getTimestamp() / 1000 / _interval.seconds();
         if (eventTimeMode - currentTimeMode > 2) {
             // logger.warn("event's timestamp too early, timestamp is " + event.getTimestamp());
             return;
@@ -265,20 +274,22 @@ public class InfluxdbOutput extends BaseTOutput {
     @Override
     public void stop() {
         super.stop();
-        try {
-            scheduler.shutdown();
-            flush();
-            if (snapshotFile != null) {
-                try {
-                    snapStore.dumpToFile(snapshotFile);
-                } catch (IOException ex) {
-                    logger.warn(String.format("WARN[%s] dump snap map error", id()), ex);
+        if (scheduler != null) {
+            try {
+                scheduler.shutdown();
+                flush();
+                if (snapshotFile != null) {
+                    try {
+                        snapStore.dumpToFile(snapshotFile);
+                    } catch (IOException ex) {
+                        logger.warn(String.format("WARN[%s] dump snap map error", id()), ex);
+                    }
                 }
+                writeService.shutdownNow();
+                writeService.awaitTermination(3000, TimeUnit.MICROSECONDS);
+            } catch (SchedulerException | InterruptedException e) {
+                logger.error("shutdown failed", e);
             }
-            writeService.shutdownNow();
-            writeService.awaitTermination(3000, TimeUnit.MICROSECONDS);
-        } catch (SchedulerException | InterruptedException e) {
-            logger.error("shutdown failed", e);
         }
     }
 
@@ -295,7 +306,7 @@ public class InfluxdbOutput extends BaseTOutput {
     }
 
     private EventPoint createEventPoint(TEvent event) {
-        long     time = event.getTimestamp().getMillis();
+        long     time = event.getTimestamp();
         String[] ks   = new String[_tagFields.length];
         for (int i = 0; i < _tagFields.length; i++) {
             ks[i] = _tagFields[i].tagOf(event);
@@ -356,7 +367,16 @@ public class InfluxdbOutput extends BaseTOutput {
         if (walFile != null) {
             try (FileWriter fw = new FileWriter(walFile)) {
                 for (Point p : points.getPoints()) {
-                    fw.write(p.lineProtocol());
+                    if (walFormat == WalFormat.line) {
+                        fw.write(p.lineProtocol());
+                    } else {
+                        JSONObject line = new JSONObject();
+                        line.putAll(p.getFields());
+                        line.putAll(p.getTags());
+                        line.put("measurement", measurement);
+                        line.put("timestamp", p.getPrecision().toSeconds(p.getTime()));
+                        fw.write(line.toJSONString());
+                    }
                     fw.write('\n');
                 }
             } catch (IOException e) {
@@ -410,7 +430,7 @@ public class InfluxdbOutput extends BaseTOutput {
             try {
                 ((InfluxdbOutput) context.getJobDetail().getJobDataMap().get("instance")).flush(true);
             } catch (Exception e) {
-                logger.error("flush exception", e);
+                ((TLogger) context.getJobDetail().getJobDataMap().get("logger")).EXCEPTION(e);
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.aliyun.tauris.plugins.filter;
 
 import com.aliyun.tauris.TEvent;
+import com.aliyun.tauris.TLogger;
 import com.aliyun.tauris.plugins.filter.mutate.*;
 
 /**
@@ -28,6 +29,7 @@ public class MutateFilter extends BaseTFilter {
     URLEncode     urlencode;
 
     public void init() {
+        this.logger = TLogger.getLogger(this);
     }
 
     @Override

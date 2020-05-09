@@ -1,5 +1,6 @@
 package com.aliyun.tauris.plugins.filter.keymap;
 
+import com.aliyun.tauris.DefaultEvent;
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.TFilter;
 import com.aliyun.tauris.config.parser.Parser;
@@ -31,7 +32,7 @@ public class KeyMapFilterTest {
                 "    }";
 
         TFilter f = parseFilter(cfg);
-        TEvent  e = new TEvent();
+        TEvent e = new DefaultEvent();
         e.set("antibot_action", "test");
         Assert.assertNotNull(f.filter(e));
         Assert.assertEquals("report", e.get("antibot_action"));

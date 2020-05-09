@@ -1,10 +1,13 @@
 package com.aliyun.tauris.plugins.output;
 
-import com.aliyun.tauris.EncodeException;
-import com.aliyun.tauris.TEvent;
-import com.aliyun.tauris.TPluginInitException;
-import com.aliyun.tauris.metric.Gauge;
-import com.aliyun.tauris.utils.TLogger;
+import com.aliyun.tauris.*;
+import com.aliyun.tauris.metrics.Counter;
+import com.aliyun.tauris.metrics.Gauge;
+import org.apache.commons.pool2.BasePooledObjectFactory;
+import org.apache.commons.pool2.PooledObject;
+import org.apache.commons.pool2.impl.DefaultPooledObject;
+import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
 import java.io.IOException;
 import java.util.concurrent.*;
@@ -15,12 +18,15 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class BaseBatchOutput extends BaseTOutput {
 
-    private static Gauge WAITING_TASK_COUNT = Gauge.build().name("input_batch_waiting_tasks").labelNames("id").help("waiting task count").create().register();
-    private static Gauge IDLE_WORKER_COUNT  = Gauge.build().name("input_batch_idle_workers").labelNames("id").help("idle worker count").create().register();
+    private static Counter OUTPUT_BATCH_TOTAL         = Counter.build().name("output_batch_total").labelNames("id").help("batch output total").create().register();
+    private static Counter OUTPUT_ERROR_BATCH_TOTAL   = Counter.build().name("output_error_batch_total").labelNames("id").help("output error batch total").create().register();
+    private static Counter OUTPUT_BATCH_DISCARD_TOTAL = Counter.build().name("output_batch_discard_total").labelNames("id").help("batch output discard event total").create().register();
+    private static Counter OUTPUT_RETRY_COUNTER       = Counter.build().name("output_batch_retry_total").labelNames("id").help("batch output retry count").create().register();
+    private static Gauge   OUTPUT_TASKPOOL_USED       = Gauge.build().name("output_task_pool_used").labelNames("id").help("how many task in batch output task pool ").create().register();
+    private static Gauge   OUTPUT_TASKQUEUE_USED      = Gauge.build().name("output_task_queue_used").labelNames("id").help("how many task in batch output task queue").create().register();
 
     private final static int BATCH_SIZE     = 100; //
     private final static int DEFAULT_LINGER = 10;  // unit second
-
 
     protected int batchSize = BATCH_SIZE;
 
@@ -40,125 +46,142 @@ public abstract class BaseBatchOutput extends BaseTOutput {
     /**
      * 在任务队列中等待执行任务的最大数量，0表示无限制
      */
-    protected int maxTaskQueueSize = 10;
+    protected int maxTaskQueueSize = 8;
 
-    private TLogger        logger;
-    private BatchWriteTask task;
-    private Thread         forceFlushThread;
-    private Thread         executeThread;
-    private long           lastFlushTime;
+    /**
+     * 如果队列已满, 则丢弃新产生的任务, 默认为 false
+     */
+    protected boolean discardTaskIfQueueFull = false;
 
-    private BlockingQueue<BatchWriteTask> taskQueue;
-    private BlockingQueue<TaskWorker>     workerQueue;
+    /**
+     * 写入失败后的重试次数
+     */
+    protected int retryTimes = 0;
+
+    /**
+     * 写入失败后最小重试间隔时间, 单位毫秒
+     */
+    protected long retryInterval = 500;
+
+    /**
+     * 写入失败后最大重试间隔时间, 单位毫秒
+     */
+    protected long maxRetryInterval = 8000;
+
+    private TLogger logger;
+
+    private BatchTask                currentTask;
+    private BlockingQueue<BatchTask> taskQueue;
+
+    private BatchTaskPool taskPool;
+
+    private volatile boolean running;
 
     public BaseBatchOutput() {
         logger = TLogger.getLogger(this);
     }
 
     public void init() throws TPluginInitException {
-        if (maxTaskQueueSize > 0) {
-            taskQueue = new ArrayBlockingQueue<>(maxTaskQueueSize);
-        } else {
-            taskQueue = new LinkedBlockingDeque<>();
-        }
-        workerQueue = new ArrayBlockingQueue<>(writeThreadCount);
-        for (int i = 0; i < writeThreadCount; i++) {
-            workerQueue.add(new TaskWorker());
-        }
-        IDLE_WORKER_COUNT.labels(id()).set(writeThreadCount);
+        GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
+        poolConfig.setMaxTotal(maxTaskQueueSize);
+        poolConfig.setMaxIdle(maxTaskQueueSize);
+        poolConfig.setMinIdle(2);
 
-        executeThread = new Thread(() -> {
-            while (true) {
+        taskQueue = maxTaskQueueSize == 0 ? new LinkedBlockingQueue<>() : new ArrayBlockingQueue<>(maxTaskQueueSize);
+        taskPool = new BatchTaskPool(poolConfig);
+    }
+
+    @Override
+    public void start() throws Exception {
+        running = true;
+        new Thread(() -> {
+            while (running || currentTask != null) {
                 try {
-                    BatchWriteTask task = taskQueue.take();
-                    TaskWorker worker = workerQueue.take();
-                    worker.setTask(task);
-                    WAITING_TASK_COUNT.labels(id).dec();
-                    IDLE_WORKER_COUNT.labels(id).dec();
-                    new Thread(worker).start();
+                    BatchTask task = null;
+                    synchronized (BaseBatchOutput.this) {
+                        if (currentTask != null && !currentTask.isEmpty()) {
+                            task = currentTask;
+                            currentTask = null;
+                        }
+                    }
+                    if (task != null) {
+                        putTaskIntoQueue(task);
+                    }
+                    Thread.sleep(linger);
                 } catch (InterruptedException e) {
                     logger.WARN("task queue has been interrupted");
                     break;
+                } catch (Exception e) {
+                    logger.EXCEPTION(e);
                 }
             }
-        });
-        executeThread.start();
+        }).start();
 
-        forceFlushThread = new Thread(() -> {
-            while (true) {
-                synchronized (BaseBatchOutput.this) {
-                    if (task != null && (!task.isEmpty() && System.currentTimeMillis() - lastFlushTime > linger)) {
-                        flush(false);
-                    }
-                }
-                try {
-                    Thread.sleep(linger);
-                } catch (InterruptedException e) {
-                    break;
-                }
-            }
-        });
-        forceFlushThread.start();
+        for (int i = 0; i < writeThreadCount; i++) {
+            Thread t = new Thread(new BatchWorker(i), String.format("Thread-batch-output-%s-%d", id(), i));
+            t.setDaemon(true);
+            t.start();
+        }
     }
 
     @Override
     public synchronized void doWrite(TEvent event) {
         try {
-            if (task == null) {
-                task = newTask();
+            if (currentTask == null) {
+                currentTask = taskPool.borrowObject();
+                currentTask.active();
+                OUTPUT_TASKPOOL_USED.labels(id()).inc();
             }
-            int ec = task.append(event);
+            int ec = currentTask.append(event);
             if (ec >= batchSize) {
-                flush(writeThreadCount > 1);
+                putTaskIntoQueue(currentTask);
+                currentTask = null;
             }
+        } catch (TaskFullException e) {
+            taskQueue.add(currentTask);
         } catch (Exception e) {
             logger.EXCEPTION(e);
         }
     }
 
-    private synchronized void flush(boolean async) {
-        if (task != null && !task.isEmpty()) {
-            try {
-                if (async) {
-                    batchWriteAsync(task);
-                } else {
-                    batchWrite(task);
-                }
-                task = newTask();
-            } catch (Exception e) {
-                logger.EXCEPTION(e);
+    private void putTaskIntoQueue(BatchTask task) throws InterruptedException {
+        if (discardTaskIfQueueFull) {
+            if (!taskQueue.add(task)) {
+                logger.WARN("queue full, %d events has been lost");
+                OUTPUT_BATCH_DISCARD_TOTAL.labels(id()).inc(task.elementCount());
             }
-            lastFlushTime = System.currentTimeMillis();
-        }
-    }
-
-    private void batchWriteAsync(BatchWriteTask task) {
-        try {
+        } else {
             taskQueue.put(task);
-            WAITING_TASK_COUNT.labels(id).inc();
-        } catch (InterruptedException e) {
-            logger.ERROR(e);
         }
+        OUTPUT_TASKQUEUE_USED.labels(id()).inc();
     }
 
-    private void batchWrite(BatchWriteTask task) {
-        task.execute();
-    }
-
-
-    protected abstract BatchWriteTask newTask() throws Exception;
+    protected abstract BatchTask createTask() throws Exception;
 
     @Override
     public void stop() {
         super.stop();
-        forceFlushThread.interrupt();
-        flush(false);
-        executeThread.interrupt();
+        running = false;
+        while (!taskQueue.isEmpty()) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                break;
+            }
+        }
     }
 
-    protected abstract class BatchWriteTask {
+    private AtomicInteger tid = new AtomicInteger();
+
+    protected abstract class BatchTask {
+
+        private int id;
 
         private AtomicInteger elementCount = new AtomicInteger();
+
+        public BatchTask() {
+            id = tid.incrementAndGet();
+        }
 
         public int elementCount() {
             return elementCount.get();
@@ -168,7 +191,7 @@ public abstract class BaseBatchOutput extends BaseTOutput {
             return elementCount.get() == 0;
         }
 
-        protected final int append(TEvent event) throws Exception {
+        protected final int append(TEvent event) throws TaskFullException, IOException {
             try {
                 accept(event);
                 return elementCount.incrementAndGet();
@@ -180,27 +203,114 @@ public abstract class BaseBatchOutput extends BaseTOutput {
 
         protected abstract void accept(TEvent event) throws EncodeException, IOException;
 
-        protected abstract void execute();
-    }
+        protected abstract boolean execute();
 
-    private class TaskWorker implements Runnable {
-
-        private BatchWriteTask task;
-
-        public void setTask(BatchWriteTask task) {
-            this.task = task;
+        protected void destroy() {
+            passivate();
         }
 
+        protected int getId() {
+            return id;
+        }
+
+        protected void passivate() {
+            elementCount.set(0);
+            clear();
+        }
+
+        protected abstract void active();
+
+        protected abstract void clear();
+    }
+
+    protected class BatchWorker implements Runnable {
+
+        private int id;
+
+        public BatchWorker(int id) {
+            this.id = id;
+        }
+
+        @Override
         public void run() {
-            try {
-                task.execute();
-            } catch (Exception e) {
-                logger.EXCEPTION(e);
-            } finally {
-                this.task = null;
-                workerQueue.add(this);
-                IDLE_WORKER_COUNT.labels(id).inc();
+            while (running || !taskQueue.isEmpty()) {
+                BatchTask task = null;
+                try {
+                    task = taskQueue.take();
+
+                    OUTPUT_TASKQUEUE_USED.labels(id()).dec();
+                    int t = retryTimes;
+                    long i = retryInterval;
+                    while (t >= 0 && !task.execute() && running) {
+                        OUTPUT_RETRY_COUNTER.labels(id()).inc();
+                        Thread.sleep(i);
+                        if (i < maxRetryInterval) {
+                            i = i * 2;
+                        }
+                        t--;
+                    }
+                    if (t > 0) {
+                        OUTPUT_BATCH_TOTAL.labels(id()).inc();
+                    }
+                } catch (InterruptedException e) {
+                    logger.EXCEPTION(e);
+                } catch (Exception e) {
+                    logger.EXCEPTION(e);
+                    if (task != null) {
+                        OUTPUT_ERROR_BATCH_TOTAL.labels(id()).inc(task.elementCount());
+                    }
+                } finally {
+                    if (task != null) {
+                        try {
+                            taskPool.returnObject(task);
+                            OUTPUT_TASKPOOL_USED.labels(id()).dec();
+                        } catch (IllegalStateException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
+        }
+    }
+
+    private class BatchTaskFactory extends BasePooledObjectFactory<BatchTask> {
+
+        @Override
+        public BatchTask create() throws Exception {
+            return createTask();
+        }
+
+        @Override
+        public PooledObject<BatchTask> wrap(BatchTask task) {
+            return new DefaultPooledObject<>(task);
+        }
+
+        @Override
+        public void destroyObject(PooledObject<BatchTask> p) throws Exception {
+            p.getObject().destroy();
+        }
+
+        @Override
+        public void activateObject(PooledObject<BatchTask> p) throws Exception {
+            p.getObject().active();
+        }
+
+        @Override
+        public void passivateObject(PooledObject<BatchTask> p) throws Exception {
+            p.getObject().passivate();
+        }
+    }
+
+    private class BatchTaskPool extends GenericObjectPool<BatchTask> {
+        public BatchTaskPool(GenericObjectPoolConfig config) {
+            super(new BatchTaskFactory(), config);
+        }
+    }
+
+    protected static class TaskFullException extends Exception {
+
+        public TaskFullException(String message) {
+            super(message);
         }
     }
 }

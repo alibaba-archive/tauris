@@ -2,6 +2,7 @@ package com.aliyun.tauris.plugins.codec;
 
 import com.aliyun.tauris.DecodeException;
 import com.aliyun.tauris.TEvent;
+import com.aliyun.tauris.TEventFactory;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
 import com.opencsv.CSVParser;
@@ -52,8 +53,8 @@ public class CSVDecoder extends AbstractDecoder {
     }
 
     @Override
-    public TEvent decode(String source) throws DecodeException {
-        TEvent event = new TEvent(source);
+    public TEvent decode(String source, TEventFactory factory) throws DecodeException {
+        TEvent event = factory.create(source);
         decode(source, event::set);
         return event;
     }

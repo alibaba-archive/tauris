@@ -1,8 +1,6 @@
 package com.aliyun.tauris.config.parser;
 
-import com.aliyun.tauris.utils.TProperty;
 import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,13 +13,15 @@ public class HashValue extends Value {
 
     private List<KeyValue> elements;
 
+    private String repr;
+
     public HashValue(List<KeyValue> elements) {
         this.elements = elements;
     }
 
     @Override
     void _assignTo(TProperty property) throws Exception {
-        Helper m = Helper.m;
+        Helper m = new Helper();
         Map<String, Object> map = new HashMap<>();
         m.expand("{").next();
         for (KeyValue e : elements) {
@@ -30,21 +30,22 @@ public class HashValue extends Value {
             } else {
                 map.put(e.getKey().value, e.value());
             }
-            m.message(e.getKey().value).append(":");
+            m.message(String.format("\"%s\"", e.getKey().value)).append(":");
 
             Object val = e.value();
             if (val == null) {
                 m.append("null").trim().text(",").next();
             } else {
-                m.append(e.value().toString()).trim().text(",").next();
+                m.append(e.value().toString()).text(",").next();
             }
         }
         m.collapse("}").next();
         property.set(map);
+        repr = m.toString();
     }
 
     @Override
     public String toString() {
-        return "";
+        return repr;
     }
 }

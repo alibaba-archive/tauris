@@ -38,16 +38,22 @@ public class TPluginResolver {
         return factory;
     }
 
-    public TPlugin resolvePlugin(Class<? extends TPlugin> type, String pluginName) {
-        return resolvePlugin(typeName(type), pluginName);
+    public TPlugin resolvePlugin(Class<? extends TPlugin> type, String pluginName, String minorName) {
+        return resolvePlugin(typeName(type), pluginName, minorName);
     }
 
-    public TPlugin resolvePlugin(String typeName, String pluginName) {
+    /**
+     * 根据插件类型名和插件名返回插件实例对象
+     * @param typeName input, filter, output 等
+     * @param pluginName http, file, tailer 等
+     * @return 插件类实例
+     */
+    public TPlugin resolvePlugin(String typeName, String pluginName, String minorName) {
         TPluginFactory factory = factories.get(typeName);
         if (factory == null) {
             throw new IllegalArgumentException("unknown plugin type:" + typeName);
         }
-        return factory.newInstance(pluginName);
+        return factory.newInstance(pluginName, minorName);
     }
 
     public static Class<? extends TPlugin> resolvePluginType(Class<? extends TPlugin> clazz) {

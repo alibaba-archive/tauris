@@ -1,11 +1,13 @@
 package com.aliyun.tauris.plugins.output;
 
 import com.aliyun.tauris.EncodeException;
+import com.aliyun.tauris.TEncoder;
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
-import com.aliyun.tauris.formatter.SimpleFormatter;
+import com.aliyun.tauris.formatter.EventFormatter;
 import com.aliyun.tauris.TPluginInitException;
+import com.aliyun.tauris.plugins.codec.PlainEncoder;
 import org.productivity.java.syslog4j.Syslog;
 import org.productivity.java.syslog4j.SyslogConstants;
 import org.productivity.java.syslog4j.SyslogIF;
@@ -31,11 +33,13 @@ public class SyslogOutput extends BaseTOutput implements SyslogConstants {
     @Required
     int port;
 
-    SimpleFormatter level = SimpleFormatter.build("info");
+    TEncoder codec = new PlainEncoder();
+
+    EventFormatter level = EventFormatter.build("info");
 
     private SyslogIF syslog;
 
-    public void init() throws TPluginInitException  {
+    public void init() throws TPluginInitException {
         if (protocol == null || "".equals(protocol.trim())) {
             throw new TPluginInitException("Instance protocol cannot be null or empty");
         }

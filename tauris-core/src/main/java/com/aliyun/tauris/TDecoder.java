@@ -1,10 +1,13 @@
 package com.aliyun.tauris;
 
 
+import com.aliyun.tauris.annotations.Type;
+
 /**
  * 将文字或字符流解码成event
  * Created by ZhangLei on 16/12/7.
  */
+@Type
 public interface TDecoder extends TPlugin {
 
     default void init() {};
@@ -15,7 +18,7 @@ public interface TDecoder extends TPlugin {
      * @return
      * @throws DecodeException
      */
-    TEvent decode(byte[] source) throws DecodeException;
+    TEvent decode(byte[] source, TEventFactory factory) throws DecodeException;
 
     /**
      * 用于中input中解码一条消息为event
@@ -23,7 +26,7 @@ public interface TDecoder extends TPlugin {
      * @return
      * @throws DecodeException
      */
-    TEvent decode(String source) throws DecodeException;
+    TEvent decode(String source, TEventFactory factory) throws DecodeException;
 
     /**
      * 用于filter

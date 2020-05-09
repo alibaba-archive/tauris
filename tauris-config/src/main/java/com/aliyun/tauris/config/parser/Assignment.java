@@ -1,7 +1,5 @@
 package com.aliyun.tauris.config.parser;
 
-import com.aliyun.tauris.utils.TProperty;
-
 /**
  * Created by jdziworski on 30.03.16.
  */

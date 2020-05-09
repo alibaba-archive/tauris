@@ -5,22 +5,18 @@ import com.aliyun.tauris.TEncoder;
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.TOutput;
 import com.aliyun.tauris.plugins.codec.PlainEncoder;
-import com.aliyun.tauris.expression.TExpression;
-import com.aliyun.tauris.metric.CounterWidget;
+import com.alibaba.texpr.TExpression;
 
 /**
  * Created by ZhangLei on 16/12/10.
  */
 public abstract class BaseTOutput extends AbstractPlugin implements TOutput {
 
-    protected TEncoder codec = new PlainEncoder();
-
-    protected CounterWidget counter;
+//    protected TEncoder codec = new PlainEncoder();
 
     protected TExpression on;
 
-    @Override
-    public boolean check(TEvent event) {
+    protected boolean check(TEvent event) {
         if (on != null) {
             return on.check(event);
         }
@@ -47,4 +43,7 @@ public abstract class BaseTOutput extends AbstractPlugin implements TOutput {
     protected void doWrite(TEvent event) {
     }
 
+//    public TEncoder getCodec() {
+//        return codec;
+//    }
 }

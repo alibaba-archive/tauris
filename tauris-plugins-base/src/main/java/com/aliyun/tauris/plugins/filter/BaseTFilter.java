@@ -1,16 +1,11 @@
 package com.aliyun.tauris.plugins.filter;
 
 
-import com.aliyun.tauris.AbstractPlugin;
-import com.aliyun.tauris.TEvent;
-import com.aliyun.tauris.TFilter;
-import com.aliyun.tauris.annotations.Required;
+import com.aliyun.tauris.*;
 import com.aliyun.tauris.annotations.ValueType;
-import com.aliyun.tauris.formatter.SimpleFormatter;
+import com.aliyun.tauris.formatter.EventFormatter;
 import com.aliyun.tauris.utils.EventLogging;
-import com.aliyun.tauris.expression.TExpression;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.alibaba.texpr.TExpression;
 
 import java.util.Map;
 
@@ -19,7 +14,8 @@ import java.util.Map;
  */
 public abstract class BaseTFilter extends AbstractPlugin implements TFilter {
 
-    private static Logger LOG = LoggerFactory.getLogger(BaseTFilter.class);
+
+    protected TLogger logger;
 
     protected EventLogging logging;
     protected TExpression  on;
@@ -27,20 +23,31 @@ public abstract class BaseTFilter extends AbstractPlugin implements TFilter {
     /**
      * 当filter 结果为true时，增加新field
      */
-    @ValueType(SimpleFormatter.class)
-    protected Map<String, SimpleFormatter> newFields;
+    @ValueType(EventFormatter.class)
+    protected Map<String, EventFormatter> newFields;
 
     /**
      * 当filter结果为false时丢弃整个事件
      */
     protected boolean discard;
 
+
+    public void init() throws TPluginInitException {
+        logger = TLogger.getLogger(this);
+    }
+
     public boolean test(TEvent event) {
         if (on != null) {
             try {
                 return on.check(event);
             } catch (RuntimeException e) {
-                LOG.error("expression `" + on.toString() + " ` execute error", e);
+                String expr = "<??>";
+                try {
+                    expr = on.toString();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                logger.ERROR("expression of plugin %s `" + expr + " ` execute error ", e, id());
                 throw e;
             }
         }
@@ -58,7 +65,7 @@ public abstract class BaseTFilter extends AbstractPlugin implements TFilter {
                 return null;
             }
             if (success && newFields != null) {
-                for (Map.Entry<String, SimpleFormatter> e: newFields.entrySet()) {
+                for (Map.Entry<String, EventFormatter> e: newFields.entrySet()) {
                     String val = e.getValue().format(event);
                     if (val != null) {
                         event.set(e.getKey(), val);
@@ -69,7 +76,7 @@ public abstract class BaseTFilter extends AbstractPlugin implements TFilter {
         return event;
     }
 
-    abstract boolean doFilter(TEvent event);
+    protected abstract boolean doFilter(TEvent event);
 
     @Override
     public void release() {

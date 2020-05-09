@@ -1,5 +1,7 @@
 package com.aliyun.tauris.plugins.codec;
 
+import com.aliyun.tauris.DefaultEvent;
+import com.aliyun.tauris.DefaultEventFactory;
 import com.aliyun.tauris.TEvent;
 import org.junit.Assert;
 import org.junit.Test;
@@ -9,7 +11,7 @@ import java.io.ByteArrayOutputStream;
 /**
  * Class KVCodecTest
  *
- * @author zhanglei
+ * @author chuanshi.zl<chuanshi.zl@alibaba-inc.com>
  * @date 2018-09-05
  */
 public class CSVCodecTest {
@@ -22,14 +24,14 @@ public class CSVCodecTest {
         encoder.init();
 
 
-        TEvent event1 = new TEvent();
+        TEvent event1 = new DefaultEvent();
         event1.set("pre", "k");
         event1.set("k1", "11");
         event1.set("k2", "1\t2");
         event1.set("k3", "1\f3");
         event1.set("k4", "14");
 
-        TEvent event2 = new TEvent();
+        TEvent event2 = new DefaultEvent();
         event2.set("pre", "k");
         event2.set("k1", "1\b2");
         event2.set("k2", "2\b2");
@@ -60,7 +62,7 @@ public class CSVCodecTest {
             if (line.trim().isEmpty()) {
                 continue;
             }
-            TEvent e = decoder.decode(line);
+            TEvent e = decoder.decode(line, new DefaultEventFactory());
             String pre = (String)e.get("pre");
             Assert.assertNotNull(e.get(pre + "1"));
             Assert.assertEquals(events[i].get(pre + "1"), e.get(pre + "1"));

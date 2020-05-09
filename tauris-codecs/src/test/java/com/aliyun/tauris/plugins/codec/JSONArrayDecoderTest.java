@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.tauris.DecodeException;
+import com.aliyun.tauris.DefaultEvent;
 import com.aliyun.tauris.TEvent;
 import org.junit.Assert;
 import org.junit.Before;
@@ -42,7 +43,7 @@ public class JSONArrayDecoderTest {
     public void test() throws DecodeException {
         JSONArrayDecoder decoder = new JSONArrayDecoder();
 
-        TEvent event = new TEvent();
+        TEvent event = new DefaultEvent();
         decoder.decode(stringSource, event, "array");
 
         JSONArray ary = (JSONArray)event.get("array");
@@ -53,7 +54,7 @@ public class JSONArrayDecoderTest {
     public void test2() throws DecodeException {
         JSONArrayDecoder decoder = new JSONArrayDecoder();
 
-        TEvent event = new TEvent();
+        TEvent event = new DefaultEvent();
         decoder.decode(objectSource, event, "array");
         JSONArray ary = (JSONArray)event.get("array");
         Assert.assertEquals(2, ary.size());

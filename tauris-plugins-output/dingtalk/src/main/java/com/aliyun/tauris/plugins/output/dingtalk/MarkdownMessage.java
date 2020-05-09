@@ -10,6 +10,7 @@ import com.hubspot.jinjava.Jinjava;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.IllegalFormatException;
 import java.util.Map;
@@ -59,7 +60,8 @@ public class MarkdownMessage implements TDingMessage {
     public String format(TEvent event) throws IllegalFormatException {
         HashMap<String, Object> data = new HashMap<String, Object>() {
             {
-                put("__time__", event.getTimestamp().toDate());
+                put("__time__", event.getTimestamp());
+                put("__date__", new Date(event.getTimestamp()));
                 put("__meta__", event.getMeta());
                 putAll(event.getFields());
             }

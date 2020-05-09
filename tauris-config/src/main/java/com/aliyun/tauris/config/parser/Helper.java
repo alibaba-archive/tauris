@@ -63,7 +63,20 @@ public class Helper {
     }
 
     public Helper append(String text) {
-        this.buffer.append(' ').append(text);
+        String[] lines = text.split("\n");
+        this.buffer.append(' ').append(lines[0]);
+        if (lines.length > 1) {
+            this.buffer.append('\n');
+        }
+        for (int i = 1; i < lines.length; i++) {
+            int t = 0;
+            while (t < indent) {
+                this.buffer.append('\t');
+                t++;
+            }
+            this.buffer.append(lines[i]);
+            this.buffer.append('\n');
+        }
         return this;
     }
 

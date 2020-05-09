@@ -15,7 +15,7 @@ public abstract class AbstractDecoder implements TDecoder {
     protected Charset charset = Charset.defaultCharset();
 
     @Override
-    public TEvent decode(byte[] source) throws DecodeException {
-        return decode(new String(source, charset));
+    public TEvent decode(byte[] source, TEventFactory factory) throws DecodeException {
+        return decode(new String(source, charset), factory);
     }
 }

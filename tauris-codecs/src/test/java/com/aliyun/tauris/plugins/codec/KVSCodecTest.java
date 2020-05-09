@@ -1,5 +1,7 @@
 package com.aliyun.tauris.plugins.codec;
 
+import com.aliyun.tauris.DefaultEvent;
+import com.aliyun.tauris.DefaultEventFactory;
 import com.aliyun.tauris.TEvent;
 import org.junit.Assert;
 import org.junit.Test;
@@ -9,7 +11,7 @@ import java.io.ByteArrayOutputStream;
 /**
  * Class KVCodecTest
  *
- * @author zhanglei
+ * @author chuanshi.zl<chuanshi.zl@alibaba-inc.com>
  * @date 2018-09-05
  */
 public class KVSCodecTest {
@@ -20,14 +22,14 @@ public class KVSCodecTest {
         encoder.kvSeperator = kvs;
         encoder.delimiter = '\n';
         encoder.quoteMode = quoteMode;
-        TEvent event1 = new TEvent();
+        TEvent event1 = new DefaultEvent();
         event1.set("pre", "k");
         event1.set("k1", "11");
         event1.set("k2", "12\n");
         event1.set("k3", "13");
         event1.set("k4", "14\n");
 
-        TEvent event2 = new TEvent();
+        TEvent event2 = new DefaultEvent();
         event2.set("pre", "j");
         event2.set("j1", "21");
         event2.set("j2", "22");
@@ -56,7 +58,7 @@ public class KVSCodecTest {
             if (line.trim().isEmpty()) {
                 continue;
             }
-            TEvent e = decoder.decode(line);
+            TEvent e = decoder.decode(line, new DefaultEventFactory());
             String pre = (String)e.get("pre");
             Assert.assertEquals(events[i].get(pre + "1"), e.get(pre + "1"));
             Assert.assertEquals(events[i].get(pre + "2"), e.get(pre + "2"));
@@ -80,7 +82,7 @@ public class KVSCodecTest {
         encoder.kvSeperator = '\1';
         encoder.quoteMode = KVQuoteMode.base64;
 
-        TEvent event = new TEvent();
+        TEvent event = new DefaultEvent();
         event.set("pre", "k\1");
         event.set("k1", "11\2");
         event.set("k2", "12\3");
@@ -96,7 +98,7 @@ public class KVSCodecTest {
         decoder.fieldSeperator = '\0';
         decoder.kvSeperator = '\1';
 
-        TEvent event2 = decoder.decode(encoded);
+        TEvent event2 = decoder.decode(encoded, new DefaultEventFactory());
 
         for (String k : event.getFields().keySet()) {
             Assert.assertEquals(event.get(k), event2.get(k));

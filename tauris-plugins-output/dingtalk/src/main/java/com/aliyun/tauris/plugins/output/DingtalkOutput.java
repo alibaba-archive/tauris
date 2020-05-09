@@ -4,7 +4,7 @@ import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.TPluginInitException;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
-import com.aliyun.tauris.metric.Counter;
+import com.aliyun.tauris.metrics.Counter;
 import com.aliyun.tauris.plugins.output.dingtalk.TDingMessage;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;

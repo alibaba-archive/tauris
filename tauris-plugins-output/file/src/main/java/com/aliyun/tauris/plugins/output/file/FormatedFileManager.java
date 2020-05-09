@@ -2,7 +2,7 @@ package com.aliyun.tauris.plugins.output.file;
 
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.annotations.Name;
-import com.aliyun.tauris.formatter.SimpleFormatter;
+import com.aliyun.tauris.formatter.EventFormatter;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +18,7 @@ import java.util.Set;
 @Name("formatted")
 public class FormatedFileManager extends AbstractFileManager {
 
-    SimpleFormatter path;
+    EventFormatter path;
 
     /**
      * 若文件在n秒内未写入, 则关闭文件.
@@ -30,7 +30,7 @@ public class FormatedFileManager extends AbstractFileManager {
     public FormatedFileManager() {
     }
 
-    public FormatedFileManager(SimpleFormatter format) {
+    public FormatedFileManager(EventFormatter format) {
         this.path = format;
     }
 

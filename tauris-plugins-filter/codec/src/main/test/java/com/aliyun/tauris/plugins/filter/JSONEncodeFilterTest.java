@@ -5,12 +5,11 @@ package com.aliyun.tauris.plugins.filter;
  */
 
 import com.alibaba.fastjson.JSON;
+import com.aliyun.tauris.DefaultEvent;
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.TFilter;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.Base64;
 
 /**
  * @author yundun-waf-dev
@@ -23,7 +22,7 @@ public class JSONEncodeFilterTest {
         String cfg = "encode { encoder => json { target => 'tgt'; } }";
         TFilter filter = ConfigTestBuilder.buildFilters(cfg).get(0);
         filter.prepare();
-        TEvent event = new TEvent("");
+        TEvent event = new DefaultEvent("");
         event.set("a", "1");
         event.set("b", "2");
         String jstxt = JSON.toJSONString(event.getFields());

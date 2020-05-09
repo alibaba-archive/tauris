@@ -6,8 +6,6 @@ import com.aliyun.tauris.annotations.Required;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * 生成 md5, sha1, hashcode
  * Created by ZhangLei on 16/12/11.

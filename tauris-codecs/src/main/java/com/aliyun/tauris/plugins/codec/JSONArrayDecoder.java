@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.aliyun.tauris.DecodeException;
 import com.aliyun.tauris.TEvent;
+import com.aliyun.tauris.TEventFactory;
 import com.aliyun.tauris.annotations.Name;
 
 /**
@@ -15,7 +16,7 @@ import com.aliyun.tauris.annotations.Name;
 public class JSONArrayDecoder extends AbstractJSONDecoder {
 
     @Override
-    public TEvent decode(String source) throws DecodeException {
+    public TEvent decode(String source, TEventFactory factory) throws DecodeException {
         throw new UnsupportedOperationException();
     }
 

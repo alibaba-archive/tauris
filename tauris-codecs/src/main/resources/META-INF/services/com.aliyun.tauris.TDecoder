@@ -1,4 +1,0 @@
-com.aliyun.tauris.plugins.codec.JSONDecoder
-com.aliyun.tauris.plugins.codec.PlainDecoder
-com.aliyun.tauris.plugins.codec.KVSDecoder
-com.aliyun.tauris.plugins.codec.CSVDecoder

@@ -29,6 +29,12 @@ public class DefaultEventTest {
         Assert.assertEquals("GET", e.get("request.method"));
         Assert.assertEquals("world", e.get("request.headers.test.hello"));
 
+        e.set("request.headers.test.hello", "testcase");
+        try {
+            e.set("request.headers.test.hello.gg.ee", "testcase");
+            Assert.assertFalse(true);
+        } catch (IllegalArgumentException ex) {}
+
         Assert.assertEquals("testcase", e.get("request.headers.test.hello"));
 
         Map m = (Map)e.remove("request.headers.test");

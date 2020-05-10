@@ -18,7 +18,7 @@ lib_dir = os.path.join(HOME, "lib")
 option_file = os.path.join(HOME, "config", "tauris.jvmoptions")
 
 def make_classpath():
-    classpath = os.path.join(lib_dir, "common") + "/*:" + os.path.join(lib_dir, "shared/*")
+    classpath = lib_dir + "/*"
     cp = os.environ.get('CLASSPATH', "")
     if cp:
         classpath = cp + ":" + classpath

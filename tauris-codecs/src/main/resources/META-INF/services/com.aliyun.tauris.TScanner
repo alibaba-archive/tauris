@@ -1,6 +1,0 @@
-com.aliyun.tauris.plugins.codec.FullTextScannerBuilder
-com.aliyun.tauris.plugins.codec.KVFlowScannerBuilder
-com.aliyun.tauris.plugins.codec.LineScannerBuilder
-com.aliyun.tauris.plugins.codec.MatchlineScannerBuilder
-com.aliyun.tauris.plugins.codec.MsgPackScannerBuilder
-com.aliyun.tauris.plugins.codec.PatternScannerBuilder

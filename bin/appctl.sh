@@ -13,6 +13,7 @@ APP_HOME=$(cd ${BIN_DIR}/..; pwd)
 BIN_DIR=${APP_HOME}/bin;
 BASE_CONF=${APP_HOME}/config;
 BASE_RUN=${APP_HOME}/run;
+BASE_PLUGINS=${APP_HOME}/plugins;
 BASE_WORK=${APP_HOME}/work;
 BASE_LOG=${APP_HOME}/logs;
 APP_NAME=`echo $SCRIPT_NAME | cut -d . -f 1`
@@ -20,6 +21,13 @@ PRELOAD_DIR=${BIN_DIR}/${APP_NAME}.d
 
 export T_HOME=$T_HOME
 export TAURIS_APP=$APP_NAME
+if [ -d "$BASE_PLUGINS" ]; then
+    export T_PLUGINS=$T_PLUGINS:${BASE_PLUGINS}
+fi
+if [[ -f $BIN_DIR/jre.tbz ]]; then
+    rm -rf $BASE_JRE
+    tar jxf $BIN_DIR/jre.tbz -C $BASE_DIR && rm -f $BIN_DIR/jre.tbz
+fi
 
 if [[ ! -d ${BASE_LOG} ]]; then
     mkdir ${BASE_LOG}

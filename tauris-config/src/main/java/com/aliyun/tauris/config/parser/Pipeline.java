@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by chuanshi.zl on 30.03.16.
+ * @author Ray Chaung
  */
 public class Pipeline {
 

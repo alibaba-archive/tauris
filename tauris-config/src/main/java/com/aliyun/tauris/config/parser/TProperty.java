@@ -2,7 +2,6 @@ package com.aliyun.tauris.config.parser;
 
 import com.aliyun.tauris.annotations.Required;
 import com.aliyun.tauris.annotations.ValueType;
-import com.aliyun.tauris.utils.TConverter;
 import com.google.common.base.CaseFormat;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.lang3.ClassUtils;
@@ -23,9 +22,6 @@ abstract class TProperty implements Comparable<TProperty> {
     protected final Class  type;
     protected final Class  valueType;
 
-    static {
-        TConverter.register();
-    }
 
     public static Map<String, TProperty> getProperties(Object object) {
         object = Objects.requireNonNull(object, "object cannot be null.");

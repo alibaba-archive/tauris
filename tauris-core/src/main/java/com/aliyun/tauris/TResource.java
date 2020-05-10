@@ -3,7 +3,6 @@ package com.aliyun.tauris;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Type;
 import com.google.common.base.CaseFormat;
-import org.reflections.Reflections;
 
 import java.nio.charset.Charset;
 import java.util.function.Consumer;
@@ -16,17 +15,11 @@ public abstract class TResource implements TPlugin {
 
     public static final String P_MD5SUM = "__md5sum__";
 
-    private static Reflections reflections;
-
     protected TResourceURI uri;
 
     protected Charset charset = Charset.defaultCharset();
 
     public abstract byte[] fetch() throws Exception;
-
-    public String fetchText() throws Exception {
-        return new String(fetch(), charset);
-    }
 
     public abstract void watch(Consumer<byte[]> consumer);
 
@@ -39,12 +32,8 @@ public abstract class TResource implements TPlugin {
     }
 
     public static TResource valueof(String uri) {
-        if (reflections == null) {
-            reflections = new Reflections(TResource.class.getPackage().getName(), TResource.class.getClassLoader());
-        }
-
         TResourceURI u = TResourceURI.valueOf(uri);
-        for (Class<? extends TResource> c : reflections.getSubTypesOf(TResource.class)) {
+        for (Class<? extends TResource> c : TPluginResolver.resolver().resolveSubTypes(TResource.class)) {
             if (schemeName(c).equals(u.getScheme())) {
                 try {
                     TResource r = c.newInstance();

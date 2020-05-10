@@ -1,16 +1,18 @@
 package com.aliyun.tauris.config.parser;
 
 import com.aliyun.tauris.TPlugin;
-import com.aliyun.tauris.TPluginFactory;
 import com.aliyun.tauris.TPluginGroup;
+import com.aliyun.tauris.TPluginNotFoundException;
+import com.aliyun.tauris.config.TConfigError;
 import com.aliyun.tauris.config.TConfigException;
 import com.aliyun.tauris.TPluginResolver;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * Created by zhanglei
+ * Created by jdziworski on 30.03.16.
  */
 public class PluginGroup {
     private final String       typeName;
@@ -29,9 +31,15 @@ public class PluginGroup {
     }
 
     public TPluginGroup build(Class<? extends TPluginGroup> groupClass) {
-        TPluginFactory factory = TPluginResolver.defaultResolver.resolvePluginFactory(typeName);
         Helper.m.text(typeName).expand("{").next();
-        List<TPlugin> plugins = this.plugins.stream().map(plugin -> plugin.build(factory)).collect(Collectors.toList());
+        List<TPlugin> plugins = this.plugins.stream().map(plugin -> {
+            try {
+                TPlugin real = TPluginResolver.resolver().resolve(typeName, plugin.getName());
+                return plugin.marshal(Objects.requireNonNull(real, String.format("%s/%s not found", typeName, plugin.getName())));
+            } catch (TPluginNotFoundException e){
+                throw new TConfigError(e.getMessage(), e);
+            }
+        }).collect(Collectors.toList());
         try {
             TPluginGroup g = groupClass.getConstructor(List.class).newInstance(plugins);
             this.assignments.assignTo(g);

@@ -5,9 +5,13 @@ import com.aliyun.tauris.config.parser.Helper;
 import org.apache.commons.cli.*;
 import org.apache.log4j.*;
 import org.apache.log4j.xml.DOMConfigurator;
+import sun.misc.Signal;
 
 import java.io.*;
 import java.lang.management.ManagementFactory;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
@@ -30,7 +34,7 @@ public class Bootstrap {
         options.addOption(Option.builder("f").longOpt("file").desc("Load the rule from a specific file <rule>").build());
         options.addOption(Option.builder("e").longOpt("execute").desc("Use the given <rule> as the rule. Same syntax as the rule file").build());
         options.addOption(Option.builder("t").longOpt("test").desc("Check configuration for valid syntax and then exit").build());
-        options.addOption(Option.builder("P").longOpt("profiler").desc("Collection plugin's performance info").build());
+        options.addOption(Option.builder("P").hasArg(true).argName("directory").longOpt("plugin").desc("plugin directory").build());
         options.addOption(Option.builder("p").hasArg(true).argName("app.pid").longOpt("pid").desc("Pid file path").build());
         options.addOption(Option.builder("m").hasArg(true).argName("port[:path]").longOpt("metric").desc("Enable metric server, default path is '/metrics'").build());
         options.addOption(Option.builder("M").hasArg(true).argName("file[:interval]").longOpt("metricF").desc("Dump metrics into a <file> every <interval> seconds, interval default 15").build());
@@ -137,10 +141,36 @@ public class Bootstrap {
         }
     }
 
-    private static void profiler(CommandLine cmd) {
-        if (cmd.hasOption("profiler")) {
-            System.setProperty("tauris.filter.profiler", "true");
+    private static File[] pluginDirectories(CommandLine cmd) {
+        Set<File> directories = new HashSet<>();
+        Consumer<String> ad = directory -> {
+            directory = directory.trim();
+            for (String d: directory.split(":")) {
+                if (!d.trim().isEmpty()) {
+                    File fd =  new File(d.trim());
+                    if (fd.isDirectory()) {
+                        directories.add(new File(d.trim()));
+                    }
+                }
+            }
+        };
+        String directory = null;
+        if (cmd.hasOption("plugin")) {
+            directory = cmd.getOptionValue("plugin");
+            if (!directory.trim().isEmpty()) {
+                ad.accept(directory);
+            }
         }
+        directory = System.getProperty(TPluginResolver.OPT_TAURIS_PLUGIN_DIRECTORY);
+        if (directory != null && !directory.isEmpty()) {
+            ad.accept(directory);
+        }
+
+        directory = System.getenv(TPluginResolver.ENV_TAURIS_PLUGIN_DIRECTORY);
+        if (directory != null && !directory.isEmpty()) {
+            ad.accept(directory);
+        }
+        return directories.toArray(new File[directories.size()]);
     }
 
     private static void metrics(CommandLine cmd) {
@@ -275,7 +305,7 @@ public class Bootstrap {
             config = new TConfigFile(new File(rule));
         }
         System.out.println("...................................................");
-        Tauris tauris = new Tauris(config);
+        Tauris tauris = new Tauris(config, pluginDirectories(cmd));
         try {
             tauris.load();
         } catch (Exception e) {
@@ -287,11 +317,11 @@ public class Bootstrap {
         if (test) {
             System.exit(0);
         }
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            System.out.println("tauris is stopping");
+        Signal.handle(new Signal("TERM"), signal -> {
+            System.out.println("signal TERM received");
             tauris.stop();
-            System.out.println("tauris has been stopped");
-        }));
+            System.exit(0);
+        });
         try {
             tauris.start();
         } catch (Exception e) {

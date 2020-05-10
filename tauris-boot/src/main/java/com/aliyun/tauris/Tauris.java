@@ -1,11 +1,13 @@
 package com.aliyun.tauris;
 
 import com.aliyun.tauris.config.TConfig;
+import com.aliyun.tauris.config.TPluginResolverInitializer;
 import com.aliyun.tauris.config.parser.Helper;
 import com.aliyun.tauris.config.parser.Parser;
 import com.aliyun.tauris.config.parser.Pipeline;
 import com.aliyun.tauris.metrics.MetricServer;
 
+import java.io.File;
 import java.util.concurrent.locks.ReentrantLock;
 
 
@@ -24,10 +26,11 @@ public class Tauris {
 
     private final ReentrantLock lock = new ReentrantLock();
 
-    public Tauris(TConfig config) {
-        this.config = config;
+    public Tauris(TConfig config, File...pluginDirs) {
         this.metricServer = MetricServer.createMetricServer();
         this.logger = TLogger.getLogger(this);
+        this.config = config;
+        TPluginResolverInitializer.initialize(Thread.currentThread().getContextClassLoader(), pluginDirs);
     }
 
     public void load() throws Exception {

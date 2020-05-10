@@ -23,8 +23,8 @@ class PluginValue extends Value {
         //此属性是一个TPlugin对象
         Helper.m.expand().next();
         //resolvePlugin(com.aliyun.tauris.TEncoder, plugin.name)
-        TPlugin instance = TPluginResolver.defaultResolver.resolvePlugin((Class<? extends TPlugin>)property.getType(), plugin.getMajorName(), plugin.getMinorName());
-        plugin.build(instance);
+        TPlugin instance = TPluginResolver.resolver().resolve((Class<? extends TPlugin>)property.getType(), plugin.getName());
+        plugin.marshal(instance);
         property.set(instance);
         Helper.m.collapse();
     }

@@ -1,5 +1,0 @@
-com.aliyun.tauris.resource.TResourceConverter
-com.aliyun.tauris.utils.converters.PatternConverter
-com.aliyun.tauris.utils.converters.CharsetConverter
-com.aliyun.tauris.utils.converters.TExprConverter
-com.aliyun.tauris.formatter.SimpleFormatterConverter

@@ -28,7 +28,7 @@ JAVA=java
 if [[ -e ${JAVA_HOME}/bin/java ]]; then
     JAVA=${JAVA_HOME}/bin/java
 fi
-
+export T_PLUGINS=$T_PLUGINS:$BASE_PLUGINS
 export CLASSPATH=`$ENV_PY cp`
 export JAVA_TOOL_OPTIONS=`$ENV_PY vm $TAURIS_APP`
 exec -a $TAURIS_APP ${JAVA} -server ${CLASS_NAME} $@

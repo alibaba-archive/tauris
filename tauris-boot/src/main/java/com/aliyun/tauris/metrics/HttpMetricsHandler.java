@@ -1,5 +1,7 @@
 package com.aliyun.tauris.metrics;
 
+import com.aliyun.tauris.metrics.Collector;
+import com.aliyun.tauris.metrics.CollectorRegistry;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -22,22 +24,19 @@ public class HttpMetricsHandler extends SimpleChannelInboundHandler<HttpRequest>
     private String path;
     private int startTime;
 
-    private boolean noComment;
-
     public HttpMetricsHandler(CollectorRegistry registry, String path) {
         this.registry = registry;
         this.path = path;
         this.startTime = (int) (System.currentTimeMillis() / 1000);
-        this.noComment = "false".equals(System.getProperty("tauris.metric.comment", "false"));
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, HttpRequest req) throws Exception {
-        if (!req.method().name().equalsIgnoreCase("get") || !req.uri().startsWith(this.path)) {
+        if (!req.method().name().equalsIgnoreCase("get") || !req.uri().equals(this.path)) {
             DefaultHttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.NOT_FOUND);
             ctx.writeAndFlush(response).channel().close();
         } else {
-            String metric = build(noComment || req.uri().contains("nocomment"));
+            String metric = build();
             DefaultFullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK,
                     Unpooled.wrappedBuffer(metric.getBytes())); // 2
 
@@ -50,21 +49,20 @@ public class HttpMetricsHandler extends SimpleChannelInboundHandler<HttpRequest>
         }
     }
 
-    private String build(boolean noComment) throws IOException {
+    private String build() throws IOException {
         StringBuilder sb = new StringBuilder();
-        write(sb, this.registry.metricFamilySamples(), noComment);
+        sb.append("# VERSION " + System.getProperty("tauris.version", "dev")).append("\n");
+        write(sb, this.registry.metricFamilySamples());
         return sb.toString();
     }
 
     private static void write(StringBuilder writer,
-                              Enumeration<Collector.MetricFamilySamples> mfs, boolean noComment) throws IOException {
+                              Enumeration<Collector.MetricFamilySamples> mfs) throws IOException {
     /* See http://prometheus.io/docs/instrumenting/exposition_formats/
      * for the output format specification. */
         for (Collector.MetricFamilySamples samples : Collections.list(mfs)) {
-            if (!noComment) {
-                writer.append("# HELP " + samples.name + " " + escapeHelp(samples.help) + "\n");
-                writer.append("# TYPE " + samples.name + " " + typeString(samples.type) + "\n");
-            }
+            writer.append("# HELP " + samples.name + " " + escapeHelp(samples.help) + "\n");
+            writer.append("# TYPE " + samples.name + " " + typeString(samples.type) + "\n");
             for (Collector.MetricFamilySamples.Sample sample : samples.samples) {
                 writer.append(sample.name);
                 if (sample.labelNames.size() > 0) {

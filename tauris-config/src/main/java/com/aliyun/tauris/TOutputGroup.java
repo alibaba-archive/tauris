@@ -1,6 +1,6 @@
 package com.aliyun.tauris;
 
-import com.alibaba.texpr.TExpression;
+import com.aliyun.tauris.expression.TExpression;
 import com.aliyun.tauris.metrics.Counter;
 
 import java.util.Collections;

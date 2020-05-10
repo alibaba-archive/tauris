@@ -9,22 +9,15 @@ import java.util.*;
  */
 public class DefaultEvent implements TEvent {
 
-    private static final int INITIAL_META_CAPACITY = Integer.parseInt(System.getProperty("tauris.event.default.meta.min_capacity", "12"));
-    private static final int INITIAL_FIELD_CAPACITY = Integer.parseInt(System.getProperty("tauris.event.default.field.min_capacity", "64"));
+    private Map<String, Object> meta = new HashMap<>();
 
-    private Map<String, Object> meta;
-
-    private Map<String, Object> fields;
+    private Map<String, Object> fields = new HashMap<>();
 
     public DefaultEvent() {
-        meta = new HashMap<>(INITIAL_META_CAPACITY);
-        fields = new HashMap<>(INITIAL_FIELD_CAPACITY);
         meta.put(META_TIMESTAMP.substring(1), System.currentTimeMillis());
     }
 
     public DefaultEvent(String source) {
-        meta = new HashMap<>(INITIAL_META_CAPACITY);
-        fields = new HashMap<>(INITIAL_FIELD_CAPACITY);
         meta.put(META_TIMESTAMP.substring(1), System.currentTimeMillis());
         meta.put(META_SOURCE.substring(1), source);
     }
@@ -183,6 +176,9 @@ public class DefaultEvent implements TEvent {
     public void setField(String name, Object value) {
         if (value == null) {
             return;
+        }
+        if (name.indexOf('.') >= 0) {
+            throw new IllegalArgumentException(String.format("invalid key:`%s`", name));
         }
         fields.put(name, value);
     }

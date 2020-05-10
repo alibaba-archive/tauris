@@ -1,4 +1,0 @@
-com.aliyun.tauris.plugins.codec.TEncoderFactory
-com.aliyun.tauris.plugins.codec.TDecoderFactory
-com.aliyun.tauris.plugins.codec.TScannerBuilderFactory
-com.aliyun.tauris.plugins.codec.TPrinterBuilderFactory

@@ -30,8 +30,8 @@ class PluginsValue extends Value {
         Object array = Array.newInstance(property.getType(), plugins.size());
         int    i     = 0;
         for (Plugin e : plugins) {
-            TPlugin plugin = TPluginResolver.defaultResolver.resolvePlugin((Class<? extends TPlugin>)property.getType(), e.getMajorName(), e.getMinorName());
-            plugin = e.build(plugin);
+            TPlugin plugin = TPluginResolver.resolver().resolve((Class<? extends TPlugin>)property.getType(), e.getName());
+            plugin = e.marshal(plugin);
             Array.set(array, i, plugin);
             i++;
         }

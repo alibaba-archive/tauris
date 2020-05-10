@@ -1,6 +1,0 @@
-com.aliyun.tauris.plugins.filter.mutate.IntegerConverter
-com.aliyun.tauris.plugins.filter.mutate.BooleanConverter
-com.aliyun.tauris.plugins.filter.mutate.DoubleConverter
-com.aliyun.tauris.plugins.filter.mutate.FloatConverter
-com.aliyun.tauris.plugins.filter.mutate.LongConverter
-com.aliyun.tauris.plugins.filter.mutate.DateConverter

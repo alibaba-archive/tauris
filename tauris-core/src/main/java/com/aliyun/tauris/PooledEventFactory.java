@@ -21,8 +21,6 @@ public class PooledEventFactory implements TEventFactory {
 
     private static final String CONFIG_PREFIX = "tauris.event.pool.config.";
 
-    private TLogger logger;
-
     private Gauge borrowedEvents;
     private Gauge returnedEvents;
     private Gauge activedEvents;
@@ -31,7 +29,6 @@ public class PooledEventFactory implements TEventFactory {
     private EventPool pool;
 
     public PooledEventFactory() {
-        logger = TLogger.getLogger(this);
         PooledFactory factory = new PooledFactory();
         pool = new EventPool(factory, newPoolConfig());
 
@@ -67,7 +64,6 @@ public class PooledEventFactory implements TEventFactory {
             recordMetrics();
             return event;
         } catch (Exception e) {
-            logger.EXCEPTION(e);
             throw new IllegalStateException(e.getMessage());
         }
     }

@@ -41,6 +41,37 @@ public class HttpMetricServer extends MetricServer {
         this.logger = TLogger.getLogger(this);
     }
 
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    /**
+     * 通过VM参数创建MetricServer
+     *
+     * @return
+     */
+    public static HttpMetricServer createMetricServer() {
+        String pt   = System.getProperty("tauris.metric.port");
+        String path = System.getProperty("tauris.metric.path", "/metrics");
+        String host = System.getProperty("tauris.metric.host", "127.0.0.1");
+        if (pt != null) {
+            try {
+                return new HttpMetricServer(host, Integer.parseInt(pt), path);
+            } catch (NumberFormatException e) {
+                System.err.println("invalid metric port " + pt);
+            }
+        }
+        return null;
+    }
+
     @Override
     public void init() {
         bootstrap = new ServerBootstrap();
@@ -60,13 +91,11 @@ public class HttpMetricServer extends MetricServer {
                 })
                 .option(ChannelOption.SO_BACKLOG, 128) // determining the number of connections queued
                 .childOption(ChannelOption.SO_KEEPALIVE, Boolean.TRUE);
-
-        Gauge g = Gauge.build().name("tauris_version").labelNames("version").help("tauris version").create().register(CollectorRegistry.defaultRegistry);
-        g.labels(System.getProperty("tauris.version", "dev")).set(1);
     }
 
     @Override
     public void start() {
+        this.init();
         try {
             ChannelFuture f = bootstrap.bind(InetAddress.getByName(host), port).sync();
             f.channel().closeFuture();

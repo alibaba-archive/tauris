@@ -61,28 +61,24 @@ public abstract class AbstractPipe implements TPipe<TEvent> {
         if (queueCapacity > 0) {
             this.queue = new ArrayBlockingQueue<>(queueCapacity);
             Thread t = new Thread(() -> {
-                this.opened = true;
-                try {
-                    while (opened || !queue.isEmpty()) {
-                        try {
-                            TEvent event = queue.poll(pollInterval, TimeUnit.MILLISECONDS);
-                            if (event != null) {
-                                write(event);
-                                TAURIS_PIPE_SIZE.labels(name).set(this.queue.size());
-                            }
-                        } catch (InterruptedException e) {
-                            break;
+                while (opened && !queue.isEmpty()) {
+                    try {
+                        TEvent event = queue.poll(pollInterval, TimeUnit.MILLISECONDS);
+                        if (event != null) {
+                            write(event);
+                            TAURIS_PIPE_SIZE.labels(name).set(this.queue.size());
                         }
+                    } catch (InterruptedException e) {
+                        break;
                     }
-                    logger.INFO("pipe %s closed", getName());
-                } catch (Exception e) {
-                    logger.EXCEPTION(e);
                 }
+                logger.INFO("pipe %s closed", getName());
             });
             t.setDaemon(true);
             t.setPriority(threadPriority);
             t.start();
         }
+        this.opened = true;
     }
 
     protected abstract void write(TEvent event) throws InterruptedException;

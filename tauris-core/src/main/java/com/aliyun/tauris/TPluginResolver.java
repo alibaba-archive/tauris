@@ -1,133 +1,128 @@
 package com.aliyun.tauris;
 
-import com.aliyun.tauris.annotations.Factory;
-import com.aliyun.tauris.annotations.Name;
-import com.google.common.base.CaseFormat;
-import org.apache.commons.lang3.ClassUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.reflections.Reflections;
+import com.aliyun.tauris.annotations.Type;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ServiceLoader;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
 
 /**
  * Created by ZhangLei on 16/10/25.
  */
 public class TPluginResolver {
 
-    public static TPluginResolver defaultResolver = new TPluginResolver();
+    public static final String OPT_TAURIS_PLUGIN_DIRECTORY = "tauris.plugin.directory";
+    public static final String ENV_TAURIS_PLUGIN_DIRECTORY = "T_PLUGINS";
+    private static TPluginResolver resolver;
 
-    private Map<String, TPluginFactory> factories = new HashMap<>();
+    private Map<String, Map<String, Entry>> pluginClassMap = new HashMap<>();
 
-    public TPluginResolver() {
-        ServiceLoader<TPluginFactory> fs = ServiceLoader.load(TPluginFactory.class);
-        for (TPluginFactory f : fs) {
-            String name = typeNameOfFactory(f.getClass());
-            factories.put(name, f);
+    public TPluginResolver(Map<String, Map<String, Entry>> pluginClassMap) {
+        this.pluginClassMap = pluginClassMap;
+    }
+
+    public static void configure(TPluginScanner scanner) {
+        if (resolver != null) {
+            throw new IllegalStateException("TPluginResolver has been configured");
         }
-    }
+        Map<String, Map<String, Entry>> pluginClassMap = new HashMap<>();
 
-    public TPluginFactory resolvePluginFactory(String typeName) {
-        TPluginFactory factory = factories.get(typeName);
-        if (factory == null) {
-            throw new IllegalArgumentException("unknown plugin type:" + typeName);
-        }
-        return factory;
-    }
-
-    public TPlugin resolvePlugin(Class<? extends TPlugin> type, String pluginName, String minorName) {
-        return resolvePlugin(typeName(type), pluginName, minorName);
-    }
-
-    /**
-     * 根据插件类型名和插件名返回插件实例对象
-     * @param typeName input, filter, output 等
-     * @param pluginName http, file, tailer 等
-     * @return 插件类实例
-     */
-    public TPlugin resolvePlugin(String typeName, String pluginName, String minorName) {
-        TPluginFactory factory = factories.get(typeName);
-        if (factory == null) {
-            throw new IllegalArgumentException("unknown plugin type:" + typeName);
-        }
-        return factory.newInstance(pluginName, minorName);
-    }
-
-    public static Class<? extends TPlugin> resolvePluginType(Class<? extends TPlugin> clazz) {
-        if (clazz.isInterface()) {
-            for (Class inf : ClassUtils.getAllInterfaces(clazz)) {
-                String n = clazz.getSimpleName();
-                if (n.charAt(0) == 'T' && inf.equals(TPlugin.class)) {
-                    return clazz;
-                }
-                for (Class sinf : ClassUtils.getAllInterfaces(inf)) {
-                    Class spt = resolvePluginType(sinf);
-                    if (spt != null) {
-                        return spt;
+        for (Class<? extends TPlugin> pluginType : scanner.scanPluginTypes()) {
+            String typeName = PluginTools.typeName(pluginType);
+            Map<String, Entry> cmap = pluginClassMap.get(typeName);
+            if (cmap == null) {
+                cmap = new HashMap<>();
+                pluginClassMap.put(typeName, cmap);
+            }
+            for (Class<? extends TPlugin> pc : scanner.scanPluginClasses(pluginType)) {
+                String pluginName = PluginTools.pluginName(pc);
+                if (!cmap.containsKey(pluginName)) {
+                    if (!isConfigurable(pc)) {
+                        try {
+                            cmap.put(pluginName, new Entry(pc, pc.newInstance()));
+                        } catch (InstantiationException | IllegalAccessException e) {
+                            throw new VerifyError("plugin " + pluginName + " instantiation exception");
+                        }
+                    } else {
+                        cmap.put(pluginName, new Entry(pc, null));
                     }
                 }
             }
-        } else {
-            for (Class inf : ClassUtils.getAllInterfaces(clazz)) {
-                if (isPluginType(inf)) {
-                    return inf;
-                }
-            }
         }
-        return null;
+        resolver = new TPluginResolver(pluginClassMap);
     }
 
-    public static boolean isPluginType(Class<? extends TPlugin> inf) {
-        for (Class sinf : inf.getInterfaces()) {
-            if (sinf.equals(TPlugin.class)) {
+    public static TPluginResolver resolver() {
+        return Objects.requireNonNull(resolver, "resolver not configured");
+    }
+
+    public <T extends TPlugin> T resolve(Class<? extends T> type, String pluginName) throws TPluginNotFoundException {
+       return (T)resolve(PluginTools.typeName(type), pluginName);
+    }
+
+    public TPlugin resolve(String typeName, String pluginName) throws TPluginNotFoundException{
+        Map<String, Entry> ss = pluginClassMap.get(typeName);
+        if (ss == null) {
+            throw new TPluginNotFoundException(typeName, pluginName);
+        }
+        Entry en = ss.get(pluginName);
+        if (en == null) {
+            throw new TPluginNotFoundException(typeName, pluginName);
+        }
+        return en.instance();
+    }
+
+    public <T extends TPlugin> Set<Class<? extends T>> resolveSubTypes(Class<T> clazz) {
+        String name = PluginTools.typeName(clazz);
+        Map<String, Entry> ss = pluginClassMap.get(name);
+        if (ss == null) {
+            return Collections.emptySet();
+        }
+        Set<Class<? extends T>> subTypes = new HashSet<>();
+        for (Entry e: ss.values()) {
+            subTypes.add((Class<? extends T>)e.getType());
+        }
+        return subTypes;
+    }
+
+    private static boolean isConfigurable(Class<? extends TPlugin> clazz) {
+        Class<?> c = clazz;
+        while (c != null) {
+            if (c.getAnnotation(Type.class) != null && c.getAnnotation(Type.class).configurable()) {
                 return true;
             }
+            for (Class<?> inf : c.getInterfaces()) {
+                if (inf.getAnnotation(Type.class) != null && inf.getAnnotation(Type.class).configurable()) {
+                    return true;
+                }
+            }
+            c = c.getSuperclass();
         }
         return false;
     }
 
-    public static String typeNameOfFactory(Class<? extends TPluginFactory> c) {
-        Factory n = c.getAnnotation(Factory.class);
-        if (n != null) {
-            Class<? extends TPlugin> pluginClass = n.value();
-            return typeName(pluginClass);
+    private static class Entry {
+        private Class<? extends TPlugin> clazz;
+        private TPlugin                  instance;
+
+        public Entry(Class<? extends TPlugin> clazz, TPlugin instance) {
+            this.clazz = clazz;
+            this.instance = instance;
         }
 
-        String name = c.getSimpleName();
-        Pattern p = Pattern.compile("^T([\\w\\d]+)Factory$");
-        Matcher m = p.matcher(name);
-        if (!m.matches()) {
-            throw new IllegalArgumentException("invalid plugin factory name:" + c.getSimpleName());
+        public Class<? extends TPlugin> getType() {
+            return clazz;
         }
-        return CaseFormat.UPPER_CAMEL.converterTo(CaseFormat.LOWER_UNDERSCORE).convert(m.group(1));
-    }
 
-    public static String pluginName(Class<? extends TPlugin> clazz) {
-        Name n = clazz.getAnnotation(Name.class);
-        if (n != null) {
-            return n.value();
+        public TPlugin instance() {
+            if (instance != null) {
+                return instance;
+            } else {
+                try {
+                    return clazz.newInstance();
+                } catch (InstantiationException | IllegalAccessException e) {
+                    throw new VerifyError("plugin instantiation exception");
+                }
+            }
         }
-        String typeName = StringUtils.capitalize(typeName(resolvePluginType(clazz)));
-        String name = clazz.getSimpleName();
-        if (name.endsWith(typeName)) {
-            name = name.substring(0, name.length() - typeName.length());
-        }
-        name = CaseFormat.UPPER_CAMEL.converterTo(CaseFormat.LOWER_UNDERSCORE).convert(name);
-        return name;
-    }
-
-
-    public static String typeName(Class<? extends TPlugin> clazz) {
-        Name n = clazz.getAnnotation(Name.class);
-        if (n != null) {
-            return n.value();
-        }
-        String name = clazz.getSimpleName().substring(1);
-        name = CaseFormat.UPPER_CAMEL.converterTo(CaseFormat.LOWER_UNDERSCORE).convert(name);
-        return name;
     }
 
 }

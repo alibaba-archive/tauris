@@ -1,7 +1,6 @@
 package com.aliyun.tauris.config.parser;
 
 import com.aliyun.tauris.config.TConfigException;
-import com.google.common.base.CaseFormat;
 
 import java.util.List;
 import java.util.Map;
@@ -22,14 +21,9 @@ public class Assignments {
         Helper m = Helper.m;
         for (Assignment a : assignments) {
             int curLineCount = m.getLineCount();
-            String name = a.getName();
             TProperty property = properties.get(a.getName());
             if (property == null) {
-                name = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, name);
-                property = properties.get(name);
-                if (name == null) {
-                    throw new TConfigException(String.format("Unknown property '%s'", a.getName()));
-                }
+                throw new TConfigException(String.format("Unknown property '%s'", a.getName()));
             }
             m.message(property.getName() + " => ");
             a.assignTo(property);

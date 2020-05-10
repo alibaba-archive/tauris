@@ -3,7 +3,7 @@ package com.aliyun.tauris.config.parser;
 import java.util.List;
 
 /**
- * Created by chuanshi on 30.03.16.
+ * @author Ray Chaung
  */
 public class OutputGroup extends PluginGroup {
 

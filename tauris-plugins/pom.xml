@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>tauris-parent</artifactId>
+        <groupId>com.aliyun.tauris</groupId>
+        <version>2.0.0-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
+    <artifactId>tauris-plugins</artifactId>
+    <packaging>pom</packaging>
+    <name>tauris-plugins</name>
+
+    <modules>
+        <module>base</module>
+        <module>redis</module>
+
+        <module>tcp</module>
+        <module>udp</module>
+        <module>codec</module>
+        <module>file</module>
+        <module>hash</module>
+        <module>csv</module>
+        <module>dingtalk</module>
+        <module>etcd</module>
+        <module>scroll</module>
+        <module>http</module>
+        <module>sls</module>
+        <module>mns</module>
+        <module>kafka</module>
+        <module>iploc</module>
+        <module>iploc-tb</module>
+        <module>iploc-dna</module>
+        <module>syslog</module>
+        <module>odps</module>
+        <module>jinja</module>
+        <module>keymap</module>
+        <module>fastjson</module>
+        <module>ua</module>
+        <module>rdb</module>
+        <module>msgpack</module>
+        <module>smtp</module>
+        <module>stats</module>
+        <module>jsoniter</module>
+        <module>influxdb</module>
+        <!--
+        <module>nats</module>
+        <module>nsq</module>
+        -->
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.aliyun.tauris</groupId>
+            <artifactId>tauris-base</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.aliyun.tauris</groupId>
+            <artifactId>tauris-config</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.aliyun.tauris</groupId>
+            <artifactId>tauris-utils</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <outputDirectory>${project_root}/plugins/${project.artifactId}</outputDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project_root}/plugins/${project.artifactId}</outputDirectory>
+                            <includeScope>runtime</includeScope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+

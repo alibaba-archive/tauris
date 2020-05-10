@@ -1,5 +1,6 @@
 package com.aliyun.tauris.config.parser;
 
+import com.aliyun.tauris.PluginTools;
 import com.aliyun.tauris.config.TConfigException;
 
 import java.lang.reflect.InvocationTargetException;
@@ -34,8 +35,7 @@ class AssignmentsValue extends Value {
 
     private void init(Object o, String name) {
         try {
-            Method initMethod = o.getClass().getMethod("init");
-            initMethod.invoke(o);
+            PluginTools.pluginInit(o);
         } catch (NoSuchMethodException e) {
             // ignore
         } catch (IllegalAccessException e) {
@@ -43,11 +43,7 @@ class AssignmentsValue extends Value {
         } catch (InvocationTargetException e) {
             // throw
             e.printStackTrace();
-            String message = e.getMessage();
-            if (message == null) {
-                message = e.getTargetException().getMessage();
-            }
-            throw new TConfigException("init component " + name + " failed, cause by " + message, e);
+            throw new TConfigException("init component " + name + " failed, cause by " + e.getMessage(), e);
         }
     }
 

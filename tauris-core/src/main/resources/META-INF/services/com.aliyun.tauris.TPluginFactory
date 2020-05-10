@@ -1,7 +1,0 @@
-com.aliyun.tauris.TInputFactory
-com.aliyun.tauris.TFilterFactory
-com.aliyun.tauris.TOutputFactory
-com.aliyun.tauris.TWidgetFactory
-
-com.aliyun.tauris.formatter.TEventFormatterFactory
-com.aliyun.tauris.utils.TBlockTextReaderFactory

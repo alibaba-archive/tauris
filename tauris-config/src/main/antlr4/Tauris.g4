@@ -29,12 +29,9 @@ plugins
     ;
 
 plugin
-    : pluginName assignments
+    : name assignments
     ;
 
-pluginName
-    : name ('.' name)?
-    ;
 
 assignments
     : '{' (assignment)* '}'
@@ -166,7 +163,6 @@ fragment INT
 fragment NAME
    : [a-zA-Z][a-zA-Z0-9_\\.]+
    ;
-
 
 // no leading zeros
 fragment EXP

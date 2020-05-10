@@ -1,13 +1,11 @@
 package com.aliyun.tauris;
 
-import com.alibaba.texpr.Context;
-
 import java.util.*;
 
 /**
  * Created by ZhangLei on 16/12/8.
  */
-public interface TEvent extends TObject, Context {
+public interface TEvent extends TObject {
 
     String META_SOURCE    = "@source";
     String META_TIMESTAMP = "@timestamp";

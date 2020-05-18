@@ -17,7 +17,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by ZhangLei on 16/12/7.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("kafka")
 public class KafkaInput extends BaseTInput {

@@ -9,14 +9,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by ZhangLei on 2017/11/20.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class THmacAuthTest {
 
     @Test
     public void test() {
 
-        String username = "John";
+        String username = "chuanshi";
         String password = "hello";
         String content = "world";
 

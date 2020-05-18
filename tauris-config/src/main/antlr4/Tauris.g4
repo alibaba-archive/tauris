@@ -1,7 +1,7 @@
 grammar Tauris ;
 
 @header {
-    package antlr4.tauris;
+    package com.aliyun.tauris.config.parser.ast;
 }
 
 pipeline
@@ -29,9 +29,12 @@ plugins
     ;
 
 plugin
-    : name assignments
+    : pluginName assignments
     ;
 
+pluginName
+    : name ('.' name)?
+    ;
 
 assignments
     : '{' (assignment)* '}'
@@ -163,6 +166,7 @@ fragment INT
 fragment NAME
    : [a-zA-Z][a-zA-Z0-9_\\.]+
    ;
+
 
 // no leading zeros
 fragment EXP

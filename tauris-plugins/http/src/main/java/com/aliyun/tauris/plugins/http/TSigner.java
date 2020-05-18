@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
- * Created by ZhangLei on 2017/11/15.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Type
 public interface TSigner extends TPlugin {

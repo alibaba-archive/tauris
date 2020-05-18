@@ -12,7 +12,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by ZhangLei on 16/10/27.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class ScrollTransport implements Runnable {
 

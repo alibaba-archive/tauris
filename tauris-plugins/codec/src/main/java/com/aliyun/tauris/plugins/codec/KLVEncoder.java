@@ -11,7 +11,7 @@ import java.util.Map;
 
 
 /**
- * Created by ZhangLei on 16/12/7.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("klv")
 public class KLVEncoder extends AbstractEncoder {

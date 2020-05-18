@@ -1,7 +1,7 @@
 package com.aliyun.tauris;
 
 /**
- * Created by ZhangLei on 16/12/9.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public interface TPlugin {
 

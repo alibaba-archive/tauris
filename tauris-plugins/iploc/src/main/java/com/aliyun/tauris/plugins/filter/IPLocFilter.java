@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by ZhangLei on 17/1/8.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("iploc")
 public class IPLocFilter extends BaseTFilter {

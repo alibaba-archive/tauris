@@ -6,7 +6,7 @@ import com.aliyun.tauris.annotations.Type;
 import javax.sql.DataSource;
 
 /**
- * Created by ZhangLei on 17/5/28.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Type
 public interface TDatasource extends TPlugin, DataSource {

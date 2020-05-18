@@ -5,7 +5,7 @@ import com.aliyun.tauris.annotations.Required;
 import com.aliyun.tauris.plugins.filter.mutate.*;
 
 /**
- * Created by ZhangLei on 16/12/11.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class ConverterFilter extends BaseTFilter {
 

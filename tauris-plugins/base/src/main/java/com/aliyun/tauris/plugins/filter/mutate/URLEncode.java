@@ -8,7 +8,7 @@ import org.apache.commons.codec.net.URLCodec;
 
 /**
  *
- * Created by ZhangLei on 16/12/14.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("urlencode")
 public class URLEncode implements TMutate {

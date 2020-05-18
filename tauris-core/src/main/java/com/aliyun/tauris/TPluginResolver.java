@@ -5,7 +5,7 @@ import com.aliyun.tauris.annotations.Type;
 import java.util.*;
 
 /**
- * Created by ZhangLei on 16/10/25.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class TPluginResolver {
 

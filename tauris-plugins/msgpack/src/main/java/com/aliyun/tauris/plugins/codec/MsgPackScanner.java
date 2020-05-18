@@ -17,8 +17,8 @@ import java.util.function.Function;
 /**
  * Class MsgPackScanner
  *
- * @author yundun-waf-dev
- * @date 2018-09-14
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 @NotThreadSafe
 public class MsgPackScanner implements TScanner {

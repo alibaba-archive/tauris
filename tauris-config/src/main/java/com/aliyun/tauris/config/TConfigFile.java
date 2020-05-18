@@ -5,7 +5,7 @@ import com.google.common.base.Charsets;
 import java.io.*;
 
 /**
- * Created by ZhangLei on 17/5/14.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class TConfigFile implements TConfig {
 

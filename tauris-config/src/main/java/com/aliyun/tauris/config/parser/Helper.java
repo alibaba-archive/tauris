@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by ZhangLei on 16/12/13.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class Helper {
 

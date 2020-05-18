@@ -3,7 +3,7 @@ package com.aliyun.tauris.plugins.filter;
 import com.aliyun.tauris.TEvent;
 
 /**
- * Created by ZhangLei on 16/12/11.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class DropFilter extends BaseTFilter {
 

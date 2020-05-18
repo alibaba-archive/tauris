@@ -3,7 +3,7 @@ package com.aliyun.tauris.config.parser;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
- * Created by ZhangLei on 16/12/13.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public abstract class SimpleValue extends Value {
 
@@ -19,7 +19,7 @@ public abstract class SimpleValue extends Value {
         }
 
         @Override
-        void _assignTo(TProperty property) throws Exception {
+        void _assignTo(PluginProperty property) throws Exception {
             property.set(value);
         }
 
@@ -43,7 +43,7 @@ public abstract class SimpleValue extends Value {
         }
 
         @Override
-        void _assignTo(TProperty property) throws Exception {
+        void _assignTo(PluginProperty property) throws Exception {
             property.set(value);
         }
 
@@ -79,7 +79,7 @@ public abstract class SimpleValue extends Value {
         }
 
         @Override
-        void _assignTo(TProperty property) throws Exception {
+        void _assignTo(PluginProperty property) throws Exception {
             property.set(value);
         }
 
@@ -107,7 +107,7 @@ public abstract class SimpleValue extends Value {
         }
 
         @Override
-        void _assignTo(TProperty property) throws Exception {
+        void _assignTo(PluginProperty property) throws Exception {
             property.set(value);
         }
 
@@ -128,7 +128,7 @@ public abstract class SimpleValue extends Value {
         }
 
         @Override
-        void _assignTo(TProperty property) throws Exception {
+        void _assignTo(PluginProperty property) throws Exception {
             property.set(null);
         }
 

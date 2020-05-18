@@ -9,7 +9,7 @@ import com.google.common.collect.Sets;
 import java.util.Set;
 
 /**
- * Created by ZhangLei on 16/12/11.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("remove_field")
 public class RemoveField extends BaseMutate {

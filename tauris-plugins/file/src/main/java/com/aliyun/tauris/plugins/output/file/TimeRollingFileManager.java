@@ -16,8 +16,8 @@ import java.util.regex.Pattern;
 /**
  * Class TimeRollingFileManager
  *
- * @author yundun-waf-dev
- * @date 2018-10-25
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 @Name("time_rolling")
 public class TimeRollingFileManager extends AbstractFileManager {

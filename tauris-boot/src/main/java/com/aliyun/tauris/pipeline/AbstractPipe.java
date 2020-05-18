@@ -13,8 +13,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * Class AbstractPipe
  *
- * @author yundun-waf-dev
- * @date 2019-04-17
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public abstract class AbstractPipe implements TPipe<TEvent> {
 
@@ -61,24 +61,28 @@ public abstract class AbstractPipe implements TPipe<TEvent> {
         if (queueCapacity > 0) {
             this.queue = new ArrayBlockingQueue<>(queueCapacity);
             Thread t = new Thread(() -> {
-                while (opened && !queue.isEmpty()) {
-                    try {
-                        TEvent event = queue.poll(pollInterval, TimeUnit.MILLISECONDS);
-                        if (event != null) {
-                            write(event);
-                            TAURIS_PIPE_SIZE.labels(name).set(this.queue.size());
+                this.opened = true;
+                try {
+                    while (opened || !queue.isEmpty()) {
+                        try {
+                            TEvent event = queue.poll(pollInterval, TimeUnit.MILLISECONDS);
+                            if (event != null) {
+                                write(event);
+                                TAURIS_PIPE_SIZE.labels(name).set(this.queue.size());
+                            }
+                        } catch (InterruptedException e) {
+                            break;
                         }
-                    } catch (InterruptedException e) {
-                        break;
                     }
+                    logger.INFO("pipe %s closed", getName());
+                } catch (Exception e) {
+                    logger.EXCEPTION(e);
                 }
-                logger.INFO("pipe %s closed", getName());
             });
             t.setDaemon(true);
             t.setPriority(threadPriority);
             t.start();
         }
-        this.opened = true;
     }
 
     protected abstract void write(TEvent event) throws InterruptedException;

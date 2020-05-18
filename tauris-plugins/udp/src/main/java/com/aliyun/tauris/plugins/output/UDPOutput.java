@@ -16,7 +16,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 /**
- * Created by ZhangLei on 16/12/8.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("udp")
 public class UDPOutput extends BaseTOutput {

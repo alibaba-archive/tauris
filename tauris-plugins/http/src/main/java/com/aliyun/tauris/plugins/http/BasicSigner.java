@@ -8,7 +8,7 @@ import java.util.Base64;
 import java.util.Map;
 
 /**
- * Created by ZhangLei on 2017/11/15.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("basic")
 public class BasicSigner implements TSigner {

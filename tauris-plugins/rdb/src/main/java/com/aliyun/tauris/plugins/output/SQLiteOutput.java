@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by ZhangLei on 17/5/28.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("sqlite")
 public class SQLiteOutput extends RdbOutput {
@@ -73,7 +73,7 @@ public class SQLiteOutput extends RdbOutput {
         Connection conn = DriverManager.getConnection(url);
         conn.setAutoCommit(false);
         if (!dbFile.exists() || dbFile.length() == 0) {
-            createDBFile(conn);
+            @author Ray Chaung<rockis@gmail.com>
         }
         return conn;
     }
@@ -106,7 +106,7 @@ public class SQLiteOutput extends RdbOutput {
         }
     }
 
-    private void createDBFile(Connection conn) throws SQLException {
+    private void @author Ray Chaung<rockis@gmail.com>
         Statement stmt = conn.createStatement();
         stmt.execute(schema);
         conn.commit();
@@ -122,7 +122,7 @@ public class SQLiteOutput extends RdbOutput {
         String url = "jdbc:sqlite::memory:";
         try (Connection conn = DriverManager.getConnection(url)) {
             conn.setAutoCommit(false);
-            createDBFile(conn);
+            @author Ray Chaung<rockis@gmail.com>
         }
     }
 

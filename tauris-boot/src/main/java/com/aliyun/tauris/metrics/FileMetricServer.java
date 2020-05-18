@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 将指标数据输出到文件
- * Created by ZhangLei on 16/12/8.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class FileMetricServer extends MetricServer {
 

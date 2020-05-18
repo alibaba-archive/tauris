@@ -10,7 +10,7 @@ import com.aliyun.tauris.annotations.Name;
 
 /**
  * 将字符串encode为json array对象
- * Created by ZhangLei on 16/12/7.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("json_array")
 public class JSONArrayDecoder extends AbstractJSONDecoder {

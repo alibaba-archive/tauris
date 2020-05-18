@@ -8,8 +8,8 @@ import java.io.File;
 /**
  * Class FormatFileManager
  *
- * @author yundun-waf-dev
- * @date 2018-10-25
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public abstract class AbstractFileManager implements TFileManager {
 

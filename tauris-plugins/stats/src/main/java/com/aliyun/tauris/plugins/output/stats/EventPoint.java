@@ -3,8 +3,8 @@ package com.aliyun.tauris.plugins.output.stats;
 /**
  * Class EventPoint
  *
- * @author yundun-waf-dev
- * @date 2018-07-10
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public class EventPoint {
 

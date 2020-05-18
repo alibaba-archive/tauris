@@ -1,19 +1,20 @@
 package com.aliyun.tauris.plugins.input;
 
 import com.aliyun.tauris.*;
-import com.aliyun.tauris.plugins.codec.LineScanner;
+import com.aliyun.tauris.plugins.codec.LineScannerBuilder;
 import com.aliyun.tauris.plugins.codec.PlainDecoder;
 import com.aliyun.tauris.TPluginInitException;
 import com.aliyun.tauris.metrics.Counter;
 import com.aliyun.tauris.TLogger;
 import com.aliyun.tauris.utils.EventFormatter;
 
+import javax.annotation.PreDestroy;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by ZhangLei on 16/12/9.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public abstract class BaseTInput extends AbstractPlugin implements TInput {
 
@@ -23,7 +24,7 @@ public abstract class BaseTInput extends AbstractPlugin implements TInput {
 
     protected TLogger logger;
 
-    protected TScanner scanner = new LineScanner();
+    protected TScannerBuilder scanner = new LineScannerBuilder();
 
     protected TDecoder codec = new PlainDecoder();
 
@@ -69,7 +70,6 @@ public abstract class BaseTInput extends AbstractPlugin implements TInput {
 
     @Override
     public void close() {
-        this.release();
     }
 
     protected void putEvent(TEvent event) throws InterruptedException {

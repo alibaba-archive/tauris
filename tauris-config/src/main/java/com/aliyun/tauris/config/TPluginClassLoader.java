@@ -14,8 +14,8 @@ import java.util.*;
 /**
  * Class CombinedClassLoader
  *
- * @author yundun-waf-dev
- * @date 2019-03-22
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public class TPluginClassLoader extends ClassLoader {
 

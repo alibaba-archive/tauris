@@ -165,7 +165,7 @@ public class InfluxdbOutput extends BaseTOutput {
     public void start() throws Exception {
         if (walDir != null) {
             if (!walDir.exists() && !walDir.mkdirs()) {
-                throw new TPluginInitException("waf_dir " + walDir.getAbsolutePath() + " not exists and cannot be created");
+                throw new TPluginInitException("waf_dir " + walDir.getAbsolutePath() + " not exists and cannot be @author Ray Chaung<rockis@gmail.com>
             }
         }
         if (runMode == RunMode.aggr && snapshotFile != null && snapshotFile.exists()) {

@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 /**
- * Created by ZhangLei on 16/12/9.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class TailerInput extends BaseTInput {
 

@@ -5,7 +5,7 @@ import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.plugins.converter.AbstractConverter;
 
 /**
- * Created by ZhangLei on 2018/4/28.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("resource")
 public class TResourceConverter extends AbstractConverter {

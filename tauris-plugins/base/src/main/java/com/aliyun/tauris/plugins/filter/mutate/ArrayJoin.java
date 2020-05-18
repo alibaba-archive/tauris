@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * 将一个字符串数组合并成一个字符串
  *
- * Created by ZhangLei on 16/12/14.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("array_join")
 public class ArrayJoin implements TMutate {

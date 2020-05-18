@@ -3,11 +3,11 @@ package com.aliyun.tauris.config.parser;
 import com.aliyun.tauris.config.TConfigException;
 
 /**
- * Created by ZhangLei on 16/12/12.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public abstract class Value {
 
-    void assignTo(TProperty property) {
+    void assignTo(PluginProperty property) {
         try {
             _assignTo(property);
             Helper.m.append(this.toString());
@@ -17,7 +17,7 @@ public abstract class Value {
         }
     }
 
-    abstract void _assignTo(TProperty property) throws Exception;
+    abstract void _assignTo(PluginProperty property) throws Exception;
 
 
 }

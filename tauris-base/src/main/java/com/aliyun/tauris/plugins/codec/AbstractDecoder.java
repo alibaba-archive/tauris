@@ -7,8 +7,8 @@ import java.nio.charset.Charset;
 /**
  * Class AbstractDecoder
  *
- * @author yundun-waf-dev
- * @date 2018-06-06
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public abstract class AbstractDecoder implements TDecoder {
 

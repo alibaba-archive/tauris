@@ -2,7 +2,8 @@ package com.aliyun.tauris.plugins.output;
 
 import com.aliyun.tauris.*;
 import com.aliyun.tauris.metrics.Counter;
-import com.aliyun.tauris.plugins.codec.DefaultPrinter;
+import com.aliyun.tauris.plugins.codec.DefaultPrinterBuilder;
+import com.aliyun.tauris.plugins.codec.EncodePrinterBuilder;
 import com.aliyun.tauris.plugins.output.file.FormatedFileManager;
 import com.aliyun.tauris.plugins.output.file.TFileManager;
 import com.aliyun.tauris.TLogger;
@@ -23,7 +24,9 @@ public class FileOutput extends BaseTOutput {
 
     private TLogger logger;
 
-    TPrinter printer = new DefaultPrinter();
+    TPrinterBuilder printer = new DefaultPrinterBuilder();
+
+    TEncoder codec;
 
     EventFormatter path;
 
@@ -52,6 +55,13 @@ public class FileOutput extends BaseTOutput {
                 }
             });
         }
+        if (codec != null) {
+            if (printer instanceof EncodePrinterBuilder) {
+                ((EncodePrinterBuilder) printer).setCodec(codec);
+            } else {
+                throw new TPluginInitException("printer not a EncodePrinterBuilder, codec will be ignored");
+            }
+        }
         if (filemanager == null && path == null) {
             throw new TPluginInitException("filemanager or path is requried");
         }
@@ -72,7 +82,7 @@ public class FileOutput extends BaseTOutput {
         synchronized (printers) {
             TPrinter w = printers.get(file);
             if (w == null) {
-                w = printer.wrap(new FileOutputStream(file, true)).withCodec(codec);
+                w = printer.create(new FileOutputStream(file, true));
                 TPrinter nw = printers.putIfAbsent(file, w);
                 if (nw != null) {
                     w = nw;

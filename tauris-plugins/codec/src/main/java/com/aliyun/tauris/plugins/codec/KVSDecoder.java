@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 /**
- * Created by ZhangLei on 16/12/7.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("kvs")
 public class KVSDecoder extends AbstractDecoder {

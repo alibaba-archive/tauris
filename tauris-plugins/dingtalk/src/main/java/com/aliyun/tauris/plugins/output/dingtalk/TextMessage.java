@@ -11,7 +11,7 @@ import java.util.IllegalFormatException;
 import java.util.Map;
 
 /**
- * Created by ZhangLei on 2018/5/17.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("text")
 public class TextMessage implements TDingMessage {

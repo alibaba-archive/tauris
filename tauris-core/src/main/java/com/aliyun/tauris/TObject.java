@@ -1,9 +1,9 @@
 package com.aliyun.tauris;
 
-import com.aliyun.tauris.expression.Context;
+import io.tauris.expression.Context;
 
 /**
- * Created by ZhangLei on 17/5/26.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public interface TObject extends Context {
 

@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
- * Created by ZhangLei on 16/12/14.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class FloatConverter extends AbstractConverter {
 

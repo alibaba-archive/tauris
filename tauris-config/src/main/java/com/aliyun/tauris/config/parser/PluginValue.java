@@ -8,7 +8,7 @@ import com.aliyun.tauris.TPluginResolver;
  *            path => '/metrics';
  *            acl  => '*';
  *          }
- * Created by ZhangLei on 16/12/14.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 class PluginValue extends Value {
 
@@ -19,7 +19,7 @@ class PluginValue extends Value {
     }
 
     @Override
-    void _assignTo(TProperty property) throws Exception {
+    void _assignTo(PluginProperty property) throws Exception {
         //此属性是一个TPlugin对象
         Helper.m.expand().next();
         //resolvePlugin(com.aliyun.tauris.TEncoder, plugin.name)

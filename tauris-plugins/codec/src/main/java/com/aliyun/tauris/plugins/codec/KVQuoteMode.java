@@ -7,7 +7,7 @@ import java.nio.charset.Charset;
 import java.util.Base64;
 
 /**
- * Created by ZhangLei on 16/12/7.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public enum KVQuoteMode {
     none('\0'), escape('!'), base64('?');

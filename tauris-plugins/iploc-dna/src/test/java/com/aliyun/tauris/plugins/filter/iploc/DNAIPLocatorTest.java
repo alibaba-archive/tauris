@@ -4,7 +4,7 @@ import com.aliyun.tauris.TResource;
 import org.junit.Test;
 
 /**
- * Created by ZhangLei on 17/8/16.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class DNAIPLocatorTest {
 

@@ -24,7 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by ZhangLei on 16/12/7.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("sls")
 public class SLSInput extends BaseTInput {
@@ -140,11 +140,13 @@ public class SLSInput extends BaseTInput {
     @Override
     public void close() {
         super.close();
-        try {
-            worker.shutdown();
-            //ClientWorker 运行过程中会生成多个异步的 Task，shutdown 之后最好等待还在执行的 Task 安全退出.
-            Thread.sleep(5 * 1000);
-        } catch (InterruptedException e) {
+        if (worker != null) {
+            try {
+                worker.shutdown();
+                //ClientWorker 运行过程中会生成多个异步的 Task，shutdown 之后最好等待还在执行的 Task 安全退出.
+                Thread.sleep(5 * 1000);
+            } catch (InterruptedException e) {
+            }
         }
         logInfo("sls input plugin closed");
     }

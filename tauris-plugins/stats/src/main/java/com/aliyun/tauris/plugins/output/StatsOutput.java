@@ -1,12 +1,10 @@
 package com.aliyun.tauris.plugins.output;
 
-import com.aliyun.tauris.DefaultEvent;
-import com.aliyun.tauris.EncodeException;
-import com.aliyun.tauris.TEvent;
-import com.aliyun.tauris.TPluginInitException;
+import com.aliyun.tauris.*;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
 import com.aliyun.tauris.metrics.Counter;
+import com.aliyun.tauris.plugins.codec.PlainEncoder;
 import com.aliyun.tauris.plugins.output.stats.EventPoint;
 import com.aliyun.tauris.plugins.output.stats.LabelField;
 import com.aliyun.tauris.plugins.output.stats.Labels;
@@ -60,6 +58,8 @@ public class StatsOutput extends BaseTOutput {
      */
     @Required
     ValueField[] valueFields;
+
+    TEncoder codec = new PlainEncoder();
 
     private volatile Map<Labels, AggregatedPoint> data = new ConcurrentHashMap<>();
 

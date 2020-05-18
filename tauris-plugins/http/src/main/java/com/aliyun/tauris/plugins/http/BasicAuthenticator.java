@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by ZhangLei on 2017/11/15.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("basic")
 public class BasicAuthenticator implements TAuthenticator {

@@ -1,7 +1,7 @@
 package com.aliyun.tauris.plugins.scroll;
 
 /**
- * Created by ZhangLei on 2018/4/15.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class ScrollMessage {
 

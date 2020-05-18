@@ -11,8 +11,8 @@ import java.io.ByteArrayOutputStream;
 /**
  * Class KVCodecTest
  *
- * @author Ray Chaung
- * @date 2018-09-05
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public class CSVCodecTest {
 

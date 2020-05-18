@@ -11,7 +11,7 @@ import java.net.SocketException;
 import java.util.function.Consumer;
 
 /**
- * Created by ZhangLei on 16/10/19.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class ScrollReceiver implements Runnable { // (1)
 

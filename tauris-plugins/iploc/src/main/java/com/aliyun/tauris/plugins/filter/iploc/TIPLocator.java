@@ -5,7 +5,7 @@ import com.aliyun.tauris.TPluginInitException;
 import com.aliyun.tauris.annotations.Type;
 
 /**
- * Created by ZhangLei on 17/6/1.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Type("iplocator")
 public interface TIPLocator extends TPlugin {

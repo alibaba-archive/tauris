@@ -7,7 +7,7 @@ import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.utils.EventFormatter;
 
 /**
- * Created by ZhangLei on 17/1/7.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("simple")
 public class SimpleFormatter implements TFormatter {

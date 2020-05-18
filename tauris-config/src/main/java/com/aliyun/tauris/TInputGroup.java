@@ -6,8 +6,8 @@ import java.util.List;
 /**
  * Class TInputGroup
  *
- * @author yundun-waf-dev
- * @date 2018-09-25
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public class TInputGroup extends TPluginGroup {
 

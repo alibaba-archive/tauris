@@ -12,7 +12,7 @@ import java.security.Principal;
 import java.util.*;
 
 /**
- * Created by ZhangLei on 2017/11/20.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class HttpServletRequestAdapter implements HttpServletRequest {
 

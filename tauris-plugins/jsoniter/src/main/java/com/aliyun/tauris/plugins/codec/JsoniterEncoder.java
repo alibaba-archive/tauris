@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  * 将对象encode为字符串
- * Created by ZhangLei on 16/12/7.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("jsoniter")
 public class JsoniterEncoder extends AbstractEncoder {

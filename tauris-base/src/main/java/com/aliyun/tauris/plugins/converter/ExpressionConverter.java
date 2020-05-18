@@ -1,12 +1,12 @@
 package com.aliyun.tauris.plugins.converter;
 
-import com.aliyun.tauris.expression.TExpression;
+import io.tauris.expression.TExpression;
 import org.apache.commons.beanutils.ConversionException;
 
 import java.nio.charset.Charset;
 
 /**
- * Created by ZhangLei on 2018/5/24.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class ExpressionConverter extends AbstractConverter {
 
@@ -25,7 +25,7 @@ public class ExpressionConverter extends AbstractConverter {
             throw new ConversionException(String.format("cannot convert %s to %s", value.getClass(), getType()));
         }
         try {
-            return (T)TExpression.build((String) value);
+            return (T)TExpression.compile((String) value);
         } catch (Exception e) {
             throw new ConversionException(e.getMessage(), e);
         }

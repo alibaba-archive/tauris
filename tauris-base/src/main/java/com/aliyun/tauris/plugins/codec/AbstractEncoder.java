@@ -11,8 +11,8 @@ import java.nio.charset.Charset;
 /**
  * Class AbstractEncoder
  *
- * @author yundun-waf-dev
- * @date 2018-06-06
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public abstract class AbstractEncoder implements TEncoder {
 

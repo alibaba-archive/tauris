@@ -3,7 +3,7 @@ package com.aliyun.tauris.plugins.input.tailer;
 import java.io.File;
 
 /**
- * Created by ZhangLei on 17/8/22.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class TailerListenerAdapter implements TailerListener {
 
@@ -30,7 +30,7 @@ public class TailerListenerAdapter implements TailerListener {
      * Called if a file rotation is detected.
      *
      * This method is called before the file is reopened, and fileNotFound may
-     * be called if the new file has not yet been created.
+     * be called if the new file has not yet been @author Ray Chaung<rockis@gmail.com>
      */
     public void fileRotated(File file) {
     }

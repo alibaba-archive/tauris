@@ -12,7 +12,7 @@ import java.io.*;
 import java.util.function.BiFunction;
 
 /**
- * Created by ZhangLei on 16/10/22.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class ScrollReader implements Scroll {
 

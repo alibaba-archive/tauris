@@ -5,7 +5,7 @@ import com.aliyun.tauris.annotations.Type;
 import java.util.List;
 
 /**
- * Created by ZhangLei on 16/12/7.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Type("input")
 public interface TInput extends TPlugin {

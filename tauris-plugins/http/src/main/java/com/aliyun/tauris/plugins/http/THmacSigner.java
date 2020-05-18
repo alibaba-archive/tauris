@@ -24,7 +24,7 @@ import java.util.*;
 import static org.apache.commons.codec.binary.Base64.encodeBase64;
 
 /**
- * Created by ZhangLei on 2017/11/15.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("hmac")
 public class THmacSigner implements TSigner {

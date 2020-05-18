@@ -5,8 +5,8 @@ import java.util.Set;
 /**
  * Class TPluginScanner
  *
- * @author yundun-waf-dev
- * @date 2019-03-21
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public interface TPluginScanner {
 

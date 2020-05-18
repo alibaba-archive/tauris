@@ -6,7 +6,7 @@ import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
 /**
- * Created by ZhangLei on 2017/9/9.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class IPUtils {
     private static String  regex   = "^(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\."

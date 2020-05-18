@@ -3,7 +3,7 @@ package com.aliyun.tauris.config.parser;
 import com.aliyun.tauris.config.TConfigException;
 
 /**
- * Created by ZhangLei on 16/12/21.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class EnvironValue extends Value  {
 
@@ -21,7 +21,7 @@ public class EnvironValue extends Value  {
     }
 
     @Override
-    void _assignTo(TProperty property) throws Exception {
+    void _assignTo(PluginProperty property) throws Exception {
         property.set(value);
     }
 

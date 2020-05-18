@@ -3,7 +3,7 @@ package com.aliyun.tauris.utils;
 import java.util.regex.Pattern;
 
 /**
- * Created by ZhangLei on 16/4/27.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class Wildcard {
 

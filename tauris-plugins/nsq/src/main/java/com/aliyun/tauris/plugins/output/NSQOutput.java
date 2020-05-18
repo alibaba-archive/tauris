@@ -20,7 +20,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 /**
- * Created by ZhangLei on 17/5/28.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("nsq")
 public class NSQOutput extends BaseTOutput {

@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.aliyun.tauris.TObject;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
-import com.aliyun.tauris.expression.TExpression;
+import io.tauris.expression.TExpression;
 import com.aliyun.tauris.TLogger;
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by ZhangLei on 17/7/27.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("json")
 public class JSONKeyMapper extends AbstractResourceKeyMapper {

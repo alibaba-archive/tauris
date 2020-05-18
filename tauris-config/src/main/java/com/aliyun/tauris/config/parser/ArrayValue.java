@@ -7,7 +7,7 @@ import java.lang.reflect.Array;
 import java.util.*;
 
 /**
- * Created by ZhangLei on 16/12/12.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class ArrayValue extends Value {
 
@@ -18,7 +18,7 @@ public class ArrayValue extends Value {
     }
 
     @Override
-    void _assignTo(TProperty property) throws Exception {
+    void _assignTo(PluginProperty property) throws Exception {
         if (property.isArray()) {
             assignToArray(property);
             return;
@@ -34,7 +34,7 @@ public class ArrayValue extends Value {
         throw new TConfigException(String.format("cannot assign an array to %s", property.getType()));
     }
 
-    void assignToArray(TProperty property) throws Exception {
+    void assignToArray(PluginProperty property) throws Exception {
         Object array = Array.newInstance(property.getType(), elements.size());
         int i = 0;
         for (SimpleValue e : elements) {
@@ -45,7 +45,7 @@ public class ArrayValue extends Value {
         property.set(array);
     }
 
-    void assignToCollection(TProperty property, Collection<Object> collection) throws Exception {
+    void assignToCollection(PluginProperty property, Collection<Object> collection) throws Exception {
         for (SimpleValue e : elements) {
             Object ev = e.value();
             if (property.isArray()) {

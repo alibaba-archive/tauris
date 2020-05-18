@@ -7,8 +7,10 @@ import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
 import com.aliyun.tauris.plugins.filter.keymap.TKeyMapper;
 
+import javax.annotation.PreDestroy;
+
 /**
- * Created by ZhangLei on 17/1/8.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("keymap")
 public class KeyMapFilter extends BaseTFilter {

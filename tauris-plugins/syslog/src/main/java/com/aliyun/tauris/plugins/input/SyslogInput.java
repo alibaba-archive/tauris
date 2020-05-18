@@ -12,7 +12,7 @@ import org.productivity.java.syslog4j.server.impl.net.tcp.TCPNetSyslogServerConf
 import org.productivity.java.syslog4j.server.impl.net.udp.UDPNetSyslogServerConfig;
 
 /**
- * Created by ZhangLei on 16/12/7.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class SyslogInput extends BaseTInput implements SyslogConstants, SyslogServerEventHandlerIF {
 

@@ -1,7 +1,7 @@
 package com.aliyun.tauris.plugins.scroll;
 
 /**
- * Created by ZhangLei on 16/10/22.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class ScrollRequest implements Scroll {
 

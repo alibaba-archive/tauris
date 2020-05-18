@@ -1,14 +1,14 @@
 package com.aliyun.tauris.plugins.filter.keymap;
 
 /**
- * Created by ZhangLei on 2018/6/4.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 
 import com.aliyun.tauris.TPluginInitException;
 
 /**
- * @author yundun-waf-dev
- * @date 2018-06-04
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public abstract class AbstractKeyMapper implements TKeyMapper {
 

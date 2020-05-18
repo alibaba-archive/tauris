@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 import java.util.Random;
 
 /**
- * Created by ZhangLei on 17/5/26.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class EventLogging implements TPlugin {
 

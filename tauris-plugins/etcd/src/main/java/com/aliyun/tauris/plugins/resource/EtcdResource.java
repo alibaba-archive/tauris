@@ -18,7 +18,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 /**
- * Created by ZhangLei on 2018/4/28.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class EtcdResource extends TResource {
 

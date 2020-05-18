@@ -8,7 +8,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Created by ZhangLei on 17/7/27.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class SubStringTest {
 

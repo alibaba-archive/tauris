@@ -27,7 +27,7 @@ import java.net.UnknownHostException;
 import java.util.List;
 
 /**
- * Created by ZhangLei on 16/12/8.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("elasticsearch")
 public class ElasticOutput extends BaseTOutput {

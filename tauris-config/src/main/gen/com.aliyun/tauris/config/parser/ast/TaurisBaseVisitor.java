@@ -1,6 +1,6 @@
-// Generated from /Users/zhanglei/Work/Projects/ware/tauris4/tauris-config/src/main/antlr4/Tauris.g4 by ANTLR 4.6
+// Generated from Tauris.g4 by ANTLR 4.6
 
-    package antlr4.tauris;
+    package com.aliyun.tauris.config.parser.ast;
 
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
@@ -62,6 +62,13 @@ public class TaurisBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitPlugin(TaurisParser.PluginContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitPluginName(TaurisParser.PluginNameContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

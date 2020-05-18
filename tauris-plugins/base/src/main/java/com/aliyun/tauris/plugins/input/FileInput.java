@@ -31,7 +31,7 @@ public class FileInput extends BaseStreamInput {
 
     @Override
     public void run() throws Exception {
-        TScanner scanner = this.scanner.wrap(new BufferedInputStream(new FileInputStream(filepath))).withCodec(codec, getEventFactory());
+        TScanner scanner = this.getScanner(new BufferedInputStream(new FileInputStream(filepath)));
         scanner.scan((event) -> {
             try {
                 putEvent(event);

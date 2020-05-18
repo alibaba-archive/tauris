@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by ZhangLei on 16/12/2.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class LabelsKey implements Serializable {
 
@@ -136,7 +136,7 @@ public class LabelsKey implements Serializable {
      * Gets the combined hash code that is computed from all the keys.
      * <p>
      * This value is computed once and then cached, so elements should not
-     * change their hash codes once created (note that this is the same
+     * change their hash codes once @author Ray Chaung<rockis@gmail.com>
      * constraint that would be used if the individual keys elements were
      * themselves {@link java.util.Map Map} keys.
      *

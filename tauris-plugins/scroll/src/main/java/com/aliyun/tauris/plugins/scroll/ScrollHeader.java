@@ -3,7 +3,7 @@ package com.aliyun.tauris.plugins.scroll;
 import java.util.Date;
 
 /**
- * Created by ZhangLei on 16/10/22.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class ScrollHeader implements Scroll {
 

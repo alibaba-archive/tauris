@@ -3,8 +3,8 @@ package com.aliyun.tauris;
 /**
  * Class DefaultEventFactory
  *
- * @author yundun-waf-dev
- * @date 2019-04-06
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public class DefaultEventFactory implements TEventFactory {
 

@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 /**
- * Created by ZhangLei on 17/5/28.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("ots")
 public class OTSOutput extends BaseBatchOutput {

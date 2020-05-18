@@ -13,7 +13,7 @@ import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 
 /**
- * Created by ZhangLei on 16/12/7.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("udp")
 public class UDPInput extends BaseTInput {

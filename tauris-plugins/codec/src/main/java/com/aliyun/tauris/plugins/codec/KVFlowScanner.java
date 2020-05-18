@@ -13,8 +13,8 @@ import java.util.function.Function;
 /**
  * Class KVFlowPrinter
  *
- * @author yundun-waf-dev
- * @date 2018-12-06
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 @Name("kvflow")
 public class KVFlowScanner extends AbstractKVFlow implements TScanner {

@@ -23,7 +23,7 @@ import java.util.Scanner;
  * <pre>
  *     sudo yum install ipdata -b current
  * </pre>
- * Created by ZhangLei on 17/6/1.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("tbip")
 public class TbIPLocator extends BaseIpLocator {

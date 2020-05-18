@@ -3,8 +3,8 @@ package com.aliyun.tauris;
 /**
  * Class TPipe
  *
- * @author yundun-waf-dev
- * @date 2019-04-15
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public interface TPipe<T> {
 

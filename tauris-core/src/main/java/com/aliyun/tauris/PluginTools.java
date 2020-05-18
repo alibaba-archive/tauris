@@ -4,9 +4,13 @@ import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Type;
 import com.google.common.base.CaseFormat;
 
+import javax.annotation.PostConstruct;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class PluginTools
@@ -34,7 +38,7 @@ public class PluginTools {
         plugin.release();
 
         Field[] fields = clazz.getDeclaredFields();
-        for (Field field: fields) {
+        for (Field field : fields) {
             try {
                 if (TPlugin.class.isAssignableFrom(field.getType())) {
                     field.setAccessible(true);
@@ -49,12 +53,13 @@ public class PluginTools {
         }
     }
 
-    public static void pluginInit(Object o) throws IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException{
+    public static void initialize(Object o) throws IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         ClassLoader pluginClassLoader  = o.getClass().getClassLoader();
         Thread.currentThread().setContextClassLoader(pluginClassLoader);
-        Method initMethod = o.getClass().getMethod("init");
-        initMethod.invoke(o);
+        for (Method m : findMethodsAnnotatedWith(o.getClass(), PostConstruct.class)) {
+            m.invoke(o);
+        }
         Thread.currentThread().setContextClassLoader(contextClassLoader);
     }
 
@@ -96,5 +101,23 @@ public class PluginTools {
         }
         name = CaseFormat.UPPER_CAMEL.converterTo(CaseFormat.LOWER_UNDERSCORE).convert(name);
         return name;
+    }
+
+    public static List<Method> findMethodsAnnotatedWith(final Class<?> type, final Class<? extends Annotation> annotation) {
+        final List<Method> methods = new ArrayList<>();
+        Class<?>           klass   = type;
+        while (klass != Object.class) { // need to iterated thought hierarchy in order to retrieve methods from above the current instance
+            // iterate though the list of methods declared in the class represented by klass variable, and add those annotated with the specified annotation
+            for (final Method method : klass.getDeclaredMethods()) {
+                if (method.isAnnotationPresent(annotation)) {
+                    Annotation annotInstance = method.getAnnotation(annotation);
+                    // TODO process annotInstance
+                    methods.add(method);
+                }
+            }
+            // move to the upper class in the hierarchy in search for more methods
+            klass = klass.getSuperclass();
+        }
+        return methods;
     }
 }

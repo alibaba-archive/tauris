@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Created by zhanglei on 2018/10/25.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Type
 public interface TFileManager extends TPlugin {

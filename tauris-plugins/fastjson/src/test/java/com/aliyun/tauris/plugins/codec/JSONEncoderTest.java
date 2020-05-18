@@ -10,7 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
- * Created by ZhangLei on 2017/11/24.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class JSONEncoderTest {
 

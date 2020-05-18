@@ -11,8 +11,8 @@ import java.io.*;
 /**
  * Class DefaultPrinter
  *
- * @author yundun-waf-dev
- * @date 2018-11-16
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 @NotThreadSafe
 @Name("csv")
@@ -43,19 +43,6 @@ public class CSVPrinter implements TPrinter {
         this.quotechar = quotechar;
         this.escape = escape;
         this.delimiter = delimiter;
-    }
-
-    @Override
-    public TPrinter wrap(OutputStream out) {
-        CSVPrinter printer = new CSVPrinter(fields, separator, quotechar, escape, delimiter);
-        printer.writer = new CSVWriter(new OutputStreamWriter(out), separator, quotechar, escape, delimiter);
-        printer.buffer = new String[fields.length];
-        return printer;
-    }
-
-    @Override
-    public TPrinter withCodec(TEncoder codec) {
-        return this;
     }
 
     @Override

@@ -14,7 +14,7 @@ import java.util.Set;
 
 
 /**
- * Created by ZhangLei on 16/12/7.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("msgpack")
 public class MsgPackEncoder extends AbstractEncoder {

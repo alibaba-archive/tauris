@@ -12,7 +12,7 @@ import java.util.*;
 
 /**
  * 将字符串encode为json对象
- * Created by ZhangLei on 16/12/7.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public abstract class AbstractJSONDecoder extends AbstractDecoder {
 

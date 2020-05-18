@@ -4,14 +4,13 @@ import com.aliyun.tauris.PluginTools;
 import com.aliyun.tauris.config.TConfigException;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * example:
  *   remove_if_value => {
  *       equals => "-";
  *   }
- * Created by ZhangLei on 16/12/13.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 class AssignmentsValue extends Value {
 
@@ -22,7 +21,7 @@ class AssignmentsValue extends Value {
     }
 
     @Override
-    void _assignTo(TProperty property) throws Exception {
+    void _assignTo(PluginProperty property) throws Exception {
         //此属性是一个复杂对象
         Helper.m.expand("{").next();
         Object propertyValue = property.getType().newInstance();
@@ -35,7 +34,7 @@ class AssignmentsValue extends Value {
 
     private void init(Object o, String name) {
         try {
-            PluginTools.pluginInit(o);
+            PluginTools.initialize(o);
         } catch (NoSuchMethodException e) {
             // ignore
         } catch (IllegalAccessException e) {
@@ -43,7 +42,11 @@ class AssignmentsValue extends Value {
         } catch (InvocationTargetException e) {
             // throw
             e.printStackTrace();
-            throw new TConfigException("init component " + name + " failed, cause by " + e.getMessage(), e);
+            String message = e.getMessage();
+            if (message == null) {
+                message = e.getTargetException().getMessage();
+            }
+            throw new TConfigException("init component " + name + " failed, cause by " + message, e);
         }
     }
 

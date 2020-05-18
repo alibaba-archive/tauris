@@ -5,7 +5,7 @@ package com.aliyun.tauris.plugins.scroll;
  * | HDR1   |PAD    | HDR Len  | GAP  |Timestamp |
  * | 0x0102 |0x0000 | 0x0000   | 0x13 |8 bits    |
  * +------+--------+------+----------------+      +------+----------------+
- * Created by ZhangLei on 16/12/8.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public interface Scroll {
 

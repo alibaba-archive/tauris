@@ -7,8 +7,8 @@ import org.slf4j.ext.LoggerWrapper;
 /**
  * Class TLogger
  *
- * @author yundun-waf-dev
- * @date 2019-01-22
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public class TLogger extends LoggerWrapper {
 

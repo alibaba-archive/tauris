@@ -1,7 +1,7 @@
 package com.aliyun.tauris;
 
 /**
- * Created by ZhangLei on 17/5/23.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class AbstractPlugin implements TPlugin {
 

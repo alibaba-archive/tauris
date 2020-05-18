@@ -1,7 +1,7 @@
 package com.aliyun.tauris.plugins.input.tailer;
 
 /**
- * Created by ZhangLei on 17/8/26.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public enum TailerBackend {
 

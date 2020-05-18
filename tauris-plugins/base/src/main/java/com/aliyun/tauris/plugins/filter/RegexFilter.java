@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * Created by ZhangLei on 16/12/8.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class RegexFilter extends BaseTFilter {
 

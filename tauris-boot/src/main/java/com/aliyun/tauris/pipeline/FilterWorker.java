@@ -10,8 +10,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * Class FilterWorker
  *
- * @author yundun-waf-dev
- * @date 2019-04-15
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public class FilterWorker extends Thread {
 

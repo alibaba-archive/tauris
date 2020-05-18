@@ -5,6 +5,7 @@ import com.aliyun.tauris.TResource;
 import com.aliyun.tauris.TResourceURI;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
+import javax.annotation.PreDestroy;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.ScheduledExecutorService;
@@ -13,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
- * Created by ZhangLei on 2018/4/13.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public abstract class AbstractScheduleUpdateResource extends TResource {
 
@@ -89,7 +90,7 @@ public abstract class AbstractScheduleUpdateResource extends TResource {
         return hexString.toString();
     }
 
-    @Override
+    @PreDestroy
     public void release() {
         if (updater != null) {
             updater.shutdownNow();

@@ -11,8 +11,8 @@ import java.util.Map;
 /**
  * Class InfluxdbDecoderTest
  *
- * @author Ray Chaung
- * @date 2018-09-04
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public class InfluxdbDecoderTest {
 

@@ -8,7 +8,7 @@ import com.google.common.cache.CacheBuilder;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by ZhangLei on 2018/5/21.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("guava")
 public class GuavaCacheBackend implements TCacheBackend {

@@ -1,7 +1,7 @@
 package com.aliyun.tauris.config.parser;
 
 /**
- * Created by jdziworski on 30.03.16.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class Assignment {
 
@@ -18,7 +18,7 @@ public class Assignment {
         return name;
     }
 
-    public void assignTo(TProperty property) {
+    public void assignTo(PluginProperty property) {
         this.value.assignTo(property);
     }
 

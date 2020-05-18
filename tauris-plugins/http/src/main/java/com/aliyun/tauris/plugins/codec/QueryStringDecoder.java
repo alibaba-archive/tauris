@@ -18,7 +18,7 @@ import java.util.Set;
 
 /**
  * $source是url的querystring字符串, 将querystring解码成key-value格式
- * Created by ZhangLei on 17/10/13.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("querystring")
 public class QueryStringDecoder extends AbstractDecoder {

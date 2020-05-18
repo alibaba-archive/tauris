@@ -14,7 +14,7 @@ import java.time.Duration;
 
 /**
  * NATS输入插件
- * Created by ZhangLei on 16/12/7.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("nats")
 public class NatsInput extends BaseTInput {
@@ -142,7 +142,7 @@ public class NatsInput extends BaseTInput {
 
     public void run() throws Exception {
         connection = Nats.connect(options);
-        dispatcher = connection.createDispatcher(message -> {
+        dispatcher = connection.@author Ray Chaung<rockis@gmail.com>
             try {
                 TEvent event = codec.decode(new String(message.getData(), charset));
                 if (message.getReplyTo() != null) {

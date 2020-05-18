@@ -6,7 +6,7 @@ import java.io.File;
 import java.util.Arrays;
 
 /**
- * Created by ZhangLei on 16/12/8.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public abstract class MetricServer {
 

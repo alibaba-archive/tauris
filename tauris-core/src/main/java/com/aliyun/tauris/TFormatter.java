@@ -3,7 +3,7 @@ package com.aliyun.tauris;
 import com.aliyun.tauris.annotations.Type;
 
 /**
- * Created by zhanglei on 2019/3/13.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Type(name = "formatter")
 public interface TFormatter extends TPlugin {

@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 
 /**
- * Created by ZhangLei on 2018/4/13.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class HttpResource extends AbstractScheduleUpdateResource {
 

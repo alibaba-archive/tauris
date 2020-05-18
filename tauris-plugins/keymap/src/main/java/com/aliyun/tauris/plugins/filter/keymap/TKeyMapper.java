@@ -5,7 +5,7 @@ import com.aliyun.tauris.TPluginInitException;
 import com.aliyun.tauris.annotations.Type;
 
 /**
- * Created by ZhangLei on 16/12/14.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Type("keymap.mapper")
 public interface TKeyMapper extends TPlugin {

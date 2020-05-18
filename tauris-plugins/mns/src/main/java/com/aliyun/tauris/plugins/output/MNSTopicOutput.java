@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayOutputStream;
 
 /**
- * Created by ZhangLei on 17/5/28.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("mns_topic")
 public class MNSTopicOutput extends BaseTOutput {

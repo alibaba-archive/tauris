@@ -3,7 +3,7 @@ package com.aliyun.tauris;
 import com.aliyun.tauris.annotations.Type;
 
 /**
- * Created by ZhangLei on 16/12/8.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Type("filter")
 public interface TFilter extends TPlugin {

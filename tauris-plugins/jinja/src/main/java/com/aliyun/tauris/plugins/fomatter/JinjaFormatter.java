@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 /**
- * Created by ZhangLei on 16/12/7.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("jinja")
 public class JinjaFormatter implements TFormatter {

@@ -3,8 +3,8 @@ package com.aliyun.tauris;
 /**
  * Class EncodeException
  *
- * @author yundun-waf-dev
- * @date 2019-01-23
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public class EncodeException extends Exception {
 

@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * Created by ZhangLei on 17/8/8.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class UserAgentFilterTest {
 

@@ -1,7 +1,7 @@
 package com.aliyun.tauris.plugins.http;
 
 /**
- * Created by zhanglei on 2018/9/10.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public enum CompressType {
     none(""), lz4("lz4"), gzip("gzip"), deflate("deflate");

@@ -1,8 +1,10 @@
 package com.aliyun.tauris.plugins.filter;
 
-import com.aliyun.tauris.*;
-import com.aliyun.tauris.plugins.codec.DefaultPrinter;
-import com.aliyun.tauris.plugins.codec.PlainEncoder;
+import com.aliyun.tauris.EncodeException;
+import com.aliyun.tauris.TEncoder;
+import com.aliyun.tauris.TEvent;
+import com.aliyun.tauris.TPluginInitException;
+import com.aliyun.tauris.annotations.Required;
 
 import java.io.*;
 
@@ -11,17 +13,19 @@ import java.io.*;
  */
 public class DebugFilter extends BaseTFilter {
 
+    @Required
+    TEncoder encoder;
+
     boolean print = true;
 
     File output;
 
-    TPrinter printer = new DefaultPrinter();
-    TEncoder codec   = new PlainEncoder();
+    private Writer writer;
 
     public void init() throws TPluginInitException {
         if (output != null) {
             try {
-                printer = printer.withCodec(codec).wrap(new FileOutputStream(output, true));
+                writer = new BufferedWriter(new FileWriter(output), 81920);
             } catch (IOException e) {
                 throw new TPluginInitException("io error", e);
             }
@@ -32,16 +36,16 @@ public class DebugFilter extends BaseTFilter {
     public boolean doFilter(TEvent event) {
         try {
             if (print) {
-                System.out.println(codec.encode(event));
+                System.out.println(encoder.encode(event));
             }
             if (output != null) {
                 try {
-                    printer.write(event);
+                    writer.write(encoder.encode(event));
                 } catch (IOException e) {
                 }
             }
         } catch (EncodeException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
         return true;
     }

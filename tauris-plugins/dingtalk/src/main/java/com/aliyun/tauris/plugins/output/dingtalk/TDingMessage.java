@@ -7,7 +7,7 @@ import com.aliyun.tauris.annotations.Type;
 import java.util.IllegalFormatException;
 
 /**
- * Created by ZhangLei on 2018/5/17.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Type
 public interface TDingMessage extends TPlugin {

@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by ZhangLei on 17/1/8.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("ua")
 public class UserAgentFilter extends BaseTFilter {

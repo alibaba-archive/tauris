@@ -14,8 +14,8 @@ import java.util.Properties;
 /**
  * Class PooledEventFactory
  *
- * @author yundun-waf-dev
- * @date 2019-04-07
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public class PooledEventFactory implements TEventFactory {
 

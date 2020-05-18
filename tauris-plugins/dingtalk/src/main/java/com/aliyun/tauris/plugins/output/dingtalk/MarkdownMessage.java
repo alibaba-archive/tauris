@@ -15,7 +15,7 @@ import java.util.IllegalFormatException;
 import java.util.Map;
 
 /**
- * Created by ZhangLei on 2018/5/17.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("markdown")
 public class MarkdownMessage implements TDingMessage {

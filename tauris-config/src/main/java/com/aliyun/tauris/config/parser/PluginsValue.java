@@ -13,7 +13,7 @@ import java.util.List;
  *         acl  => '*';
  *     }
  *  }
- * Created by ZhangLei on 16/12/13.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 class PluginsValue extends Value {
 
@@ -24,7 +24,7 @@ class PluginsValue extends Value {
     }
 
     @Override
-    void _assignTo(TProperty property) throws Exception {
+    void _assignTo(PluginProperty property) throws Exception {
         //此属性是一个TPlugin数组
         Helper.m.expand("{").next();
         Object array = Array.newInstance(property.getType(), plugins.size());

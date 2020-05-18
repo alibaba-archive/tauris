@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.concurrent.*;
 
 /**
- * Created by ZhangLei on 16/12/7.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("tcp")
 public class TCPInput extends BaseTInput {

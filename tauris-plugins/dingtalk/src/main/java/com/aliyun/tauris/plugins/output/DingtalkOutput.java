@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 
 /**
- * Created by ZhangLei on 16/12/8.
+ * @author Ray Chaung <rockis@gmail.com>
  */
 @Name("ding")
 public class DingtalkOutput extends BaseTOutput {

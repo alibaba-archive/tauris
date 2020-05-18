@@ -6,7 +6,7 @@ import com.aliyun.tauris.metrics.Counter;
 /**
  * 空输出
  * 将filter输入的内容直接丢弃
- * Created by ZhangLei on 16/12/8.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class EmptyOutput extends BaseTOutput {
 

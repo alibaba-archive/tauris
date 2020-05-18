@@ -5,8 +5,8 @@ import com.aliyun.tauris.TEvent;
 /**
  * Class LabelField
  *
- * @author yundun-waf-dev
- * @date 2018-07-10
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public class LabelField {
 

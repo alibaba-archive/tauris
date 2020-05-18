@@ -1,7 +1,7 @@
 package com.aliyun.tauris.config;
 
 /**
- * Created by ZhangLei on 16/10/25.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class TConfigException extends RuntimeException {
 

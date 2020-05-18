@@ -1,7 +1,7 @@
 package com.aliyun.tauris.metrics;
 
 /**
- * Created by ZhangLei on 16/11/30.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public interface CollectorChild {
 

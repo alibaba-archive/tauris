@@ -8,7 +8,7 @@ import org.junit.Test;
 import java.util.Arrays;
 
 /**
- * Created by ZhangLei on 17/7/27.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class RandomFilterTest {
 

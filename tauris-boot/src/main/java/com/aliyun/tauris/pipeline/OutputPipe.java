@@ -7,8 +7,8 @@ import com.aliyun.tauris.TLogger;
 /**
  * Class OutputPipe
  *
- * @author yundun-waf-dev
- * @date 2019-04-16
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public class OutputPipe extends AbstractPipe {
 

@@ -3,7 +3,7 @@ package com.aliyun.tauris.plugins.converter;
 import com.aliyun.tauris.utils.EventFormatter;
 
 /**
- * Created by ZhangLei on 17/1/7.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class EventFormatterConverter extends AbstractConverter {
 

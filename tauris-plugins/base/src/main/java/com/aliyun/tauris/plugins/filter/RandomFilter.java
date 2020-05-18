@@ -9,7 +9,7 @@ import java.util.Random;
 import java.util.UUID;
 
 /**
- * Created by ZhangLei on 16/12/11.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("random")
 public class RandomFilter extends BaseTFilter {

@@ -18,7 +18,7 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 
 /**
- * Created by ZhangLei on 16/12/8.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("tcp")
 public class TCPOutput extends BaseBatchOutput {

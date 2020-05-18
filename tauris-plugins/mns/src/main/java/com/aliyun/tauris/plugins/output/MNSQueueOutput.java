@@ -22,7 +22,7 @@ import java.util.List;
 
 
 /**
- * Created by ZhangLei on 17/5/28.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("mns_queue")
 public class MNSQueueOutput extends BaseTOutput {

@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * Created by ZhangLei on 17/7/27.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("hash")
 public class HashKeyMapper extends AbstractKeyMapper {

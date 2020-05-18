@@ -35,7 +35,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Created by ZhangLei on 16/12/8.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("elasticsearch_http")
 public class ElasticHttpOutput extends BaseTOutput {

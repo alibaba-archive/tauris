@@ -10,8 +10,8 @@ import java.io.IOException;
 /**
  * Class SimpleFileManager
  *
- * @author yundun-waf-dev
- * @date 2018-10-25
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 @Name("simple")
 public class SimpleFileManager extends AbstractFileManager {

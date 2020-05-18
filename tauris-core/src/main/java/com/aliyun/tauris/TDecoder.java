@@ -5,7 +5,7 @@ import com.aliyun.tauris.annotations.Type;
 
 /**
  * 将文字或字符流解码成event
- * Created by ZhangLei on 16/12/7.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Type
 public interface TDecoder extends TPlugin {

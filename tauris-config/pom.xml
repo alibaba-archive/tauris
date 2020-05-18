@@ -17,21 +17,17 @@
             <artifactId>tauris-core</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.aliyun.tauris</groupId>
-            <artifactId>tauris-utils</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.4</version>
         </dependency>
-
 
         <dependency>
             <groupId>org.reflections</groupId>
@@ -44,29 +40,6 @@
         <profile>
             <id>devel</id>
             <build>
-                <plugins>
-
-                    <plugin>
-                        <groupId>org.antlr</groupId>
-                        <artifactId>antlr4-maven-plugin</artifactId>
-                        <version>4.6</version>
-                        <configuration>
-                            <arguments>
-                                <argument>-visitor</argument>
-                            </arguments>
-                            <outputDirectory>src/main/gen/antlr4/tauris</outputDirectory>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>antlr</id>
-                                <goals>
-                                    <goal>antlr4</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                </plugins>
             </build>
         </profile>
     </profiles>
@@ -99,6 +72,25 @@
                 <configuration>
                     <outputDirectory>${project_root}/lib</outputDirectory>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-maven-plugin</artifactId>
+                <version>4.6</version>
+                <configuration>
+                    <arguments>
+                        <argument>-visitor</argument>
+                    </arguments>
+                    <outputDirectory>src/main/gen/com.aliyun/tauris/config/parser/ast</outputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>antlr</id>
+                        <goals>
+                            <goal>antlr4</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

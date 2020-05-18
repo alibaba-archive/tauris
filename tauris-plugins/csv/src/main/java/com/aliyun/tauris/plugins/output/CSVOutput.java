@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by ZhangLei on 17/4/17.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("csv")
 public class CSVOutput extends BaseTOutput {

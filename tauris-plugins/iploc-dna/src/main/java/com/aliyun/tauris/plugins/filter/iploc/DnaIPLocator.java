@@ -17,7 +17,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * <pre>
  *     http://gitlab.alibaba-inc.com/yihong.lb/attribution/wikis/home
  * </pre>
- * Created by ZhangLei on 17/6/1.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("dna")
 public class DnaIPLocator extends BaseIpLocator {

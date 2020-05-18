@@ -9,13 +9,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by ZhangLei on 2017/11/20.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class BasicAuthTest {
 
     @Test
     public void test() throws Exception {
-        String username = "John";
+        String username = "chuanshi";
         String password = "hello";
         String content = "world";
 

@@ -7,7 +7,7 @@ import java.io.OutputStream;
 
 /**
  * 将event转换为字符串, 用于output组件
- * Created by ZhangLei on 16/12/7.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Type
 public interface TEncoder extends TPlugin {

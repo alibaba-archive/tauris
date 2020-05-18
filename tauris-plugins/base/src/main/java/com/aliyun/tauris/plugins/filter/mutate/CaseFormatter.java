@@ -12,7 +12,7 @@ import java.util.Set;
 
 /**
  * 转换event的key或value的大小写
- * Created by ZhangLei on 16/12/14.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("caseformat")
 public class CaseFormatter implements TMutate {

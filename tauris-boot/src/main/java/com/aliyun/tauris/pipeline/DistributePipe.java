@@ -9,8 +9,8 @@ import java.util.List;
 /**
  * Class DistributePipe
  *
- * @author yundun-waf-dev
- * @date 2019-04-17
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public class DistributePipe extends AbstractPipe {
 

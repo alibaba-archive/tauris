@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by ZhangLei on 17/6/1.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class IPInfo {
 

@@ -8,7 +8,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import java.util.UUID;
 
 /**
- * Created by ZhangLei on 16/12/11.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("idgen")
 public class IdGenFilter extends BaseTFilter {

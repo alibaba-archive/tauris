@@ -8,7 +8,7 @@ import java.io.*;
 import java.util.function.BiConsumer;
 
 /**
- * Created by ZhangLei on 16/10/22.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class ScrollWriter implements Scroll {
 

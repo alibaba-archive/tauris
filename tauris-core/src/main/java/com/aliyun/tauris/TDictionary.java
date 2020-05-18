@@ -6,7 +6,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Created by ZhangLei on 16/12/21.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class TDictionary {
 

@@ -5,7 +5,7 @@ import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.annotations.Type;
 
 /**
- * Created by ZhangLei on 16/12/14.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Type
 public interface TMutate extends TPlugin {

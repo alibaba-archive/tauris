@@ -1,18 +1,14 @@
 package com.aliyun.tauris.plugins.output;
 
 import com.aliyun.tauris.AbstractPlugin;
-import com.aliyun.tauris.TEncoder;
 import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.TOutput;
-import com.aliyun.tauris.plugins.codec.PlainEncoder;
-import com.aliyun.tauris.expression.TExpression;
+import io.tauris.expression.TExpression;
 
 /**
  * Created by ZhangLei on 16/12/10.
  */
 public abstract class BaseTOutput extends AbstractPlugin implements TOutput {
-
-    protected TEncoder codec = new PlainEncoder();
 
     protected TExpression on;
 
@@ -43,7 +39,7 @@ public abstract class BaseTOutput extends AbstractPlugin implements TOutput {
     protected void doWrite(TEvent event) {
     }
 
-    public TEncoder getCodec() {
-        return codec;
-    }
+//    public TEncoder getCodec() {
+//        return codec;
+//    }
 }

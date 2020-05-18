@@ -5,7 +5,8 @@ import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
 
 
 /**

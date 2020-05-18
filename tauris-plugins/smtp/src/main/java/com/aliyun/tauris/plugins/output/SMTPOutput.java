@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Created by ZhangLei on 16/12/8.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("smtp")
 public class SMTPOutput extends BaseTOutput {

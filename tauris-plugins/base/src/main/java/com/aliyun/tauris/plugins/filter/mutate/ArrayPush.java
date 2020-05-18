@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * 将一个表达式的值push到一个数组中，如果数组为空则新创建一个
  *
- * Created by ZhangLei on 16/12/14.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("array_push")
 public class ArrayPush implements TMutate {

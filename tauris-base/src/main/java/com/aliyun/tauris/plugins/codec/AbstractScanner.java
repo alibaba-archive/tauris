@@ -16,16 +16,13 @@ import java.util.function.Function;
 public abstract class AbstractScanner implements TScanner {
 
     protected TLogger logger;
-    protected TDecoder codec = new PlainDecoder();
+    protected TDecoder codec;
     protected TEventFactory factory;
 
-    public AbstractScanner() {
-        this.logger = TLogger.getLogger(this);
-    }
-
-    public AbstractScanner(TDecoder codec) {
+    public AbstractScanner(TDecoder codec, TEventFactory factory) {
         this.logger = TLogger.getLogger(this);
         this.codec = codec;
+        this.factory = factory;
     }
 
     @Override
@@ -42,14 +39,8 @@ public abstract class AbstractScanner implements TScanner {
                 }
             }
         } catch (EOFException e) {
+            // ignored
         }
-    }
-
-    @Override
-    public TScanner withCodec(TDecoder codec, TEventFactory factory) {
-        this.codec = codec;
-        this.factory = factory;
-        return this;
     }
 
     protected abstract boolean hasNext();

@@ -8,7 +8,7 @@ import java.nio.charset.Charset;
 import java.util.function.Consumer;
 
 /**
- * Created by ZhangLei on 2018/4/13.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Type("resource")
 public abstract class TResource implements TPlugin {
@@ -22,6 +22,9 @@ public abstract class TResource implements TPlugin {
     public abstract byte[] fetch() throws Exception;
 
     public abstract void watch(Consumer<byte[]> consumer);
+
+    public void release() {
+    }
 
     public void setURI(TResourceURI uri) {
         this.uri = uri;

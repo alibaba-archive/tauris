@@ -1,7 +1,7 @@
 package com.aliyun.tauris.plugins.filter.iploc.dna;
 
 /**
- * Created by ZhangLei on 2017/9/9.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class LineReader {
 

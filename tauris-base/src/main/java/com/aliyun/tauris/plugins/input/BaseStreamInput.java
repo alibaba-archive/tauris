@@ -1,15 +1,18 @@
 package com.aliyun.tauris.plugins.input;
 
 import com.aliyun.tauris.*;
-import com.aliyun.tauris.plugins.codec.LineScanner;
-import com.aliyun.tauris.TScanner;
+import com.aliyun.tauris.plugins.codec.LineScannerBuilder;
+
+import java.io.InputStream;
 
 /**
- * Created by ZhangLei on 16/12/9.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public abstract class BaseStreamInput extends BaseTInput implements TInput {
 
-    protected TScanner scanner = new LineScanner();
+    protected TScannerBuilder scanner = new LineScannerBuilder();
 
-
+    public TScanner getScanner(InputStream in) {
+        return scanner.create(in, eventFactory);
+    }
 }

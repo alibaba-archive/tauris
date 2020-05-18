@@ -16,38 +16,38 @@
     <modules>
         <module>base</module>
         <module>redis</module>
-
-        <module>tcp</module>
-        <module>udp</module>
-        <module>codec</module>
         <module>file</module>
         <module>hash</module>
         <module>csv</module>
         <module>dingtalk</module>
-        <module>etcd</module>
-        <module>scroll</module>
         <module>http</module>
-        <module>sls</module>
-        <module>mns</module>
-        <module>kafka</module>
-        <module>iploc</module>
-        <module>iploc-tb</module>
-        <module>iploc-dna</module>
-        <module>syslog</module>
-        <module>odps</module>
         <module>jinja</module>
         <module>keymap</module>
         <module>fastjson</module>
-        <module>ua</module>
-        <module>rdb</module>
-        <module>msgpack</module>
         <module>smtp</module>
         <module>stats</module>
-        <module>jsoniter</module>
-        <module>influxdb</module>
+        <module>sls</module>
+        <module>iploc</module>
         <!--
+        <module>codec</module>
         <module>nats</module>
         <module>nsq</module>
+        <module>tcp</module>
+        <module>udp</module>
+        <module>etcd</module>
+        <module>scroll</module>
+        <module>iploc-tb</module>
+        <module>iploc-dna</module>
+        <module>odps</module>
+        <module>msgpack</module>
+        <module>jsoniter</module>
+        <module>influxdb</module>
+        <module>ua</module>
+        <module>rdb</module>
+        <module>mns</module>
+        <module>kafka</module>
+        <module>syslog</module>
+
         -->
     </modules>
 

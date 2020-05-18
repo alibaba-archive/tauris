@@ -4,23 +4,15 @@ import com.aliyun.openservices.log.Client;
 import com.aliyun.openservices.log.common.LogItem;
 import com.aliyun.openservices.log.exception.LogException;
 import com.aliyun.openservices.log.request.PutLogsRequest;
-import com.aliyun.tauris.EncodeException;
-import com.aliyun.tauris.TEvent;
+import com.aliyun.tauris.*;
 import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
-import com.aliyun.tauris.TPluginInitException;
 import com.aliyun.tauris.metrics.Counter;
-
-import com.aliyun.tauris.TLogger;
-import com.aliyun.tauris.utils.EventFormatter;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * sls输出插件
@@ -31,7 +23,6 @@ public class SLSOutput extends BaseBatchOutput {
 
 
     private static Counter OUTPUT_COUNTER = Counter.build().name("output_sls_total").labelNames("id").help("sls put count").create().register();
-    private static Counter ERROR_COUNTER  = Counter.build().name("output_sls_error_total").labelNames("id").help("sls put error count").create().register();
 
     private TLogger logger;
 
@@ -50,7 +41,7 @@ public class SLSOutput extends BaseBatchOutput {
     @Required
     String logstore;
 
-    EventFormatter topic;
+    TFormatter topic;
 
     String hashKey;
 
@@ -68,6 +59,13 @@ public class SLSOutput extends BaseBatchOutput {
     String[] fields;
 
 
+    /**
+     * 不输出的field, 仅在fields为空时有效
+     */
+    String[] excludeFields;
+
+    private Set<String> excludeFieldSet;
+
     private Client client;
 
     public void init() throws TPluginInitException {
@@ -81,14 +79,17 @@ public class SLSOutput extends BaseBatchOutput {
                 throw new TPluginInitException("cannot read hostname");
             }
         }
+        if (fields == null && excludeFields != null) {
+            excludeFieldSet = new HashSet<>(Arrays.asList(excludeFields));
+        }
     }
 
     @Override
-    protected BatchWriteTask newTask() throws Exception {
+    protected BatchTask createTask() throws Exception {
         return new SLSWriteTask();
     }
 
-    class SLSWriteTask extends BatchWriteTask {
+    class SLSWriteTask extends BatchTask {
 
         Map<String, List<LogItem>> items = new HashMap<>();
 
@@ -121,7 +122,10 @@ public class SLSOutput extends BaseBatchOutput {
             } else {
                 for (Map.Entry<String, Object> e: event.getFields().entrySet()) {
                     if (e.getValue() != null) {
-                        item.PushBack(e.getKey(), e.getValue().toString());
+                        String key = e.getKey();
+                        if (excludeFieldSet == null || !excludeFieldSet.contains(key)) {
+                            item.PushBack(key, e.getValue().toString());
+                        }
                     }
                 }
             }
@@ -138,17 +142,30 @@ public class SLSOutput extends BaseBatchOutput {
         }
 
         @Override
-        protected void execute() {
-            for (Map.Entry<String, List<LogItem>> e: items.entrySet()) {
-                PutLogsRequest request = new PutLogsRequest(project, logstore, e.getKey(), source, e.getValue(), hashKey);
+        protected boolean execute() {
+            List<String> topics = new ArrayList<>(items.keySet());
+            for (String topic: topics) {
+                List<LogItem> es = items.get(topic);
+                PutLogsRequest request = new PutLogsRequest(project, logstore, topic, source, es, hashKey);
                 try {
                     client.PutLogs(request);
-                    OUTPUT_COUNTER.labels(id()).inc(e.getValue().size());
+                    OUTPUT_COUNTER.labels(id()).inc(es.size());
+                    items.remove(topic);
                 } catch (LogException ex) {
-                    ERROR_COUNTER.labels(id()).inc(elementCount());
-                    logger.ERROR("put log to %s/%s with topic '%s' failed", ex, project, logstore, e.getKey());
+                    logger.ERROR("put log to %s/%s with topic '%s' failed", ex, project, logstore, topic);
                 }
             }
+            return items.isEmpty();
+        }
+
+        @Override
+        protected void active() {
+            clear();
+        }
+
+        @Override
+        protected void clear() {
+            items.values().forEach(List::clear);
         }
     }
 }

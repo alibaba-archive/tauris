@@ -15,7 +15,7 @@ import java.nio.charset.Charset;
 /**
  * IPIP库
  * https://www.ipip.net/ip.html
- * Created by ZhangLei on 2018/1/11.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("ipip")
 public class IPIPLocator extends BaseIpLocator {

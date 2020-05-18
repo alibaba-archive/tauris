@@ -15,7 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
- * Created by ZhangLei on 16/12/8.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("syslog")
 public class SyslogOutput extends BaseTOutput implements SyslogConstants {

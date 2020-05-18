@@ -3,7 +3,6 @@ package com.aliyun.tauris.config.parser;
 import com.aliyun.tauris.annotations.Required;
 import com.aliyun.tauris.annotations.ValueType;
 import com.google.common.base.CaseFormat;
-import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.lang3.ClassUtils;
 
 import java.lang.reflect.Array;
@@ -13,21 +12,20 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
- * Created by ZhangLei on 16/12/10.
+ * @author Ray Chaung<rockis@gmail.com>
  */
-abstract class TProperty implements Comparable<TProperty> {
+abstract class PluginProperty implements Comparable<PluginProperty> {
 
     protected final Object object;
     protected final String name;
     protected final Class  type;
     protected final Class  valueType;
 
-
-    public static Map<String, TProperty> getProperties(Object object) {
+    public static Map<String, PluginProperty> getProperties(Object object) {
         object = Objects.requireNonNull(object, "object cannot be null.");
-        Class<?> type = object.getClass();
-        Class[] noArgs = new Class[0], oneArg = new Class[1];
-        Map<String, TProperty> properties = new HashMap<>();
+        Class<?>                    type       = object.getClass();
+        Class[]                     noArgs     = new Class[0], oneArg = new Class[1];
+        Map<String, PluginProperty> properties = new HashMap<>();
         for (Field field : getAllFields(type)) {
             if (field.getName().startsWith("_")) continue;
             int modifiers = field.getModifiers();
@@ -96,7 +94,7 @@ abstract class TProperty implements Comparable<TProperty> {
         return allFields;
     }
 
-    TProperty(Object object, String name, Class type, ValueType valueType) {
+    PluginProperty(Object object, String name, Class type, ValueType valueType) {
         this.object = object;
         this.name = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, name);
         this.type = type;
@@ -127,7 +125,7 @@ abstract class TProperty implements Comparable<TProperty> {
         return name;
     }
 
-    public int compareTo(TProperty o) {
+    public int compareTo(PluginProperty o) {
         int comparison = name.compareTo(o.name);
         if (comparison != 0) {
             // Sort id and name above all other fields.
@@ -163,7 +161,7 @@ abstract class TProperty implements Comparable<TProperty> {
         if (this == obj) return true;
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
-        TProperty other = (TProperty) obj;
+        PluginProperty other = (PluginProperty) obj;
         if (name == null) {
             if (other.name != null) return false;
         } else if (!name.equals(other.name)) return false;
@@ -173,7 +171,7 @@ abstract class TProperty implements Comparable<TProperty> {
         return true;
     }
 
-    static class MethodProperty extends TProperty {
+    static class MethodProperty extends PluginProperty {
         private final Method setMethod, getMethod;
 
         MethodProperty(Object object, String name, Class type, Method setMethod, Method getMethod) {
@@ -200,7 +198,7 @@ abstract class TProperty implements Comparable<TProperty> {
             if (setMethod == null) {
                 throw new IllegalStateException(name + " is writeonly");
             }
-            value = ConvertUtils.convert(value, getType());
+            value = PluginPropertyConverter.convert(value, getType());
             setMethod.invoke(object, value);
         }
 
@@ -234,7 +232,7 @@ abstract class TProperty implements Comparable<TProperty> {
 
     }
 
-    static class FieldProperty extends TProperty {
+    static class FieldProperty extends PluginProperty {
         private final Field field;
 
         protected FieldProperty(Object object, Field field) {
@@ -261,10 +259,10 @@ abstract class TProperty implements Comparable<TProperty> {
                 if (this.field.getType().isArray() && !value.getClass().isArray()) {
                     Class<?> compType = this.field.getType().getComponentType();
                     Object array = Array.newInstance(compType, 1);
-                    Array.set(array, 0, ConvertUtils.convert(value, compType));
+                    Array.set(array, 0, PluginPropertyConverter.convert(value, compType));
                     field.set(object, array);
                 } else {
-                    value = ConvertUtils.convert(value, this.field.getType());
+                    value = PluginPropertyConverter.convert(value, this.field.getType());
                     field.set(object, value);
                 }
             }

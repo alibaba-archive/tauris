@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by ZhangLei on 16/12/8.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("tcp_nio")
 public class TCPNIOOutput extends BaseTOutput {

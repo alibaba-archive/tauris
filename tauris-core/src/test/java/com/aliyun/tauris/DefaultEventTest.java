@@ -3,7 +3,6 @@ package com.aliyun.tauris;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -11,7 +10,7 @@ import java.util.Map;
 
 
 /**
- * Created by ZhangLei on 17/4/27.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class DefaultEventTest {
 
@@ -19,7 +18,7 @@ public class DefaultEventTest {
     public void test() throws Exception {
 
         TEvent e = new DefaultEvent("testcase");
-        String json = StringUtils.join(IOUtils.readLines(getClass().getClassLoader().getResourceAsStream("jsondata.json")), "\n");
+        String json = String.join(",", IOUtils.readLines(getClass().getClassLoader().getResourceAsStream("jsondata.json")));
         JSONObject data = JSON.parseObject(json);
         data.forEach(e::set);
 

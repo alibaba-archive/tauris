@@ -2,6 +2,7 @@ package com.aliyun.tauris.config;
 
 import com.aliyun.tauris.*;
 import com.aliyun.tauris.annotations.Type;
+import com.aliyun.tauris.config.parser.PluginPropertyConverter;
 import org.reflections.Configuration;
 import org.reflections.Reflections;
 import org.reflections.util.ConfigurationBuilder;
@@ -21,8 +22,8 @@ import java.util.Set;
 /**
  * Class TPluginResolverInitializer
  *
- * @author yundun-waf-dev
- * @date 2019-03-21
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public class TPluginResolverInitializer implements TPluginScanner {
 
@@ -33,6 +34,7 @@ public class TPluginResolverInitializer implements TPluginScanner {
         Thread.currentThread().setContextClassLoader(cl);
         TPluginResolverInitializer initializer = new TPluginResolverInitializer(cl);
         TPluginResolver.configure(initializer);
+        PluginPropertyConverter.configure(initializer);
     }
 
     public TPluginResolverInitializer(ClassLoader classLoader) {

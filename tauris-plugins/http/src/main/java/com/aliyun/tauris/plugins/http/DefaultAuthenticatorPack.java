@@ -5,7 +5,7 @@ import com.aliyun.tauris.annotations.Name;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Created by ZhangLei on 2017/11/20.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("default")
 public class DefaultAuthenticatorPack implements TAuthenticatorPack {

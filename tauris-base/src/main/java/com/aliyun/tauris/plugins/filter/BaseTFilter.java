@@ -5,12 +5,12 @@ import com.aliyun.tauris.*;
 import com.aliyun.tauris.annotations.ValueType;
 import com.aliyun.tauris.utils.EventFormatter;
 import com.aliyun.tauris.utils.EventLogging;
-import com.aliyun.tauris.expression.TExpression;
+import io.tauris.expression.TExpression;
 
 import java.util.Map;
 
 /**
- * Created by ZhangLei on 16/12/10.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public abstract class BaseTFilter extends AbstractPlugin implements TFilter {
 
@@ -71,9 +71,4 @@ public abstract class BaseTFilter extends AbstractPlugin implements TFilter {
     }
 
     protected abstract boolean doFilter(TEvent event);
-
-    @Override
-    public void release() {
-        super.release();
-    }
 }

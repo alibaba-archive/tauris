@@ -5,8 +5,8 @@ import org.apache.commons.collections4.keyvalue.MultiKey;
 /**
  * Class Labels
  *
- * @author yundun-waf-dev
- * @date 2018-07-10
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public class Labels extends MultiKey<String> {
 

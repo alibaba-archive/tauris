@@ -7,7 +7,7 @@ import com.aliyun.tauris.annotations.Required;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by ZhangLei on 16/12/11.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("timestamp")
 public class TimestampFilter extends BaseTFilter {

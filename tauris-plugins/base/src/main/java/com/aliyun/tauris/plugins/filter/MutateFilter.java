@@ -4,7 +4,7 @@ import com.aliyun.tauris.TEvent;
 import com.aliyun.tauris.plugins.filter.mutate.*;
 
 /**
- * Created by ZhangLei on 16/12/11.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class MutateFilter extends BaseTFilter {
 

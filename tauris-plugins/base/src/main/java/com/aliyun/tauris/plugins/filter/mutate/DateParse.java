@@ -13,7 +13,7 @@ import java.util.Date;
 
 
 /**
- * Created by ZhangLei on 16/12/7.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("dateparse")
 public class DateParse implements TMutate {

@@ -14,8 +14,8 @@ import java.util.Enumeration;
 /**
  * Class HttpMetricsHandler
  *
- * @author yundun-waf-dev
- * @date 2018-09-19
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public class HttpMetricsHandler extends SimpleChannelInboundHandler<HttpRequest> {
 

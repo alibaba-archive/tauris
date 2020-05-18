@@ -13,7 +13,7 @@ import java.util.Base64;
 
 /**
  * 将对象encode为字符串
- * Created by ZhangLei on 16/12/7.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("base64")
 public class Base64Encoder extends AbstractEncoder {

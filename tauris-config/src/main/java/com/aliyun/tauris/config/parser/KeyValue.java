@@ -4,7 +4,7 @@ package com.aliyun.tauris.config.parser;
 import com.aliyun.tauris.config.parser.SimpleValue.StringValue;
 
 /**
- * Created by ZhangLei on 16/12/14.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class KeyValue {
 

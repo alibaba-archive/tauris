@@ -5,7 +5,7 @@ import org.apache.commons.beanutils.ConversionException;
 import java.util.regex.Pattern;
 
 /**
- * Created by ZhangLei on 2018/5/11.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class PatternConverter extends AbstractConverter {
 

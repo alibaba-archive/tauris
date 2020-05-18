@@ -1,9 +1,8 @@
 package com.aliyun.tauris.config.parser;
 
-import antlr4.tauris.TaurisBaseVisitor;
-import antlr4.tauris.TaurisLexer;
-import antlr4.tauris.TaurisParser;
+import com.aliyun.tauris.config.parser.ast.*;
 import com.aliyun.tauris.config.TConfigException;
+import io.tauris.expression.ExprException;
 import org.antlr.v4.runtime.*;
 
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ import java.util.function.Function;
 import static java.util.stream.Collectors.toList;
 
 /**
- * Created by yundun-waf-dev
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class Parser {
 
@@ -31,14 +30,14 @@ public class Parser {
         try {
             Pipeline pipeline = visitor.visit(parser.pipeline());
             if (errorListener.hasError()) {
-                throw new TConfigException(String.format("config has syntax error, %s", errorListener.errorMessage));
+                throw new ExprException(String.format("config has syntax error, %s", errorListener.errorMessage));
             }
             return pipeline;
         } catch (Exception e) {
             if (errorListener.hasError()) {
-                throw new TConfigException(String.format("config has syntax error, %s", errorListener.errorMessage));
+                throw new ExprException(String.format("config has syntax error, %s", errorListener.errorMessage));
             } else {
-                throw new TConfigException(String.format("config has syntax error, %s", e.getMessage()));
+                throw new ExprException(String.format("config has syntax error, %s", e.getMessage()));
             }
         }
     }
@@ -47,13 +46,6 @@ public class Parser {
         PluginVisitor visitor = new PluginVisitor();
         return parse(config, (parser) -> {
             return visitor.visitPlugin(parser.plugin());
-        });
-    }
-
-    public static PluginGroup parsePluginGroup(String config) {
-        PluginGroupVisitor visitor = new PluginGroupVisitor();
-        return parse(config, (parser) -> {
-            return visitor.visitPluginGroup(parser.pluginGroup());
         });
     }
 
@@ -170,10 +162,12 @@ public class Parser {
     private static class PluginVisitor extends TaurisBaseVisitor<Plugin> {
         @Override
         public Plugin visitPlugin(TaurisParser.PluginContext ctx) {
-            String             methodName    = ctx.name().getText();
+            TaurisParser.PluginNameContext pluginNameCtx = ctx.pluginName();
+            String majorName = pluginNameCtx.name(0).getText();
+            String minorName = pluginNameCtx.name().size() > 1 ?  pluginNameCtx.name(1).getText() : null;
             AssignmentsVisitor objectVisitor = new AssignmentsVisitor();
             Assignments        pluginBody    = objectVisitor.visitAssignments(ctx.assignments());
-            return new Plugin(methodName, pluginBody);
+            return new Plugin(majorName, minorName, pluginBody);
         }
     }
 

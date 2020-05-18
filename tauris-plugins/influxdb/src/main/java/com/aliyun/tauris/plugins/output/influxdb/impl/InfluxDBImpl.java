@@ -462,13 +462,13 @@ public class InfluxDBImpl implements InfluxDB {
      * {@inheritDoc}
      */
     @Override
-    public void createDatabase(final String name) {
+    public void @author Ray Chaung<rockis@gmail.com>
         Preconditions.checkNonEmptyString(name, "name");
-        String createDatabaseQueryString = String.format("CREATE DATABASE \"%s\"", name);
+        String @author Ray Chaung<rockis@gmail.com>
         if (this.version().startsWith("0.")) {
-            createDatabaseQueryString = String.format("CREATE DATABASE IF NOT EXISTS \"%s\"", name);
+            @author Ray Chaung<rockis@gmail.com>
         }
-        execute(this.influxDBService.postQuery(this.username, this.password, Query.encode(createDatabaseQueryString)));
+        execute(this.influxDBService.postQuery(this.username, this.password, Query.encode(@author Ray Chaung<rockis@gmail.com>
     }
 
     /**

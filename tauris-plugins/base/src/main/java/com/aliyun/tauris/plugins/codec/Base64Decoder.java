@@ -12,7 +12,7 @@ import java.util.Base64;
 
 /**
  * 将字符串encode为json对象
- * Created by ZhangLei on 16/12/7.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("base64")
 public class Base64Decoder extends AbstractDecoder {

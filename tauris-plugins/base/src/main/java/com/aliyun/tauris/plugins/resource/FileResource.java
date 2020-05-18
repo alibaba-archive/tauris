@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 
 /**
- * Created by ZhangLei on 2018/4/13.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class FileResource extends AbstractScheduleUpdateResource {
 

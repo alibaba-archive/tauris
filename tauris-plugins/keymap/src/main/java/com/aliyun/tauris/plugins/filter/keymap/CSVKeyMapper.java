@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by ZhangLei on 17/7/27.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("csv")
 public class CSVKeyMapper extends AbstractResourceKeyMapper {

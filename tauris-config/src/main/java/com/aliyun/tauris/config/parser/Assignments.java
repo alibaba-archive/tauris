@@ -1,12 +1,13 @@
 package com.aliyun.tauris.config.parser;
 
 import com.aliyun.tauris.config.TConfigException;
+import com.google.common.base.CaseFormat;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * Created by jdziworski on 30.03.16.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class Assignments {
 
@@ -17,13 +18,18 @@ public class Assignments {
     }
 
     public void assignTo(Object object) {
-        Map<String, TProperty> properties = TProperty.getProperties(object);
-        Helper m = Helper.m;
+        Map<String, PluginProperty> properties = PluginProperty.getProperties(object);
+        Helper                      m          = Helper.m;
         for (Assignment a : assignments) {
             int curLineCount = m.getLineCount();
-            TProperty property = properties.get(a.getName());
+            String         name     = a.getName();
+            PluginProperty property = properties.get(a.getName());
             if (property == null) {
-                throw new TConfigException(String.format("Unknown property '%s'", a.getName()));
+                name = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, name);
+                property = properties.get(name);
+                if (name == null) {
+                    throw new TConfigException(String.format("Unknown property '%s'", a.getName()));
+                }
             }
             m.message(property.getName() + " => ");
             a.assignTo(property);

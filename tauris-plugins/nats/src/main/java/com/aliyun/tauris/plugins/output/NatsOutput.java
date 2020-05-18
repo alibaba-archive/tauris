@@ -19,7 +19,7 @@ import java.time.Duration;
 
 /**
  * NATS 输出插件
- * Created by ZhangLei on 16/12/8.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("nats")
 public class NatsOutput extends BaseTOutput {

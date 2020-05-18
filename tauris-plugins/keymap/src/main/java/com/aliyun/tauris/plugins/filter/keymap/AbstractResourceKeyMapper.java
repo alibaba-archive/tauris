@@ -1,16 +1,18 @@
 package com.aliyun.tauris.plugins.filter.keymap;
 
+import com.aliyun.tauris.PluginTools;
 import com.aliyun.tauris.TResource;
 import com.aliyun.tauris.annotations.Required;
 import com.aliyun.tauris.TPluginInitException;
 
+import javax.annotation.PreDestroy;
 import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Created by ZhangLei on 17/5/26.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public abstract class AbstractResourceKeyMapper extends AbstractKeyMapper {
 
@@ -62,7 +64,9 @@ public abstract class AbstractResourceKeyMapper extends AbstractKeyMapper {
 
     public abstract Object resolveValue(Object value);
 
+    @Override
     public void release() {
         mapping.clear();
+        resource.release();
     }
 }

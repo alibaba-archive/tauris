@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
- * Created by ZhangLei on 2017/11/15.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Type("http.authenticator")
 public interface TAuthenticator extends TPlugin {

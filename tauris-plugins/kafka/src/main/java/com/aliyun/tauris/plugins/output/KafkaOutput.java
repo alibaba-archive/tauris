@@ -25,7 +25,7 @@ import java.util.concurrent.Future;
 
 /**
  * Kafaka输出插件
- * Created by ZhangLei on 17/5/28.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("kafka")
 public class KafkaOutput extends BaseTOutput {

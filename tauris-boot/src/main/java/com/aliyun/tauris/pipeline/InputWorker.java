@@ -6,8 +6,8 @@ import com.aliyun.tauris.TLogger;
 /**
  * Class InputWorker
  *
- * @author yundun-waf-dev
- * @date 2019-04-15
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public class InputWorker extends Thread {
 

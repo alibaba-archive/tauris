@@ -13,8 +13,10 @@ import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+import javax.annotation.PreDestroy;
+
 /**
- * Created by ZhangLei on 17/1/8.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("redis")
 public class RedisFilter extends BaseTFilter {
@@ -71,7 +73,6 @@ public class RedisFilter extends BaseTFilter {
 
     @Override
     public void release() {
-        super.release();
         this.jedisPool.destroy();
     }
 }

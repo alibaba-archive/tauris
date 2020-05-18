@@ -9,7 +9,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 /**
- * Created by ZhangLei on 2018/5/21.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("redis")
 public class RedisCacheBackend implements TCacheBackend {

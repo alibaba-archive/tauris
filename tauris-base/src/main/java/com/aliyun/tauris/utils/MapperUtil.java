@@ -1,7 +1,7 @@
 package com.aliyun.tauris.utils;
 
 /**
- * Created by ZhangLei on 16/6/23.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class MapperUtil {
 

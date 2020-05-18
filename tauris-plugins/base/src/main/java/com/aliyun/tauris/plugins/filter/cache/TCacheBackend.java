@@ -5,7 +5,7 @@ import com.aliyun.tauris.TPluginInitException;
 import com.aliyun.tauris.annotations.Type;
 
 /**
- * Created by ZhangLei on 2018/5/21.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Type
 public interface TCacheBackend extends TPlugin {

@@ -11,7 +11,7 @@ import org.joda.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
- * Created by ZhangLei on 16/12/14.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("dateformat")
 public class DateFormat extends BaseMutate {

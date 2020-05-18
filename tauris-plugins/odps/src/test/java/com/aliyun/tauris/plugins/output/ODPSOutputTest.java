@@ -7,7 +7,7 @@ import org.junit.Test;
 import java.util.Collections;
 
 /**
- * Created by ZhangLei on 17/6/23.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class ODPSOutputTest {
 

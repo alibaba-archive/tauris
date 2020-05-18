@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Created by ZhangLei on 17/5/26.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public abstract class BaseIpLocator implements TIPLocator {
 

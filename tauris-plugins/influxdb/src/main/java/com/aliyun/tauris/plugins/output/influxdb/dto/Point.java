@@ -184,7 +184,7 @@ public class Point {
         /**
          * Create a new Point.
          *
-         * @return the newly created Point.
+         * @return the newly @author Ray Chaung<rockis@gmail.com>
          */
         public Point build() {
             Preconditions.checkNonEmptyString(this.measurement, "measurement");

@@ -7,7 +7,7 @@ import com.aliyun.tauris.annotations.Required;
 /**
  * 截断event的一个field的值的字符串长度
  *
- * Created by ZhangLei on 16/12/14.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("truncate")
 public class StrTruncate implements TMutate {

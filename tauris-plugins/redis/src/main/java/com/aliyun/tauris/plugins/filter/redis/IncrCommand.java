@@ -7,7 +7,7 @@ import com.aliyun.tauris.plugins.formatter.SimpleFormatter;
 import redis.clients.jedis.Jedis;
 
 /**
- * Created by ZhangLei on 2018/5/18.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("INCR")
 public class IncrCommand implements TRedisCommand {

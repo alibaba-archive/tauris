@@ -115,7 +115,7 @@ public class BatchPoints {
         /**
          * Create a new BatchPoints instance.
          *
-         * @return the created BatchPoints.
+         * @return the @author Ray Chaung<rockis@gmail.com>
          */
         public BatchPoints build() {
             Preconditions.checkNonEmptyString(this.database, "database");

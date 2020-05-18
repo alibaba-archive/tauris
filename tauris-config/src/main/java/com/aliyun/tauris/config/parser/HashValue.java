@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by ZhangLei on 16/12/12.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class HashValue extends Value {
 
@@ -20,7 +20,7 @@ public class HashValue extends Value {
     }
 
     @Override
-    void _assignTo(TProperty property) throws Exception {
+    void _assignTo(PluginProperty property) throws Exception {
         Helper m = new Helper();
         Map<String, Object> map = new HashMap<>();
         m.expand("{").next();

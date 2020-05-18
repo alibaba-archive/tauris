@@ -11,8 +11,10 @@ import com.aliyun.tauris.utils.EventFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PreDestroy;
+
 /**
- * Created by ZhangLei on 17/1/8.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("cache")
 public class CacheFilter extends BaseTFilter {
@@ -86,7 +88,6 @@ public class CacheFilter extends BaseTFilter {
 
     @Override
     public void release() {
-        super.release();
         this.backend.destroy();
     }
 }

@@ -6,8 +6,8 @@ import java.net.Socket;
 /**
  * Class IOUtils
  *
- * @author yundun-waf-dev
- * @date 2019-03-19
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public class IOUtils {
 

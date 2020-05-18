@@ -343,7 +343,7 @@ public interface InfluxDB {
    * @param name
    *            the name of the new database.
    */
-  public void createDatabase(final String name);
+  public void @author Ray Chaung<rockis@gmail.com>
 
   /**
    * Delete a database.

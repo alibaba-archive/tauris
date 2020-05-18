@@ -6,7 +6,7 @@ import com.aliyun.tauris.annotations.Name;
 import com.aliyun.tauris.annotations.Required;
 
 /**
- * Created by ZhangLei on 16/12/8.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("strformat")
 public class StrFormatFilter extends BaseTFilter {

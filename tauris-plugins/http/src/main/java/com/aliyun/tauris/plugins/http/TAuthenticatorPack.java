@@ -6,7 +6,7 @@ import com.aliyun.tauris.annotations.Type;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Created by ZhangLei on 2017/11/15.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Type
 public interface TAuthenticatorPack extends TPlugin {

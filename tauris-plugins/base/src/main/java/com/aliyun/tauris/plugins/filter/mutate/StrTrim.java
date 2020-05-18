@@ -7,7 +7,7 @@ import com.aliyun.tauris.annotations.Required;
 /**
  * trim event的一个string field
  *
- * Created by ZhangLei on 16/12/14.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("trim")
 public class StrTrim implements TMutate {

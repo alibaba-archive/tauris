@@ -25,11 +25,9 @@
                 <module>tauris-core</module>
                 <module>tauris-base</module>
                 <module>tauris-config</module>
-                <module>tauris-expression</module>
                 <module>tauris-utils</module>
                 <module>tauris-boot</module>
                 <module>tauris-plugins</module>
-                <module>tauris-example</module>
             </modules>
         </profile>
 
@@ -39,14 +37,13 @@
                 <module>tauris-core</module>
                 <module>tauris-base</module>
                 <module>tauris-config</module>
-                <module>tauris-expression</module>
                 <module>tauris-utils</module>
                 <module>tauris-boot</module>
                 <module>tauris-plugins</module>
                 <module>tauris-example</module>
+
             </modules>
         </profile>
-
 
         <profile>
             <id>release</id>
@@ -54,7 +51,6 @@
                 <module>tauris-core</module>
                 <module>tauris-base</module>
                 <module>tauris-config</module>
-                <module>tauris-expression</module>
                 <module>tauris-utils</module>
                 <module>tauris-boot</module>
                 <module>tauris-plugins</module>

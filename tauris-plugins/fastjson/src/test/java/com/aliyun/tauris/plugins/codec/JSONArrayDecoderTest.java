@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Created by ZhangLei on 2017/11/24.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class JSONArrayDecoderTest {
 

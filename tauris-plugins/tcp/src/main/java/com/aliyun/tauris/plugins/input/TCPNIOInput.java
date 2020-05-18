@@ -17,7 +17,7 @@ import java.net.InetAddress;
 import java.nio.charset.Charset;
 
 /**
- * Created by ZhangLei on 16/12/7.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("tcp_nio")
 public class TCPNIOInput extends BaseTInput {

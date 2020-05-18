@@ -3,7 +3,7 @@ package com.aliyun.tauris.plugins.filter.mutate;
 import java.util.Optional;
 
 /**
- * Created by ZhangLei on 16/12/14.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class BooleanConverter extends AbstractConverter {
 

@@ -7,7 +7,7 @@ import com.aliyun.tauris.annotations.Required;
 /**
  * 将一个字符串类型的field/meta 分割为多个field/meta
  *
- * Created by ZhangLei on 16/12/14.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("split")
 public class StrSplit implements TMutate {

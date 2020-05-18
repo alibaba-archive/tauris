@@ -5,7 +5,7 @@ import org.apache.commons.beanutils.ConversionException;
 import java.nio.charset.Charset;
 
 /**
- * Created by ZhangLei on 2018/5/24.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class CharsetConverter extends AbstractConverter {
 

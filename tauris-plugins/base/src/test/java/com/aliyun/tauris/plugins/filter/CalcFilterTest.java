@@ -2,12 +2,12 @@ package com.aliyun.tauris.plugins.filter;
 
 import com.aliyun.tauris.DefaultEvent;
 import com.aliyun.tauris.TEvent;
-import com.aliyun.tauris.expression.TExpression;
+import io.tauris.expression.TExpression;
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Created by ZhangLei on 17/7/27.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class CalcFilterTest {
 
@@ -16,7 +16,7 @@ public class CalcFilterTest {
     public void test() {
 
         CalcFilter cf = new CalcFilter();
-        cf.expression = TExpression.build("123+456");
+        cf.expression = TExpression.compile("123+456");
         cf.target = "tgt";
         cf.valueType = CalcFilter.NumberType.DOUBLE;
 //        cf.init();
@@ -27,7 +27,7 @@ public class CalcFilterTest {
 
 
         cf = new CalcFilter();
-        cf.expression = TExpression.build("$val+456");
+        cf.expression = TExpression.compile("$val+456");
         cf.target = "tgt";
         cf.valueType = CalcFilter.NumberType.DOUBLE;
 //        cf.init();

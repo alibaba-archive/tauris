@@ -1,7 +1,7 @@
 package com.aliyun.tauris.plugins.http;
 
 import com.aliyun.tauris.*;
-import com.aliyun.tauris.plugins.codec.FullTextScanner;
+import com.aliyun.tauris.plugins.codec.FullTextScannerBuilder;
 import com.aliyun.tauris.plugins.codec.PlainDecoder;
 import com.aliyun.tauris.plugins.codec.PlainEncoder;
 import com.aliyun.tauris.TScanner;
@@ -14,8 +14,8 @@ import java.util.zip.*;
 /**
  * Class CompressTest
  *
- * @author yundun-waf-dev
- * @date 2018-09-10
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public class CompressTest {
 
@@ -27,7 +27,7 @@ public class CompressTest {
         writer.close();
 
         InputStream reader  = readerFactory.newReader();
-        TScanner    scanner = new FullTextScanner().wrap(reader);
+        TScanner    scanner = new FullTextScannerBuilder().create(reader, new DefaultEventFactory());
         scanner.scan((e) -> {
             Assert.assertEquals(text, e.getSource());
             return true;

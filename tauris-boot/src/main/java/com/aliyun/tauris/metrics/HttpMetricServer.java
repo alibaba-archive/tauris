@@ -15,7 +15,7 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
 import java.net.InetAddress;
 
 /**
- * Created by ZhangLei on 16/12/8.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class HttpMetricServer extends MetricServer {
 
@@ -111,6 +111,7 @@ public class HttpMetricServer extends MetricServer {
         try {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
+            logger.INFO("http metric server has been shutdown");
         } catch (Exception e) {
             logger.ERROR(e);
         }

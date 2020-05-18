@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * Created by ZhangLei on 17/8/28.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class RegexFilterTest {
 

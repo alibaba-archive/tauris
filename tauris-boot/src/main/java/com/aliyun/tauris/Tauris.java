@@ -8,11 +8,12 @@ import com.aliyun.tauris.config.parser.Pipeline;
 import com.aliyun.tauris.metrics.MetricServer;
 
 import java.io.File;
+import java.util.ServiceLoader;
 import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
- * Created by ZhangLei on 16/10/20.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class Tauris {
 
@@ -104,7 +105,6 @@ public class Tauris {
             }
         }
     }
-
 
     public Pipeline parse() {
         String   cfgText     = config.load();

@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 import java.util.*;
 
 /**
- * Created by ZhangLei on 16/12/8.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class TPipeline {
 

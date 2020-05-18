@@ -3,7 +3,7 @@ package com.aliyun.tauris.metrics;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by ZhangLei on 16/12/2.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class LabelsKeyFactory {
 

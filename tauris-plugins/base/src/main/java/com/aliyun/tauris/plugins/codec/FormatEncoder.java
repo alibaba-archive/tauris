@@ -2,6 +2,7 @@ package com.aliyun.tauris.plugins.codec;
 
 import com.aliyun.tauris.EncodeException;
 import com.aliyun.tauris.TEvent;
+import com.aliyun.tauris.TEventFormatter;
 import com.aliyun.tauris.TFormatter;
 import com.aliyun.tauris.annotations.Required;
 

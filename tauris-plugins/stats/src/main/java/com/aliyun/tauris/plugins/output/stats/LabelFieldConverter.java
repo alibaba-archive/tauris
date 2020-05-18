@@ -3,7 +3,7 @@ package com.aliyun.tauris.plugins.output.stats;
 import com.aliyun.tauris.plugins.converter.AbstractConverter;
 
 /**
- * Created by ZhangLei on 17/1/7.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class LabelFieldConverter extends AbstractConverter {
 

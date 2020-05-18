@@ -8,8 +8,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Class EphemEvent
  *
- * @author yundun-waf-dev
- * @date 2019-04-15
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public class EphemEvent implements TEvent {
 

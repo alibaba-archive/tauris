@@ -5,13 +5,11 @@ import com.aliyun.tauris.config.parser.Helper;
 import org.apache.commons.cli.*;
 import org.apache.log4j.*;
 import org.apache.log4j.xml.DOMConfigurator;
-import sun.misc.Signal;
 
 import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
@@ -19,7 +17,7 @@ import java.util.regex.Pattern;
 
 
 /**
- * Created by ZhangLei on 16/10/20.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class Bootstrap {
 
@@ -317,17 +315,19 @@ public class Bootstrap {
         if (test) {
             System.exit(0);
         }
-        Signal.handle(new Signal("TERM"), signal -> {
-            System.out.println("signal TERM received");
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("tauris is stopping");
             tauris.stop();
-            System.exit(0);
-        });
+            System.out.println("tauris has been stopped");
+        }));
         try {
             tauris.start();
         } catch (Exception e) {
             e.printStackTrace();
             System.err.print(e.getMessage());
             System.exit(1);
+        } finally {
+            tauris.stop();
         }
     }
 }

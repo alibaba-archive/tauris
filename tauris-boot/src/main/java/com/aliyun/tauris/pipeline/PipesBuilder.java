@@ -8,8 +8,8 @@ import java.util.List;
 /**
  * Class ChannelBuilder
  *
- * @author yundun-waf-dev
- * @date 2019-04-15
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public class PipesBuilder {
 

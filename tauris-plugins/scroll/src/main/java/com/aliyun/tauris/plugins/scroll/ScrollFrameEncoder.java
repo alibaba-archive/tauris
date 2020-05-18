@@ -18,8 +18,8 @@ import java.util.function.BiFunction;
 /**
  * Class ScrollFrameDecoder
  *
- * @author yundun-waf-dev
- * @date 2018-09-17
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public class ScrollFrameEncoder extends MessageToByteEncoder<ByteBuf> {
 

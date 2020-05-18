@@ -14,7 +14,7 @@ import com.aliyun.tauris.TLogger;
 
 
 /**
- * Created by ZhangLei on 16/12/7.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("mns")
 public class MNSQueueInput extends BaseTInput {

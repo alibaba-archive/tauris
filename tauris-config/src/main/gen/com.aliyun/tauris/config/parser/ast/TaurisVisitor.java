@@ -1,6 +1,6 @@
-// Generated from /Users/zhanglei/Work/Projects/ware/tauris4/tauris-config/src/main/antlr4/Tauris.g4 by ANTLR 4.6
+// Generated from Tauris.g4 by ANTLR 4.6
 
-    package antlr4.tauris;
+    package com.aliyun.tauris.config.parser.ast;
 
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -54,6 +54,12 @@ public interface TaurisVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitPlugin(TaurisParser.PluginContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TaurisParser#pluginName}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPluginName(TaurisParser.PluginNameContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link TaurisParser#assignments}.
 	 * @param ctx the parse tree

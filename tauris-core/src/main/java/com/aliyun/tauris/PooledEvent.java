@@ -3,8 +3,8 @@ package com.aliyun.tauris;
 /**
  * Class PooledEvent
  *
- * @author yundun-waf-dev
- * @date 2019-04-07
+ * @author Ray Chaung<rockis@gmail.com>
+ *
  */
 public class PooledEvent extends DefaultEvent {
 

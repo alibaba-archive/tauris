@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * Created by jdziworski on 30.03.16.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class PluginGroup {
     private final String       typeName;
@@ -46,7 +46,7 @@ public class PluginGroup {
             String pid = PluginId.generateId(typeName + "_group");
             if (g.id() == null) {
                 g.setId(pid);
-                Helper.m.collapse("} //id: " + pid).next();
+                Helper.m.collapse("} # id: " + pid).next();
             } else {
                 Helper.m.collapse("}").next();
             }

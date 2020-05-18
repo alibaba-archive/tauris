@@ -8,7 +8,7 @@ import com.aliyun.tauris.TLogger;
 import java.util.Scanner;
 
 /**
- * Created by ZhangLei on 16/12/9.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 @Name("stdin")
 public class StdInput extends BaseTInput {

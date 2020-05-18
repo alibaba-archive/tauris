@@ -3,7 +3,7 @@ package com.aliyun.tauris;
 import java.util.*;
 
 /**
- * Created by ZhangLei on 16/12/8.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public interface TEvent extends TObject {
 

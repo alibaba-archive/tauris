@@ -1,7 +1,7 @@
 package com.aliyun.tauris.plugins.output.dingtalk;
 
 /**
- * Created by ZhangLei on 2018/5/17.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public enum  DingMsgType {
     text, link, markdown;

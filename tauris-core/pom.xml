@@ -13,9 +13,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.aliyun.tauris</groupId>
-            <artifactId>tauris-expression</artifactId>
-            <version>${project.version}</version>
+            <groupId>io.tauris</groupId>
+            <artifactId>expression</artifactId>
+            <version>1.0.8</version>
         </dependency>
 
         <dependency>

@@ -6,8 +6,10 @@ import com.aliyun.tauris.TPluginInitException;
 import com.aliyun.tauris.metrics.Counter;
 import com.aliyun.tauris.utils.EventFormatter;
 
+import javax.annotation.PreDestroy;
+
 /**
- * Created by ZhangLei on 16/12/14.
+ * @author Ray Chaung<rockis@gmail.com>
  */
 public class MetricFilter extends BaseTFilter {
 
@@ -76,7 +78,7 @@ public class MetricFilter extends BaseTFilter {
         return true;
     }
 
-    @Override
+    @PreDestroy
     public void release() {
         counter.unregister();
     }

@@ -7,7 +7,6 @@ import com.aliyun.tauris.TLogger;
  * Class InputWorker
  *
  * @author Ray Chaung<rockis@gmail.com>
- *
  */
 public class InputWorker extends Thread {
 
@@ -16,6 +15,8 @@ public class InputWorker extends Thread {
     private TPipe<TEvent> channel;
 
     private TInput input;
+
+    private volatile boolean running;
 
     public InputWorker(TEventFactory eventFactory, TInput input, TPipe<TEvent> channel) {
         this.eventFactory = eventFactory;
@@ -32,15 +33,18 @@ public class InputWorker extends Thread {
     public void run() {
         try {
             input.init(channel, eventFactory);
+            running = true;
             input.run();
         } catch (Exception e) {
             logger.ERROR("input plugin thread raise an exception, pipeline will be closed", e);
-//            pipeline.setState(TPipeline.State.failed);
+            running = false;
         }
     }
 
     public void shutdown() {
-        input.close();
+        if (running) {
+            input.close();
+        }
         PluginTools.release(input);
     }
 }

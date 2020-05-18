@@ -58,6 +58,7 @@ public class SLSInput extends BaseTInput {
      */
     String workerInstance;
 
+
     /**
      * 用于指出在服务端没有记录 shard 的 checkpoint 的情况下应该从什么位置消费 shard，
      * 如果服务端保存了有效的 checkpoint 信息，那么这些取值不起任何作用，
@@ -86,6 +87,8 @@ public class SLSInput extends BaseTInput {
      * 0 ~ 1000
      */
     int maxFetchLogGroupSize = 1000;
+
+    boolean batchPut = true;
 
     private ClientWorker worker;
 
@@ -198,9 +201,15 @@ public class SLSInput extends BaseTInput {
                         for (Logs.Log.Content cont : log.getContentsList()) {
                             event.setField(cont.getKey().trim(), cont.getValue());
                         }
-                        events.add(event);
+                        if (batchPut) {
+                            events.add(event);
+                        } else {
+                            putEvent(event);
+                        }
                     }
-                    putEvents(events);
+                    if (batchPut && !events.isEmpty()) {
+                        putEvents(events);
+                    }
                 }
                 if (checkTimeInterval > 0) {
                     long curTime = System.currentTimeMillis();

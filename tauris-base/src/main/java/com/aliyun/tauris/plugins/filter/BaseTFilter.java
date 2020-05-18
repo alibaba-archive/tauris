@@ -41,7 +41,13 @@ public abstract class BaseTFilter extends AbstractPlugin implements TFilter {
             try {
                 return on.check(event);
             } catch (RuntimeException e) {
-                logger.ERROR("expression `" + on.toString() + " ` execute error", e);
+                String expr = "<??>";
+                try {
+                    expr = on.toString();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                logger.ERROR("expression of plugin %s `" + expr + " ` execute error ", e, id());
                 throw e;
             }
         }

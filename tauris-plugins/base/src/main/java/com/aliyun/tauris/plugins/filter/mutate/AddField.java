@@ -15,17 +15,17 @@ import java.util.Set;
 public class AddField extends BaseMutate {
 
     @Required
-    Map<String, Object> newFields;
+    Map<String, Object> fields;
 
     boolean formatKey;
 
-    private Map<Object, Object> fields = new HashMap<>();
+    private Map<Object, Object> _fields = new HashMap<>();
 
     public void init() {
-        Set<String> keySet = new HashSet<>(newFields.keySet());
+        Set<String> keySet = new HashSet<>(fields.keySet());
         for (String rawKey : keySet) {
             Object key = rawKey;
-            Object rawVal = newFields.get(rawKey);
+            Object rawVal = fields.get(rawKey);
             Object val = rawVal;
 
             if (formatKey && isExprValue(key)) {
@@ -38,14 +38,14 @@ public class AddField extends BaseMutate {
                     e.printStackTrace();
                 }
             }
-            this.fields.put(key, val);
+            this._fields.put(key, val);
         }
     }
 
     @Override
     public void mutate(TEvent event) {
         if (test(event)) {
-            for (Map.Entry<Object, Object> entry : fields.entrySet()) {
+            for (Map.Entry<Object, Object> entry : _fields.entrySet()) {
                 Object key = entry.getKey();
                 Object val = entry.getValue();
                 if (key instanceof EventFormatter) {

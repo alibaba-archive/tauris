@@ -111,6 +111,7 @@ public class TPipeline {
                 t.shutdown();
                 logger.INFO("input plugin %s closed", t.getInput().id());
             } catch (RuntimeException e) {
+                e.printStackTrace();
                 logger.ERROR("input plugin %s close failed", e, t.getInput().id());
             }
         }));

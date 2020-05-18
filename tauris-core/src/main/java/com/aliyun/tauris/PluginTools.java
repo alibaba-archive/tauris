@@ -57,9 +57,11 @@ public class PluginTools {
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         ClassLoader pluginClassLoader  = o.getClass().getClassLoader();
         Thread.currentThread().setContextClassLoader(pluginClassLoader);
-        for (Method m : findMethodsAnnotatedWith(o.getClass(), PostConstruct.class)) {
-            m.invoke(o);
-        }
+//        for (Method m : findMethodsAnnotatedWith(o.getClass(), PostConstruct.class)) {
+//            m.invoke(o);
+//        }
+        Method initMethod = o.getClass().getMethod("init");
+        initMethod.invoke(o);
         Thread.currentThread().setContextClassLoader(contextClassLoader);
     }
 

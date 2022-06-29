@@ -13,7 +13,7 @@
         <javac_target>1.8</javac_target>
         <javac_source>1.8</javac_source>
         <file_encoding>UTF-8</file_encoding>
-        <slf4j_version>1.7.9</slf4j_version>
+        <slf4j_version>1.7.26</slf4j_version>
         <project_dir>${project.basedir}</project_dir>
     </properties>
 
